@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ndl:NameDistro xmlns:ndl="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1" xmlns:p="http://xsspe.mitre.org/xsspe-core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1 NameDistro.xsd http://xsspe.mitre.org/xsspe-core xsspe-core_0.1.xsd" nameType="role" defaultRollup="http://role.dod.mil/" resource="https://nameservice.dod.mil" timeStamp="2016-01-08T09:42:13.653Z" includedActionStartTime="1970-01-01T00:00:00Z" partialUpdate="false">
+  <ndl:Modification dName="Not Detected" hName="Not Detected" nameID="39470" active="true" lastUpdated="2013-05-18T20:59:48.583Z" />
+  <ndl:Modification dName="Unknown" hName="Unknown" nameID="39472" active="true" lastUpdated="2013-05-18T20:59:48.613Z" />
+  <ndl:Modification dName="Other" hName="Other" nameID="39474" active="true" lastUpdated="2013-05-18T20:59:48.647Z" />
+  <ndl:Modification dName="Server" hName="Server" nameID="39476" active="true" lastUpdated="2013-05-18T20:59:48.690Z" />
+  <ndl:Modification dName="Workstation" hName="Workstation" nameID="39478" active="true" lastUpdated="2013-05-18T20:59:48.753Z" />
+  <ndl:Modification dName="Peripheral" hName="Peripheral" nameID="39480" active="true" lastUpdated="2013-05-18T20:59:48.817Z" />
+  <ndl:Modification dName="Infrastructure" hName="Infrastructure" nameID="39482" active="true" lastUpdated="2013-05-18T20:59:48.847Z" />
+  <ndl:Modification dName="Network Device" hName="Network Device" nameID="39484" active="true" lastUpdated="2013-05-18T20:59:48.880Z" />
+</ndl:NameDistro>

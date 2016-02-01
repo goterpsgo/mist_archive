@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ndl:NameDistro xmlns:ndl="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1" xmlns:p="http://xsspe.mitre.org/xsspe-core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1 NameDistro.xsd http://xsspe.mitre.org/xsspe-core xsspe-core_0.1.xsd" nameType="dod network" defaultRollup="http://dodnetwork.dod.mil" resource="https://nameservice.dod.mil" timeStamp="2016-01-08T09:42:20.597Z" includedActionStartTime="1970-01-01T00:00:00Z" partialUpdate="false">
+  <ndl:Modification dName="CENTRIXS" hName="CENTRIXS" nameID="39306" active="true" lastUpdated="2014-02-26T17:35:19.643Z" />
+  <ndl:Modification dName="COALITION CLASSIFIED" hName="COALITION CLASSIFIED" nameID="39308" active="true" lastUpdated="2014-02-26T17:35:19.643Z" />
+  <ndl:Modification dName="COALITION CLASSIFIED" hName="COALITION UNCLASSIFIED" nameID="39310" active="true" lastUpdated="2014-02-26T17:35:19.643Z" />
+  <ndl:Modification dName="NIPRNET" hName="NIPRNET" nameID="39312" active="true" lastUpdated="2014-02-26T17:35:19.643Z" />
+  <ndl:Modification dName="SIPRNET" hName="SIPRNET" nameID="39314" active="true" lastUpdated="2014-02-26T17:35:19.643Z" />
+  <ndl:Modification dName="ONE-NET" hName="ONE-NET" nameID="39316" active="true" lastUpdated="2014-02-26T17:35:19.643Z" />
+  <ndl:Modification dName="DREN-S" hName="DREN-S" nameID="39318" active="true" lastUpdated="2014-02-26T17:35:19.643Z" />
+  <ndl:Modification dName="DREN-U" hName="DREN-U" nameID="39320" active="true" lastUpdated="2014-02-26T17:35:19.643Z" />
+</ndl:NameDistro>

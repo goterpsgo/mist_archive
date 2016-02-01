@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ndl:NameDistro xmlns:ndl="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1" xmlns:p="http://xsspe.mitre.org/xsspe-core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1 NameDistro.xsd http://xsspe.mitre.org/xsspe-core xsspe-core_0.1.xsd" nameType="permission" defaultRollup="http://permission.dod.mil/" resource="https://nameservice.dod.mil" timeStamp="2016-01-08T09:42:10.833Z" includedActionStartTime="1970-01-01T00:00:00Z" partialUpdate="false">
+  <ndl:Modification dName="CMRS Administrator" hName="CMRS Administrator" nameID="39440" active="true" lastUpdated="2013-05-18T20:59:47.413Z" />
+  <ndl:Modification dName="CMRS Maintainer" hName="CMRS Maintainer" nameID="39442" active="true" lastUpdated="2013-05-18T20:59:47.490Z" />
+  <ndl:Modification dName="Command" hName="Command" nameID="39444" active="true" lastUpdated="2013-05-18T20:59:47.520Z" />
+  <ndl:Modification dName="Visit Maintainer" hName="Visit Maintainer" nameID="39446" active="true" lastUpdated="2013-05-18T20:59:47.583Z" />
+  <ndl:Modification dName="Reviewer" hName="Reviewer" nameID="39448" active="true" lastUpdated="2013-05-18T20:59:47.663Z" />
+  <ndl:Modification dName="Enclave Analyst" hName="Enclave Analyst" nameID="39450" active="true" lastUpdated="2013-05-18T20:59:47.757Z" />
+  <ndl:Modification dName="Enclave DAA" hName="Enclave DAA" nameID="39452" active="true" lastUpdated="2013-05-18T20:59:47.817Z" />
+  <ndl:Modification dName="Enclave Manager" hName="Enclave Manager" nameID="39454" active="true" lastUpdated="2013-05-18T20:59:47.850Z" />
+  <ndl:Modification dName="System Analyst" hName="System Analyst" nameID="39456" active="true" lastUpdated="2013-05-18T20:59:47.943Z" />
+  <ndl:Modification dName="System DAA" hName="System DAA" nameID="39458" active="true" lastUpdated="2013-05-18T20:59:48.083Z" />
+  <ndl:Modification dName="System Manager" hName="System Manager" nameID="39460" active="true" lastUpdated="2013-05-18T20:59:48.160Z" />
+  <ndl:Modification dName="Organization Analyst" hName="Organization Analyst" nameID="39462" active="true" lastUpdated="2013-05-18T20:59:48.257Z" />
+  <ndl:Modification dName="Organization DAA" hName="Organization DAA" nameID="39464" active="true" lastUpdated="2013-05-18T20:59:48.333Z" />
+  <ndl:Modification dName="Organization Manager" hName="Organization Manager" nameID="39466" active="true" lastUpdated="2013-05-18T20:59:48.427Z" />
+</ndl:NameDistro>

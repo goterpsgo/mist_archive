@@ -1,0 +1,90 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 6 (0x6)
+    Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=US, ST=Maryland, L=Linthicum, O=Secure Innovations LLC, CN=Secure Innovations LLC Root CA/emailAddress=dsmith@secure-innovations.net
+        Validity
+            Not Before: Jul 27 09:27:48 2015 GMT
+            Not After : Sep  3 09:27:48 2020 GMT
+        Subject: C=US, ST=Maryland, O=Secure Innovations LLC, CN=dataGather/emailAddress=jfrank@secure-innovations.net
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:cb:ba:98:96:a9:45:2e:af:09:4c:36:19:62:c4:
+                    21:5d:57:4e:dd:48:99:b3:fd:16:8c:34:e0:7b:00:
+                    41:90:ed:8c:b2:be:48:4a:99:81:a6:be:73:64:8e:
+                    ab:d1:8c:f6:1c:69:7c:30:63:77:38:7b:c2:a4:12:
+                    fb:d2:47:fb:43:a2:4a:54:47:bd:aa:1b:ef:ea:7a:
+                    e6:e7:e5:ca:64:0b:f1:08:84:70:5e:ed:e7:1b:1e:
+                    f6:38:4e:d6:a3:e5:58:88:7c:3c:2a:fb:0c:b8:20:
+                    10:5d:fc:3e:92:57:7f:f5:e0:42:f4:ed:6f:70:0e:
+                    56:7d:1a:01:f3:fe:c3:3c:90:5c:08:b1:c4:bb:5b:
+                    17:f7:03:d6:d4:e9:8d:10:f0:69:7d:84:b1:f9:c6:
+                    91:90:ef:26:23:22:a7:81:28:20:12:02:3d:4e:81:
+                    4c:47:cf:4f:e0:28:ee:56:51:72:1e:1e:e4:fe:c8:
+                    df:99:df:0f:2f:dc:6e:11:ca:18:44:4e:c9:8d:99:
+                    10:8c:26:c3:c4:e7:6f:7c:3a:ac:47:52:08:c1:28:
+                    27:78:3e:dd:a4:47:4e:06:4e:61:56:d9:3b:af:67:
+                    ed:f1:79:eb:1f:36:a6:62:e0:b5:be:12:69:16:dd:
+                    ec:6a:bd:d9:03:4e:bb:db:e8:a1:bc:33:ce:de:9e:
+                    ff:db
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                06:AE:CD:8D:3E:AB:9B:0C:70:E7:35:41:98:1A:24:22:CD:BA:DB:F0
+            X509v3 Authority Key Identifier: 
+                keyid:A6:72:1F:E9:13:83:90:0A:93:FD:65:2D:96:65:4E:08:8F:59:12:A9
+                DirName:/C=US/ST=Maryland/L=Linthicum/O=Secure Innovations LLC/CN=Secure Innovations LLC Root CA/emailAddress=dsmith@secure-innovations.net
+                serial:8F:8D:F3:58:CD:44:3D:67
+
+            Netscape CA Revocation Url: 
+                http://10.11.1.81:8081/revocation.pem
+    Signature Algorithm: sha1WithRSAEncryption
+         92:3d:a7:ff:f1:23:2e:ca:8f:c1:0d:c2:4c:7e:f9:d6:60:82:
+         4e:d1:6d:f6:fa:3a:91:a7:a9:71:bd:b8:bf:d5:3b:c8:46:35:
+         7b:dc:12:d5:35:60:8a:89:68:28:1f:a8:06:2b:1f:2f:29:9c:
+         41:51:2a:eb:36:0c:f4:d2:df:24:18:23:b2:b1:1e:6d:c0:f0:
+         d1:1a:93:dd:76:3f:db:38:44:42:56:09:cf:52:d7:70:15:cc:
+         2c:ee:88:e2:ea:65:26:b1:bb:e6:41:41:de:0e:26:14:6c:5b:
+         d6:28:b2:67:b7:03:20:88:a9:e4:18:4c:52:5d:ef:21:4c:48:
+         97:aa:14:9e:b2:c3:0d:e2:84:08:f4:8f:52:b1:a5:68:8d:e2:
+         10:22:93:71:27:f5:04:09:8d:3d:29:4e:18:50:eb:ee:6c:cd:
+         7a:09:89:a9:25:e8:af:32:8c:e8:52:39:32:f3:bd:67:56:40:
+         c7:68:a4:66:64:a7:8f:d0:e8:a5:2e:4d:5c:35:15:4a:d5:97:
+         f1:15:91:c0:9f:05:38:65:aa:b1:94:16:7a:57:e0:49:4f:46:
+         d1:f7:ea:7b:12:6c:e1:b3:fb:2f:db:90:a0:a6:07:f1:ec:5b:
+         0b:b0:02:69:a5:17:96:8d:6b:0d:92:7d:2d:50:ce:55:e7:1c:
+         4f:72:8a:1f
+-----BEGIN CERTIFICATE-----
+MIIE9zCCA9+gAwIBAgIBBjANBgkqhkiG9w0BAQUFADCBrDELMAkGA1UEBhMCVVMx
+ETAPBgNVBAgTCE1hcnlsYW5kMRIwEAYDVQQHEwlMaW50aGljdW0xHzAdBgNVBAoT
+FlNlY3VyZSBJbm5vdmF0aW9ucyBMTEMxJzAlBgNVBAMTHlNlY3VyZSBJbm5vdmF0
+aW9ucyBMTEMgUm9vdCBDQTEsMCoGCSqGSIb3DQEJARYdZHNtaXRoQHNlY3VyZS1p
+bm5vdmF0aW9ucy5uZXQwHhcNMTUwNzI3MDkyNzQ4WhcNMjAwOTAzMDkyNzQ4WjCB
+hDELMAkGA1UEBhMCVVMxETAPBgNVBAgTCE1hcnlsYW5kMR8wHQYDVQQKExZTZWN1
+cmUgSW5ub3ZhdGlvbnMgTExDMRMwEQYDVQQDEwpkYXRhR2F0aGVyMSwwKgYJKoZI
+hvcNAQkBFh1qZnJhbmtAc2VjdXJlLWlubm92YXRpb25zLm5ldDCCASIwDQYJKoZI
+hvcNAQEBBQADggEPADCCAQoCggEBAMu6mJapRS6vCUw2GWLEIV1XTt1ImbP9Fow0
+4HsAQZDtjLK+SEqZgaa+c2SOq9GM9hxpfDBjdzh7wqQS+9JH+0OiSlRHvaob7+p6
+5uflymQL8QiEcF7t5xse9jhO1qPlWIh8PCr7DLggEF38PpJXf/XgQvTtb3AOVn0a
+AfP+wzyQXAixxLtbF/cD1tTpjRDwaX2EsfnGkZDvJiMip4EoIBICPU6BTEfPT+Ao
+7lZRch4e5P7I35nfDy/cbhHKGEROyY2ZEIwmw8Tnb3w6rEdSCMEoJ3g+3aRHTgZO
+YVbZO69n7fF56x82pmLgtb4SaRbd7Gq92QNOu9voobwzzt6e/9sCAwEAAaOCAUgw
+ggFEMAkGA1UdEwQCMAAwHQYDVR0OBBYEFAauzY0+q5sMcOc1QZgaJCLNutvwMIHh
+BgNVHSMEgdkwgdaAFKZyH+kTg5AKk/1lLZZlTgiPWRKpoYGypIGvMIGsMQswCQYD
+VQQGEwJVUzERMA8GA1UECBMITWFyeWxhbmQxEjAQBgNVBAcTCUxpbnRoaWN1bTEf
+MB0GA1UEChMWU2VjdXJlIElubm92YXRpb25zIExMQzEnMCUGA1UEAxMeU2VjdXJl
+IElubm92YXRpb25zIExMQyBSb290IENBMSwwKgYJKoZIhvcNAQkBFh1kc21pdGhA
+c2VjdXJlLWlubm92YXRpb25zLm5ldIIJAI+N81jNRD1nMDQGCWCGSAGG+EIBBAQn
+FiVodHRwOi8vMTAuMTEuMS44MTo4MDgxL3Jldm9jYXRpb24ucGVtMA0GCSqGSIb3
+DQEBBQUAA4IBAQCSPaf/8SMuyo/BDcJMfvnWYIJO0W32+jqRp6lxvbi/1TvIRjV7
+3BLVNWCKiWgoH6gGKx8vKZxBUSrrNgz00t8kGCOysR5twPDRGpPddj/bOERCVgnP
+UtdwFcws7oji6mUmsbvmQUHeDiYUbFvWKLJntwMgiKnkGExSXe8hTEiXqhSessMN
+4oQI9I9SsaVojeIQIpNxJ/UECY09KU4YUOvubM16CYmpJeivMozoUjky871nVkDH
+aKRmZKeP0OilLk1cNRVK1ZfxFZHAnwU4ZaqxlBZ6V+BJT0bR9+p7Emzhs/sv25Cg
+pgfx7FsLsAJppReWjWsNkn0tUM5V5xxPcoof
+-----END CERTIFICATE-----

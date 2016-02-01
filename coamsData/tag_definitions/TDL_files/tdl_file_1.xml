@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Example XML based on OAM v2.0.5 UI-->
+<TagCatalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns="http://schema.dod.mil/oam/tag_data/1.0" 
+	xmlns:td="http://schema.dod.mil/oam/tag_data/1.0" 
+	xsi:schemaLocation="http://schema.dod.mil/oam/tag_data/1.0 ..\schema\tag_definition_language.xsd" 
+	timeStamp="2013-06-27T12:00:00-04:00">
+	<TagDefinitions>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=cocomaor</name>
+			<title>Geographic AoR</title>
+			<description>The Geographic AoR field specifies the asset's Area of Responsibility (AoR), the geographic COCOM in which the asset operates.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=location&amp;rollupType=COCOM%20AOR" root="30002" />
+			</dataSource>
+			<required>
+				<defaultValue>30002</defaultValue>
+			</required>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=geolocation</name>
+			<title>Geolocation</title>
+			<description>The Geolocation field specifies the non-DoD specific representation of the current operating geographical location.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=location&amp;rollupType=http%3A%2F%2Fgeolocation.dod.mil" root="30002" />
+			</dataSource>
+			<required>
+				<defaultValue>30002</defaultValue>
+			</required>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=cndsp</name>
+			<title>CND Service Provider</title>
+			<description>The Computer Network Defense Service Provider (CNDSP) for the asset.  Also known as Computer Emergency Response Teams (CERT) and Network Operations and Security Centers (NOSC).</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=organization&amp;rollupType=http%3A%2F%2FCNDSP.dod.mil"/>
+			</dataSource>
+			<required>
+				<defaultValue>29995</defaultValue>
+			</required>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=ccsafa</name>
+			<title>Owning CC/S/A/FA</title>
+			<description>The Owning CC/S/A/FA Service group specifies the CC/S/A/FA that owns the assets.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=organization&amp;rollupType=http%3A%2F%2FCCSA.dod.mil"/>
+			</dataSource>
+			<notRequired>
+				<defaultValue>29995</defaultValue>
+			</notRequired>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=ownorg</name>
+			<title>Owning Unit</title>
+			<description>The Owning Unit group specifies unit whose ADPE account on which the device is carried.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=organization&amp;rollupType=http%3A%2F%2Fowner.dod.mil"/>
+			</dataSource>
+			<required>
+				<defaultValue>29995</defaultValue>
+			</required>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=adminorg</name>
+			<title>Administration Unit</title>
+			<description>The Administration Unit group specifies the unit that is responsible for administering the asset (e.g. the unit the system administrator belongs to).</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=organization&amp;rollupType=http%3A%2F%2Fadmin.dod.mil"/>
+			</dataSource>
+			<required>
+				<defaultValue>29995</defaultValue>
+			</required>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=adminpoc</name>
+			<title>Administration POC</title>
+			<description>The Administration PoC group specifies the Point of Contact (PoC) information for reaching the unit or person responsible to the DoD for the administration of the device.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=organization&amp;rollupType=http%3A%2F%2Fadminpoc.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=maclevel</name>
+			<title>MAC Level</title>
+			<description>The MAC Level field specifies the Mission Assurance Category (MAC) level of the device. MAC levels are defined in DoDI 8500.2.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=mac&amp;rollupType=http%3A%2F%2Fmac.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=confidentialitylevel</name>
+			<title>Confidentiality Level</title>
+			<description>The Confidentiality Level field specifies the confidentiality level of the device. Confidentiality levels are defined in DoDI 8500.2.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=confidentiality%20level&amp;rollupType=http%3A%2F%2Fconfidentialitylevel.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=pmomanaged</name>
+			<title>PMO Managed</title>
+			<description>The PMO Managed field specifies whether or not changes to the device's configuration are governed by a centralized program management office. If this is checked, the asset is governed by a centralized program management office.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=system&amp;rollupType=http%3A%2F%2Fpmomanaged.dod.mil"/>
+			</dataSource>
+			<notRequired>
+				<defaultValue>0</defaultValue>
+			</notRequired>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=systemaffiliation</name>
+			<title>System Affiliations</title>
+			<description>The System Affiliation refers to the system accreditation boundary that the device was certified in.  System names are to match those reported in the DoD IT Program Registry (DITPR)</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=system&amp;rollupType=http%3A%2F%2Fmission.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>100</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=operationalaccreditation</name>
+			<title>Operational Accreditation</title>
+			<description>TBD</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=system&amp;rollupType=http%3A%2F%2Foperationalaccredit.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>100</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=typeaccreditation</name>
+			<title>Type Accreditation</title>
+			<description>TBD</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=system&amp;rollupType=http%3A%2F%2Ftypeaccredit.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>100</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=dodnetwork</name>
+			<title>DoD Network</title>
+			<description>The DoD Network field specifies the name of network that the asset operates on.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=dod%20network&amp;rollupType=http%3A%2F%2Fdodnetwork.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=nondodnetwork</name>
+			<title>Non-DoD Network</title>
+			<description>The Non-DoD Network field specifies the non-DoD specific name of the network on which this asset operates. (e.g. Internet)</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=non-dod%20network&amp;rollupType=http%3A%2F%2Fnondodnetwork.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=ccsd</name>
+			<title>CCSD</title>
+			<description>The CCSD field specifies the Control Communications Service Designator (CCSD) for the asset. (A CCSD is a DoD-specific circuit designator assigned and tracked by DISA.)</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=ccsd&amp;rollupType=http%3A%2F%2Fccsd.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=nondodcircuitid</name>
+			<title>Non-DoD Circuit Id</title>
+			<description>The Non-DoD Circuit Id field specifies the non-DoD specific network circuit identifier for the circuit the asset uses as its primary communication path.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=non-dod%20circuit%20id&amp;rollupType=http%3A%2F%2Fnondodcircuitid.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=role</name>
+			<title>Roles</title>
+			<description>Roles are the high-level purpose of the asset.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=role&amp;rollupType=http%3A%2F%2FRoles.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>100</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=function</name>
+			<title>Functions</title>
+			<description>Functions are the specific implemented activities the device performs within its overall roles.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=function&amp;rollupType=http%3A%2F%2FFunctions.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>100</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=classification</name>
+			<title>Classifications</title>
+			<description>TBD</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=classification&amp;rollupType=http%3A%2F%2Fclassification.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=cndserviceprovider</name>
+			<title>CND Service Provider</title>
+			<description>There is also a CNDSP as an alternate rollup of the organization nametype.  Is this redundant or are there intentionally two of these.</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=cnd%20service%20provider&amp;rollupType=http%3A%2F%2Fcndserviceprovider.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=fipsavailabilitylevel</name>
+			<title>FIPS Availability Level</title>
+			<description>TBD</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=fips%20availability%20level&amp;rollupType=http%3A%2F%2Ffipsavailabilitylevel.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=fipsconfidentialitylevel</name>
+			<title>FIPS Confidentiality Level</title>
+			<description>TBD</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=fips%20confidentiality%20level&amp;rollupType=http%3A%2F%2Ffipsconfidentialitylevel.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=fipsintegritylevel</name>
+			<title>FIPS Integrity Level</title>
+			<description>TBD</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=fips%20integrity%20level&amp;rollupType=http%3A%2F%2Ffipsintegritylevel.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=networkzone</name>
+			<title>Network Zone</title>
+			<description>TBD</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=network%20zone&amp;rollupType=http%3A%2F%2Fnetworkzones.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+		<TagDefinition>
+			<name>https://dpms.disa.mil?name=permission</name>
+			<title>Permissions</title>
+			<description>TBD</description>
+			<dataSource>
+				<plaintext uri="https://vms.disa.mil/coams?nameType=permission&amp;rollupType=http%3A%2F%2FPermissions.dod.mil"/>
+			</dataSource>
+			<notRequired/>
+			<cardinality>1</cardinality>
+			<version>1.0</version>
+		</TagDefinition>
+	</TagDefinitions>
+</TagCatalog>
