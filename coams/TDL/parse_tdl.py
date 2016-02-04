@@ -14,7 +14,7 @@ from modules import xmltodict
 
 
 def parse_xml(filename):
-    with open('tdl_files/' + filename) as xml_file:
+    with open(filename) as xml_file:
         xml_dict = xmltodict.parse(xml_file.read())
     return xml_dict
 
