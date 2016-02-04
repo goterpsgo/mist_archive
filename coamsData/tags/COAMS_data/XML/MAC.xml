@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ndl:NameDistro xmlns:ndl="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1" xmlns:p="http://xsspe.mitre.org/xsspe-core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1 NameDistro.xsd http://xsspe.mitre.org/xsspe-core xsspe-core_0.1.xsd" nameType="mac" defaultRollup="http://mac.dod.mil" resource="https://nameservice.dod.mil" timeStamp="2016-01-08T09:42:13.157Z" includedActionStartTime="1970-01-01T00:00:00Z" partialUpdate="false">
-  <ndl:Modification dName="1" hName="1" nameID="39266" active="true" lastUpdated="2014-02-26T17:35:19.547Z" />
-  <ndl:Modification dName="2" hName="2" nameID="39268" active="true" lastUpdated="2014-02-26T17:35:19.547Z" />
-  <ndl:Modification dName="3" hName="3" nameID="39270" active="true" lastUpdated="2014-02-26T17:35:19.547Z" />
-</ndl:NameDistro>

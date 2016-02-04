@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ndl:NameDistro xmlns:ndl="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1" xmlns:p="http://xsspe.mitre.org/xsspe-core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1 NameDistro.xsd http://xsspe.mitre.org/xsspe-core xsspe-core_0.1.xsd" nameType="non-dod network" defaultRollup="http://nondodnetwork.dod.mil" resource="https://nameservice.dod.mil" timeStamp="2016-01-08T09:42:08.873Z" includedActionStartTime="1970-01-01T00:00:00Z" partialUpdate="false">
-  <ndl:Modification dName="TBD" hName="TBD" nameID="39492" active="true" lastUpdated="2013-05-18T21:00:32.403Z" />
-</ndl:NameDistro>
