@@ -1,1 +1,0 @@
-server=coams-sc-5.silab.net
