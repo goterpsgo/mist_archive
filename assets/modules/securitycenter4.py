@@ -57,7 +57,7 @@ class SecurityCenter:
             return None
 
     def get_repositories(self):
-        resp = self.connect('repository', 'init')
+        resp = self.connect('group', 'init')
         if resp:
             return resp['repositories']
         else:
