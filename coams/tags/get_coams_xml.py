@@ -29,7 +29,7 @@ def save_output_xml(ids, base_url, user, password):
                 r = requests.get(url, auth=(user, password), verify=False, stream=True)
             else:
                 r = requests.get(url, verify=False, stream=True)
-            if r.status_code == "200":
+            if r.status_code == 200:
                 print "OK"
             else:
                 print "No Data Retrived"
