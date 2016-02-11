@@ -65,7 +65,7 @@ class SecurityCenter:
 
 class Database:
 
-    def __init__(self):
+    def __init__(self, needed_fields):
         connection_string = 'mysql://' + config.username + ':' + base64.b64decode(config.password) + '@mistDB:3306/MIST'
         ssl_args = {'ssl': {'cert': '/opt/mist/database/certificates/mist-interface.crt',
                             'key': '/opt/mist/database/certificates/mist-interface.key',
@@ -74,10 +74,12 @@ class Database:
         self.metadata = MetaData(self.db)
         self.assets_table = Table('Assets', self.metadata, autoload=True)
         self.repo_table = Table('Repos', self.metadata, autoload=True)
+        self.update_fields = needed_fields
+        self.insert_fields = needed_fields + ['state']
 
-    def check_exists(self, stmt):
+    def check_exists(self, sql):
         # Execute SQL query
-        rs = stmt.execute()
+        rs = self.db.execute(sql)
         found = False
         primary_key = 0
         for row in rs:
@@ -97,37 +99,36 @@ class Database:
 
         # checking for biosGUID match first
         if asset_dictionary['biosGUID'] and asset_found is False:
-            s = self.assets_table.select(self.assets_table.c.biosGUID == asset_dictionary['biosGUID'])
-            asset_found, mist_id = self.check_exists(s)
+            sql = "SELECT assetID FROM Assets WHERE biosGUID = '%s'" % asset_dictionary['biosGUID']
+            asset_found, mist_id = self.check_exists(sql)
 
         # checking for dnsName second
         if asset_dictionary['dnsName'] and asset_found is False:
-            s = self.assets_table.select(self.assets_table.c.dnsName == asset_dictionary['dnsName'])
-            asset_found, mist_id = self.check_exists(s)
+            sql = "SELECT assetID FROM Assets WHERE dnsName = '%s'" % asset_dictionary['dnsName']
+            asset_found, mist_id = self.check_exists(sql)
 
         # checking for netbiosName third
         if asset_dictionary['netbiosName'] and asset_found is False:
-            s = self.assets_table.select(self.assets_table.c.netbiosName is asset_dictionary['netbiosName'])
-            asset_found, mist_id = self.check_exists(s)
+            sql = "SELECT assetID FROM Assets WHERE netbiosName = '%s'" % asset_dictionary['netbiosName']
+            asset_found, mist_id = self.check_exists(sql)
 
         # Checking for ip and mac combo last
         if asset_dictionary['ip'] and asset_dictionary['macAddress'] and asset_found is False:
-            s = self.assets_table.select(and_(self.assets_table.c.ip == asset_dictionary['ip'],
-                                              self.assets_table.c.macAddress == asset_dictionary['macAddress']))
-            asset_found, mist_id = self.check_exists(s)
+            sql = "SELECT assetID FROM Assets WHERE ip = '%s' and macAddress = '%s'" % \
+                  (asset_dictionary['ip'], asset_dictionary['macAddress'])
+            asset_found, mist_id = self.check_exists(sql)
 
         return asset_found, mist_id
 
-    def update_asset(self, asset_dict, mist_id, fields):
+    def update_asset(self, asset_dict, mist_id):
         # Get all Values that will be updated
-        values = {}
+        fields = self.update_fields
+        sql = "UPDATE Assets SET "
         for info in fields:
-            values[info] = asset_dict[info]
-        del values['repositoryID']
-
-        # update values in database
-        u = self.assets_table.update().where(self.assets_table.c.assetID == mist_id).values(values)
-        u.execute()
+            if info is not "repositoryID":
+                sql = sql + info + "='" + str(asset_dict[info]) + "', "
+        sql = sql[:-2] + " WHERE assetID = " + str(mist_id)
+        self.db.execute(sql)
 
     def check_repo(self, mist_id, repo_id, sec_center_id):
         # Check the repo to make sure asset has already been added to it
@@ -147,16 +148,24 @@ class Database:
         i = self.repo_table.insert()
         i.execute(values)
 
-    def insert_asset(self, asset_dictionary, fields):
-        # Get all the values that will be inserted
-        values = {'state': 'R'}
-        for info in fields:
-            values[info] = asset_dictionary[info]
-        del values['repositoryID']
+    def insert_asset(self, asset_dict):
+        # Set the static variables
+        fields = self.insert_fields
+        asset_dict['state'] = 'R'
+        sql_columns = "INSERT INTO Assets (assetID,"
+        sql_values = " VALUES (DEFAULT,"
 
-        # insert values into database
-        i = self.assets_table.insert()
-        i.execute(values)
+        for info in fields:
+            if info is not 'repositoryID':
+                sql_columns = sql_columns + info + ","
+                sql_values += "'" + str(asset_dict[info]) + "',"
+
+        # Clean up the sql statement and execute
+        sql_columns = sql_columns[:-1] + ")"
+        sql_values = sql_values[:-1] + ")"
+        sql = sql_columns + sql_values
+        self.db.execute(sql)
+
         results = self.db.execute("Select assetID from Assets ORDER BY assetID DESC LIMIT 1")
         last_id = 0
         for row in results:
@@ -194,15 +203,18 @@ def get_security_centers(master_dir, sc_file):
     return security_center_list
 
 
-if __name__ == "__main__":
-
+def main():
     # Create log directory if it does not exist
     if not os.path.exists('/var/log/MIST'):
         os.makedirs('/var/log/MIST')
     log_file = '/var/log/MIST/asset_gathering.log'
-    
+
+    # fields needed from the asset dictionary returned from Security Center
+    needed_fields = ['repositoryID', 'biosGUID', 'macAddress', 'ip', 'dnsName', 'lastAuthRun', 'lastUnauthRun',
+                     'netbiosName', 'osCPE', 'mcafeeGUID']
+
     # create the database stuff that we need
-    mist_database = Database()
+    mist_database = Database(needed_fields)
 
     # get directories for all SC's to pull from
     master_directory = os.path.dirname(os.path.realpath(__file__)) + '/SecurityCenters'
@@ -221,8 +233,6 @@ if __name__ == "__main__":
             repo_dict = sc.get_repo_mapping()
 
             # Get a list of assets
-            needed_fields = ['repositoryID', 'biosGUID', 'macAddress', 'ip', 'dnsName', 'lastAuthRun', 'lastUnauthRun',
-                             'netbiosName', 'osCPE', 'mcafeeGUID']
             asset_list = sc.get_asset_list(needed_fields)
 
             # Loop through all assets
@@ -230,9 +240,9 @@ if __name__ == "__main__":
                 # Check to see if asset exists
                 asset_exists, asset_id = mist_database.check_asset(asset)
                 if asset_exists:
-                    mist_database.update_asset(asset, asset_id, needed_fields)
+                    mist_database.update_asset(asset, asset_id)
                 else:
-                    asset_id = mist_database.insert_asset(asset, needed_fields)
+                    asset_id = mist_database.insert_asset(asset)
 
                 # Insert the repo if it is not there
                 if asset_id != 0:
@@ -240,3 +250,6 @@ if __name__ == "__main__":
                     if not repo:
                         mist_database.insert_repo(asset['repositoryID'], sc_id, repo_dict[asset['repositoryID']],
                                                   security_center_dict['server'], int(asset_id))
+
+if __name__ == "__main__":
+    main()
