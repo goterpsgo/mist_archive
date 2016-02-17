@@ -16,15 +16,15 @@ from sqlalchemy import *
 
 #Security Center stuff
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/modules")
-from gatherSCData import GatherSCData 
+from gather_sc_data import GatherSCData
 
-class CVE_ASR:
+class Benchmark_ASR:
 
     def __init__(self, allScan):
-        
+
         #Set wether or not to include all scan data
         self.allScan = allScan
-
+        
         #Static Name Defs
         wsnt = "http://docs.oasis-open.org/wsn/b-2"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
@@ -70,13 +70,13 @@ class CVE_ASR:
         #main element
         self.notificationMessage = ET.SubElement(self.root, self.nsWSNT + "NotificationMessage")
         #Topic Always static
-        ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.cve.results"
+        ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.benchmark.results"
 
     def buildProducerReference(self, refNumber):
         producerReference = ET.SubElement(self.notificationMessage, self.nsWSNT + "ProducerReference")
         ET.SubElement(producerReference, self.nsWSA + "Address").text = socket.gethostname()
         metadata = ET.SubElement(producerReference, self.nsWSA + "Metadata")
-        ET.SubElement(metadata, self.nsWSA + "MessageID").text = socket.gethostname() + ":acas.cve.results:local:" + str(refNumber)
+        ET.SubElement(metadata, self.nsWSA + "MessageID").text = socket.gethostname() + ":acas.benchmark.results:local:" + str(refNumber)
         ET.SubElement(metadata, self.nsTaggedValue + "taggedString", name="MIST", value="0.1") 
 
     def getSCInfo(self, sc):
@@ -86,7 +86,7 @@ class CVE_ASR:
             for result in results:
                 server = result[0]
         return server
-    
+
     def getIPList(self, assetList):
         assetIPDict = {}
         for asset in assetList:
@@ -97,33 +97,52 @@ class CVE_ASR:
             assetIPDict[ip] = asset
         return assetIPDict
 
-    def querySC(self, sc, assetList, data, cveDict):
+    def querySC(self, sc, assetList, data, cceDict):
         assetIPDict = self.getIPList(assetList)
         results = sc.query('vuln', 'query', data)
         if results:
             for result in results['results']:
-                if result['cve']:
-                    cveGroup = result['cve'].split(",")
+                if result['pluginName']:
+                    #split the plugin name to get benchmark details
+                    benchmarkFields = result['pluginName'].split(":")
+                    benchmarkKey = benchmarkFields[4] + ":" + benchmarkFields[3]
+                    benchmarkValue = benchmarkFields[0] + ":" + benchmarkFields[2]
+
+                    #figure out if its pass, fail, or mitigated
+                    if data['sourceType'] == 'patched':
+                        pluginResult = 'mitigated'
+                    else:
+                        if result['severity'] == '0':
+                            pluginResult = 'pass'
+                        else:
+                            pluginResult = 'fail'
+            
+                    #add the plugin result to the CCEID
+                    benchmarkValue = benchmarkValue + ":" + pluginResult
                     ip = result['ip']
                     if ip in assetIPDict:
-                        for cve in cveGroup:
-                            if not cve in cveDict:
-                                cveDict[cve] = []
-                            if not assetIPDict[ip] in cveDict[cve]:
-                                cveDict[cve].append(assetIPDict[ip])
-        return cveDict
+                        #create and add to the main dictionary all assets that 
+                        if benchmarkKey not in cceDict:
+                            cceDict[benchmarkKey] = {}
+                        tempDict = cceDict[benchmarkKey]
+                        if benchmarkValue not in tempDict:
+                            tempDict[benchmarkValue] = []
+                        if not assetIPDict[ip] in tempDict[benchmarkValue]:
+                            tempDict[benchmarkValue].append(assetIPDict[ip])
+                        cceDict[benchmarkKey] = tempDict
+            
+        return cceDict
             
     def getNumDaysSincePublish(self, sc, repo):
         #Get the current time
         timeFormat = '%Y-%m-%d %H:%M:%S'
         currentTime = datetime.datetime.now()
-            
+
         #Get the last publish time
-        timeResults = self.db.execute('SELECT cveLast FROM repoPublishTimes WHERE repoID = ' + str(repo) + ' and scID="' + sc + '"')
+        timeResults = self.db.execute('SELECT benchmarkLast FROM repoPublishTimes WHERE repoID = ' + str(repo) + ' and scID="' + sc + '"')
         lastPublished = None
-        if timeResults:    
-            for result in timeResults:
-                lastPublished = result[0]
+        for result in timeResults:
+            lastPublished = result[0]
 
         if lastPublished:
             timeDiff = currentTime - lastPublished
@@ -136,13 +155,13 @@ class CVE_ASR:
                     interval = timeDiffDays + 1
         else:
             interval = "All"
-    
-        return interval 
+
+        return interval
 
     def buildReport(self, assetDict):
         resultsPackage = ET.SubElement(self.message, self.nsSummRes + "ResultsPackage")
 
-        #Set population characseritics
+        #Set population chiaracteritics
         assetCount = 0
         for scID, repoDict in assetDict.iteritems():
             for repo, assetList in repoDict.iteritems():
@@ -150,58 +169,54 @@ class CVE_ASR:
         popChar = ET.SubElement(resultsPackage, self.nsSummRes + "PopulationCharacteristics", populationSize=str(assetCount))
         ET.SubElement(popChar, self.nsSummRes + "resource").text = socket.gethostname()
         
-        #Set the benchmark ID
-        benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark")
-        benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
-        ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
-        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = "acas.cve.results"
-
         #Gather the CVE totals and who they belong to
-        cveFailDict = {}
-        cveMitigatedDict = {}
+        cceBenchmarkDict = {}
+        cceMitigatedDict = {}
         for scID, repoDict in assetDict.iteritems():
             server = self.getSCInfo(scID)
             sc = GatherSCData()
             sc.login(server)
 
             for repo, assetList in repoDict.iteritems():
-                #Get the repos last publish date
+                #Get the assets last publish date
                 interval = self.getNumDaysSincePublish(scID, repo)
-                    
-                #Gather All the failed cve
+            
+                #Gather All the failed cce's
                 if self.allScan or interval == "All":
-                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'cveID', 'operator':'=', 'value':'CVE'}]
+                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName': 'cceID', 'operator':'=', 'value':'CCE'}]
                 else:
-                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}, {'filterName':'cveID', 'operator':'=', 'value':'CVE'}]
+                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName': 'cceID', 'operator':'=', 'value':'CCE'}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
                 data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
-                cveFailDict = self.querySC(sc, assetList, data, cveFailDict)
+                cceBenchmarkDict = self.querySC(sc, assetList, data, cceBenchmarkDict)
 
                 #Gather All the mitigated cve's
                 data = {'tool':'vulndetails', 'sourceType':'patched', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
-                cveMitigatedDict = self.querySC(sc, assetList, data, cveMitigatedDict)
-
-        #Write summRes for each CVE fail
-        cveCount = 0
-        for cveID, assetList in cveFailDict.iteritems():
-            cveCount += 1
-            ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID=cveID)
-            ET.SubElement(ruleResult, self.nsSummRes + "ident").text = cveID
-            ruleComplianceItem = ET.SubElement(ruleResult, self.nsSummRes + "ruleComplianceItem", ruleResult="fail")
-            result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
-            for asset in assetList:
-                ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
-
-        for cveID, assetList in cveMitigatedDict.iteritems():
-            cveCount += 1
-            ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID=cveID)
-            ET.SubElement(ruleResult, self.nsSummRes + "ident").text = cveID
-            ruleComplianceItem = ET.SubElement(ruleResult, self.nsSummRes + "ruleComplianceItem", ruleResult="fixed")
-            result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
-            for asset in assetList:
-                ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
+                cceBenchmarkDict = self.querySC(sc, assetList, data, cceBenchmarkDict)
         
-        return cveCount
-
+        benchmarkCount = 0
+        for benchmark, cceDict in cceBenchmarkDict.iteritems():
+            benchmarkCount += 1
+            benchmarkSplit = benchmark.split(":")
+            benchmarkProfile, benchmarkIdentifier = benchmarkSplit[0], benchmarkSplit[1]
+            
+            #Set the benchmark ID
+            benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark", profile=benchmarkProfile)
+            benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
+            ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
+            ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = benchmarkIdentifier
+            
+            #Print out the cce for particular profile
+            for cceRuleID, assetList in cceDict.iteritems():
+                cceRuleSplit = cceRuleID.split(":")
+                cceID, ruleID, result = cceRuleSplit[0], cceRuleSplit[1], cceRuleSplit[2]
+                #Build the xml for each result
+                ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID=ruleID)
+                ET.SubElement(ruleResult, self.nsSummRes + "ident").text = cceID
+                ruleComplianceItem = ET.SubElement(ruleResult, self.nsSummRes + "ruleComplianceItem", ruleResult=result)
+                result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
+                for asset in assetList:
+                    ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
+        return benchmarkCount
     
     def buildXML(self, assetDict, refNumber, tempDirectory):
 
@@ -215,11 +230,11 @@ class CVE_ASR:
         self.message = ET.SubElement(self.notificationMessage, self.nsWSNT + "Message")
 
         #build the report
-        cveCount = self.buildReport(assetDict)
+        benchmarkCount = self.buildReport(assetDict)
 
         #Build the XML Tree
         tree = ET.ElementTree(self.root)
         #Output the tree to a file
-        if cveCount > 0:
-            tree.write(tempDirectory + "/" + str(refNumber) + ".cve.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+        if benchmarkCount > 0:
+            tree.write(tempDirectory + "/" + str(refNumber) + ".benchmark.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
 

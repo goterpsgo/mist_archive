@@ -16,15 +16,15 @@ from sqlalchemy import *
 
 #Security Center stuff
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/modules")
-from gatherSCData import GatherSCData 
+from gather_sc_data import GatherSCData
 
-class IAVM_ASR:
+class CVE_ASR:
 
     def __init__(self, allScan):
-
-        #Set wether or not to include all scan data
-        self.allScan  = allScan
         
+        #Set wether or not to include all scan data
+        self.allScan = allScan
+
         #Static Name Defs
         wsnt = "http://docs.oasis-open.org/wsn/b-2"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
@@ -70,13 +70,13 @@ class IAVM_ASR:
         #main element
         self.notificationMessage = ET.SubElement(self.root, self.nsWSNT + "NotificationMessage")
         #Topic Always static
-        ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.iavm.results"
+        ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.cve.results"
 
     def buildProducerReference(self, refNumber):
         producerReference = ET.SubElement(self.notificationMessage, self.nsWSNT + "ProducerReference")
         ET.SubElement(producerReference, self.nsWSA + "Address").text = socket.gethostname()
         metadata = ET.SubElement(producerReference, self.nsWSA + "Metadata")
-        ET.SubElement(metadata, self.nsWSA + "MessageID").text = socket.gethostname() + ":acas.iavm.results:local:" + str(refNumber)
+        ET.SubElement(metadata, self.nsWSA + "MessageID").text = socket.gethostname() + ":acas.cve.results:local:" + str(refNumber)
         ET.SubElement(metadata, self.nsTaggedValue + "taggedString", name="MIST", value="0.1") 
 
     def getSCInfo(self, sc):
@@ -86,7 +86,7 @@ class IAVM_ASR:
             for result in results:
                 server = result[0]
         return server
-
+    
     def getIPList(self, assetList):
         assetIPDict = {}
         for asset in assetList:
@@ -97,36 +97,33 @@ class IAVM_ASR:
             assetIPDict[ip] = asset
         return assetIPDict
 
-
-    def querySC(self, sc, assetList, data, iavmDict):
+    def querySC(self, sc, assetList, data, cveDict):
         assetIPDict = self.getIPList(assetList)
         results = sc.query('vuln', 'query', data)
         if results:
             for result in results['results']:
-                if result['xref']:
-                    xrefGroup = result['xref'].split(",")
+                if result['cve']:
+                    cveGroup = result['cve'].split(",")
                     ip = result['ip']
-                    iavmGroup = []
-                    for xref in xrefGroup:
-                        if xref.startswith('IAVA:'):
-                            iavmGroup.append(xref.split(":")[1])
-                    for iavm in iavmGroup:
-                        if not iavm in iavmDict:
-                            iavmDict[iavm] = []
-                        if not assetIPDict[ip] in iavmDict[iavm]:
-                            iavmDict[iavm].append(assetIPDict[ip])
-        return iavmDict
+                    if ip in assetIPDict:
+                        for cve in cveGroup:
+                            if not cve in cveDict:
+                                cveDict[cve] = []
+                            if not assetIPDict[ip] in cveDict[cve]:
+                                cveDict[cve].append(assetIPDict[ip])
+        return cveDict
             
     def getNumDaysSincePublish(self, sc, repo):
         #Get the current time
         timeFormat = '%Y-%m-%d %H:%M:%S'
         currentTime = datetime.datetime.now()
-
+            
         #Get the last publish time
-        timeResults = self.db.execute('SELECT iavmLast FROM repoPublishTimes WHERE repoID = ' + str(repo) + ' and scID="' + sc + '"')
+        timeResults = self.db.execute('SELECT cveLast FROM repoPublishTimes WHERE repoID = ' + str(repo) + ' and scID="' + sc + '"')
         lastPublished = None
-        for result in timeResults:
-            lastPublished = result[0]
+        if timeResults:    
+            for result in timeResults:
+                lastPublished = result[0]
 
         if lastPublished:
             timeDiff = currentTime - lastPublished
@@ -139,13 +136,13 @@ class IAVM_ASR:
                     interval = timeDiffDays + 1
         else:
             interval = "All"
-
-        return interval
+    
+        return interval 
 
     def buildReport(self, assetDict):
         resultsPackage = ET.SubElement(self.message, self.nsSummRes + "ResultsPackage")
 
-        #Set population characteritics
+        #Set population characseritics
         assetCount = 0
         for scID, repoDict in assetDict.iteritems():
             for repo, assetList in repoDict.iteritems():
@@ -157,53 +154,54 @@ class IAVM_ASR:
         benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark")
         benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
         ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
-        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = "acas.iavm.results"
+        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = "acas.cve.results"
 
         #Gather the CVE totals and who they belong to
-        iavmFailDict = {}
-        iavmMitigatedDict = {}
+        cveFailDict = {}
+        cveMitigatedDict = {}
         for scID, repoDict in assetDict.iteritems():
             server = self.getSCInfo(scID)
             sc = GatherSCData()
             sc.login(server)
 
             for repo, assetList in repoDict.iteritems():
-                #Get the assets last publish date
+                #Get the repos last publish date
                 interval = self.getNumDaysSincePublish(scID, repo)
-            
-                #Gather All the failed cve's
+                    
+                #Gather All the failed cve
                 if self.allScan or interval == "All":
-                    filters = [{'filterName': 'iavmID', 'operator': '=', 'value': '-'}, {'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}]
+                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'cveID', 'operator':'=', 'value':'CVE'}]
                 else:
-                    filters = [{'filterName': 'iavmID', 'operator': '=', 'value': '-'}, {'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
+                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}, {'filterName':'cveID', 'operator':'=', 'value':'CVE'}]
                 data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
-                iavmFailDict = self.querySC(sc, assetList, data, iavmFailDict)
+                cveFailDict = self.querySC(sc, assetList, data, cveFailDict)
 
                 #Gather All the mitigated cve's
                 data = {'tool':'vulndetails', 'sourceType':'patched', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
-                iavmMitigatedDict = self.querySC(sc, assetList, data, iavmMitigatedDict)
-        
+                cveMitigatedDict = self.querySC(sc, assetList, data, cveMitigatedDict)
+
         #Write summRes for each CVE fail
-        iavmCount = 0
-        for iavmID, assetList in iavmFailDict.iteritems():
-            iavmCount += 1
-            ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID="IAVM " + str(iavmID))
-            ET.SubElement(ruleResult, self.nsSummRes + "ident").text = "IAVM " + str(iavmID)
+        cveCount = 0
+        for cveID, assetList in cveFailDict.iteritems():
+            cveCount += 1
+            ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID=cveID)
+            ET.SubElement(ruleResult, self.nsSummRes + "ident").text = cveID
             ruleComplianceItem = ET.SubElement(ruleResult, self.nsSummRes + "ruleComplianceItem", ruleResult="fail")
             result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
             for asset in assetList:
                 ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
 
-        for iavmID, assetList in iavmMitigatedDict.iteritems():
-            iavmCount += 1
-            ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID="IAVM " + iavmID)
-            ET.SubElement(ruleResult, self.nsSummRes + "ident").text = "IAVM " + iavmID
+        for cveID, assetList in cveMitigatedDict.iteritems():
+            cveCount += 1
+            ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID=cveID)
+            ET.SubElement(ruleResult, self.nsSummRes + "ident").text = cveID
             ruleComplianceItem = ET.SubElement(ruleResult, self.nsSummRes + "ruleComplianceItem", ruleResult="fixed")
             result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
             for asset in assetList:
                 ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
-            
-        return iavmCount
+        
+        return cveCount
+
     
     def buildXML(self, assetDict, refNumber, tempDirectory):
 
@@ -217,11 +215,11 @@ class IAVM_ASR:
         self.message = ET.SubElement(self.notificationMessage, self.nsWSNT + "Message")
 
         #build the report
-        iavmCount = self.buildReport(assetDict)
+        cveCount = self.buildReport(assetDict)
 
         #Build the XML Tree
         tree = ET.ElementTree(self.root)
         #Output the tree to a file
-        if iavmCount > 0:
-            tree.write(tempDirectory + "/" + str(refNumber) + ".iavm.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+        if cveCount > 0:
+            tree.write(tempDirectory + "/" + str(refNumber) + ".cve.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
 

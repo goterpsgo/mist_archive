@@ -4,6 +4,7 @@ import base64
 import datetime
 import pytz
 import os
+import collections
 
 #from xml.etree import ElementTree as ET
 from lxml import etree as ET
@@ -16,15 +17,15 @@ from sqlalchemy import *
 
 #Security Center stuff
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/modules")
-from gatherSCData import GatherSCData 
+from gather_sc_data import GatherSCData
 
-class Benchmark_ASR:
+class Plugin_ASR:
 
     def __init__(self, allScan):
-
-        #Set wether or not to include all scan data
-        self.allScan = allScan
         
+        #Set wether or not to include all scan data
+        self.allScan = allScan        
+
         #Static Name Defs
         wsnt = "http://docs.oasis-open.org/wsn/b-2"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
@@ -37,8 +38,8 @@ class Benchmark_ASR:
         opsattr="http://metadata.dod.mil/mdr/ns/netops/shared_data/ops_attributes/0.41"
         cndc="http://metadata.dod.mil/mdr/ns/netops/net_defense/cnd-core/0.41"
         device = "http://metadata.dod.mil/mdr/ns/netops/shared_data/device/0.41"
-        cpe = "http://scap.nist.gov/schema/cpe-record/0.1"
-        summRes = "http://metadata.dod.mil/mdr/ns/netops/net_defense/summary_res/0.41"
+        cpe = "http://scap.nist.gov/schema/cpe-record/0.1"        
+        summRes = "http://metadata.dod.mil/mdr/ns/netops/net_defense/summary_res/0.41"        
 
         #Converting to right namespace
         self.nsWSNT = "{%s}" % wsnt
@@ -70,13 +71,13 @@ class Benchmark_ASR:
         #main element
         self.notificationMessage = ET.SubElement(self.root, self.nsWSNT + "NotificationMessage")
         #Topic Always static
-        ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.benchmark.results"
+        ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.plugin.results"
 
     def buildProducerReference(self, refNumber):
         producerReference = ET.SubElement(self.notificationMessage, self.nsWSNT + "ProducerReference")
         ET.SubElement(producerReference, self.nsWSA + "Address").text = socket.gethostname()
         metadata = ET.SubElement(producerReference, self.nsWSA + "Metadata")
-        ET.SubElement(metadata, self.nsWSA + "MessageID").text = socket.gethostname() + ":acas.benchmark.results:local:" + str(refNumber)
+        ET.SubElement(metadata, self.nsWSA + "MessageID").text = socket.gethostname() + ":acas.plugin.results:local:" + str(refNumber)
         ET.SubElement(metadata, self.nsTaggedValue + "taggedString", name="MIST", value="0.1") 
 
     def getSCInfo(self, sc):
@@ -97,49 +98,40 @@ class Benchmark_ASR:
             assetIPDict[ip] = asset
         return assetIPDict
 
-    def querySC(self, sc, assetList, data, cceDict):
+    def querySC(self, sc, assetList, data, pluginDict):
         assetIPDict = self.getIPList(assetList)
         results = sc.query('vuln', 'query', data)
         if results:
             for result in results['results']:
-                if result['pluginName']:
-                    #split the plugin name to get benchmark details
-                    benchmarkFields = result['pluginName'].split(":")
-                    benchmarkKey = benchmarkFields[4] + ":" + benchmarkFields[3]
-                    benchmarkValue = benchmarkFields[0] + ":" + benchmarkFields[2]
-
-                    #figure out if its pass, fail, or mitigated
-                    if data['sourceType'] == 'patched':
-                        pluginResult = 'mitigated'
-                    else:
-                        if result['severity'] == '0':
-                            pluginResult = 'pass'
-                        else:
-                            pluginResult = 'fail'
-            
-                    #add the plugin result to the CCEID
-                    benchmarkValue = benchmarkValue + ":" + pluginResult
+                if result['pluginID']:
+                    pluginID = result['pluginID']
                     ip = result['ip']
                     if ip in assetIPDict:
-                        #create and add to the main dictionary all assets that 
-                        if benchmarkKey not in cceDict:
-                            cceDict[benchmarkKey] = {}
-                        tempDict = cceDict[benchmarkKey]
-                        if benchmarkValue not in tempDict:
-                            tempDict[benchmarkValue] = []
-                        if not assetIPDict[ip] in tempDict[benchmarkValue]:
-                            tempDict[benchmarkValue].append(assetIPDict[ip])
-                        cceDict[benchmarkKey] = tempDict
+                        if not pluginID in pluginDict:
+                            pluginDict[pluginID] = []
+                        if not assetIPDict[ip] in pluginDict[pluginID]:
+                            pluginDict[pluginID].append(assetIPDict[ip])
+        return pluginDict
             
-        return cceDict
-            
+    def buildSummResult(self, benchmark, pluginDict, count, resultType):
+        sortedDict = collections.OrderedDict(sorted(pluginDict.items()))
+        for pluginID, assetList in sortedDict.iteritems():
+            count += 1
+            ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID= pluginID)
+            ET.SubElement(ruleResult, self.nsSummRes + "ident").text = pluginID
+            ruleComplianceItem = ET.SubElement(ruleResult, self.nsSummRes + "ruleComplianceItem", ruleResult=resultType)
+            result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
+            for asset in assetList:
+                ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
+        return count
+
     def getNumDaysSincePublish(self, sc, repo):
         #Get the current time
         timeFormat = '%Y-%m-%d %H:%M:%S'
         currentTime = datetime.datetime.now()
 
         #Get the last publish time
-        timeResults = self.db.execute('SELECT benchmarkLast FROM repoPublishTimes WHERE repoID = ' + str(repo) + ' and scID="' + sc + '"')
+        timeResults = self.db.execute('SELECT pluginLast FROM repoPublishTimes WHERE repoID = ' + str(repo) + ' and scID="' + sc + '"')
         lastPublished = None
         for result in timeResults:
             lastPublished = result[0]
@@ -161,7 +153,7 @@ class Benchmark_ASR:
     def buildReport(self, assetDict):
         resultsPackage = ET.SubElement(self.message, self.nsSummRes + "ResultsPackage")
 
-        #Set population chiaracteritics
+        #Set population characteritics
         assetCount = 0
         for scID, repoDict in assetDict.iteritems():
             for repo, assetList in repoDict.iteritems():
@@ -169,9 +161,16 @@ class Benchmark_ASR:
         popChar = ET.SubElement(resultsPackage, self.nsSummRes + "PopulationCharacteristics", populationSize=str(assetCount))
         ET.SubElement(popChar, self.nsSummRes + "resource").text = socket.gethostname()
         
+        #Set the benchmark ID
+        benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark")
+        benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
+        ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
+        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = "acas.plugin.results"
+
         #Gather the CVE totals and who they belong to
-        cceBenchmarkDict = {}
-        cceMitigatedDict = {}
+        pluginFailDict = {}
+        pluginInfoDict = {}
+        pluginMitigatedDict = {}
         for scID, repoDict in assetDict.iteritems():
             server = self.getSCInfo(scID)
             sc = GatherSCData()
@@ -180,43 +179,34 @@ class Benchmark_ASR:
             for repo, assetList in repoDict.iteritems():
                 #Get the assets last publish date
                 interval = self.getNumDaysSincePublish(scID, repo)
-            
-                #Gather All the failed cce's
+    
+                #Gather All the failed cve's
                 if self.allScan or interval == "All":
-                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName': 'cceID', 'operator':'=', 'value':'CCE'}]
+                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'!=', 'value': 0}]
                 else:
-                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName': 'cceID', 'operator':'=', 'value':'CCE'}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
+                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'!=', 'value': 0}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
                 data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
-                cceBenchmarkDict = self.querySC(sc, assetList, data, cceBenchmarkDict)
+                pluginFailDict = self.querySC(sc, assetList, data, pluginFailDict)
 
                 #Gather All the mitigated cve's
                 data = {'tool':'vulndetails', 'sourceType':'patched', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
-                cceBenchmarkDict = self.querySC(sc, assetList, data, cceBenchmarkDict)
+                pluginMitigatedDict = self.querySC(sc, assetList, data, pluginMitigatedDict)
+
+                #gather the informational
+                if self.allScan or interval == "All":
+                    infoFilters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'=', 'value': 0}]
+                else:
+                    infoFilters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'=', 'value': 0}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
+                data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': infoFilters}
+                pluginInfoDict = self.querySC(sc, assetList, data, pluginInfoDict)
         
-        benchmarkCount = 0
-        for benchmark, cceDict in cceBenchmarkDict.iteritems():
-            benchmarkCount += 1
-            benchmarkSplit = benchmark.split(":")
-            benchmarkProfile, benchmarkIdentifier = benchmarkSplit[0], benchmarkSplit[1]
-            
-            #Set the benchmark ID
-            benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark", profile=benchmarkProfile)
-            benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
-            ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
-            ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = benchmarkIdentifier
-            
-            #Print out the cce for particular profile
-            for cceRuleID, assetList in cceDict.iteritems():
-                cceRuleSplit = cceRuleID.split(":")
-                cceID, ruleID, result = cceRuleSplit[0], cceRuleSplit[1], cceRuleSplit[2]
-                #Build the xml for each result
-                ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID=ruleID)
-                ET.SubElement(ruleResult, self.nsSummRes + "ident").text = cceID
-                ruleComplianceItem = ET.SubElement(ruleResult, self.nsSummRes + "ruleComplianceItem", ruleResult=result)
-                result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
-                for asset in assetList:
-                    ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
-        return benchmarkCount
+        pluginCount = 0
+        pluginCount = pluginCount + self.buildSummResult(benchmark, pluginFailDict, pluginCount, "fail")
+        pluginCount = pluginCount + self.buildSummResult(benchmark, pluginInfoDict, pluginCount, "informational")
+        pluginCount = pluginCount + self.buildSummResult(benchmark, pluginMitigatedDict, pluginCount, "fixed")        
+
+        return pluginCount
+
     
     def buildXML(self, assetDict, refNumber, tempDirectory):
 
@@ -230,11 +220,11 @@ class Benchmark_ASR:
         self.message = ET.SubElement(self.notificationMessage, self.nsWSNT + "Message")
 
         #build the report
-        benchmarkCount = self.buildReport(assetDict)
+        pluginCount = self.buildReport(assetDict)
 
         #Build the XML Tree
         tree = ET.ElementTree(self.root)
         #Output the tree to a file
-        if benchmarkCount > 0:
-            tree.write(tempDirectory + "/" + str(refNumber) + ".benchmark.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+        if pluginCount > 0:
+            tree.write(tempDirectory + "/" + str(refNumber) + ".plugin.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
 

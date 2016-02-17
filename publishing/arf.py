@@ -16,7 +16,7 @@ from sqlalchemy import *
 
 #Security Center stuff
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/modules")
-from gatherSCData import GatherSCData 
+from gather_sc_data import GatherSCData
 from tzlocal import get_localzone
 
 class ARF:
@@ -188,17 +188,18 @@ class ARF:
         data = {'ip':ip, 'repositories':[{'id':repo}]}
         results = sc.query('vuln', 'getIP', data)
         #Set the values from Security Center
-        scValues = results['records'][0]
-        #retrieve the fields needed
-        tagValues = {'LastCredScanPluginVers':scValues['pluginSet'], 'ScanPolicy':scValues['policyName'],
-                     'LastCredScan':scValues['lastAuthRun'], 'BIOSGUID':scValues['biosGUID'],
-                     'McAfeeAgentGUID':scValues['mcafeeGUID']}
-        #Make the Tags if they exists
-        for tag, value in tagValues.iteritems():
-            if value != "":
-                if tag == 'LastCredScan':
-                    value = datetime.datetime.fromtimestamp(float(value)).strftime('%Y-%m-%dT%H:%M:%S%z')
-                ET.SubElement(device, self.nsTaggedValue + "taggedString", name=tag, value=value)
+        if results['records']:
+            scValues = results['records'][0]
+            #retrieve the fields needed
+            tagValues = {'LastCredScanPluginVers':scValues['pluginSet'], 'ScanPolicy':scValues['policyName'],
+                         'LastCredScan':scValues['lastAuthRun'], 'BIOSGUID':scValues['biosGUID'],
+                         'McAfeeAgentGUID':scValues['mcafeeGUID']}
+            #Make the Tags if they exists
+            for tag, value in tagValues.iteritems():
+                if value != "":
+                    if tag == 'LastCredScan':
+                        value = datetime.datetime.fromtimestamp(float(value)).strftime('%Y-%m-%dT%H:%M:%S%z')
+                    ET.SubElement(device, self.nsTaggedValue + "taggedString", name=tag, value=value)
     
     def checkAsset(self, assetID, timeFormat):
         #Get the last time the asset was published

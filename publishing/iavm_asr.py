@@ -4,7 +4,6 @@ import base64
 import datetime
 import pytz
 import os
-import collections
 
 #from xml.etree import ElementTree as ET
 from lxml import etree as ET
@@ -17,15 +16,15 @@ from sqlalchemy import *
 
 #Security Center stuff
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/modules")
-from gatherSCData import GatherSCData 
+from gather_sc_data import GatherSCData
 
-class Plugin_ASR:
+class IAVM_ASR:
 
     def __init__(self, allScan):
-        
-        #Set wether or not to include all scan data
-        self.allScan = allScan        
 
+        #Set wether or not to include all scan data
+        self.allScan  = allScan
+        
         #Static Name Defs
         wsnt = "http://docs.oasis-open.org/wsn/b-2"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
@@ -38,8 +37,8 @@ class Plugin_ASR:
         opsattr="http://metadata.dod.mil/mdr/ns/netops/shared_data/ops_attributes/0.41"
         cndc="http://metadata.dod.mil/mdr/ns/netops/net_defense/cnd-core/0.41"
         device = "http://metadata.dod.mil/mdr/ns/netops/shared_data/device/0.41"
-        cpe = "http://scap.nist.gov/schema/cpe-record/0.1"        
-        summRes = "http://metadata.dod.mil/mdr/ns/netops/net_defense/summary_res/0.41"        
+        cpe = "http://scap.nist.gov/schema/cpe-record/0.1"
+        summRes = "http://metadata.dod.mil/mdr/ns/netops/net_defense/summary_res/0.41"
 
         #Converting to right namespace
         self.nsWSNT = "{%s}" % wsnt
@@ -71,13 +70,13 @@ class Plugin_ASR:
         #main element
         self.notificationMessage = ET.SubElement(self.root, self.nsWSNT + "NotificationMessage")
         #Topic Always static
-        ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.plugin.results"
+        ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.iavm.results"
 
     def buildProducerReference(self, refNumber):
         producerReference = ET.SubElement(self.notificationMessage, self.nsWSNT + "ProducerReference")
         ET.SubElement(producerReference, self.nsWSA + "Address").text = socket.gethostname()
         metadata = ET.SubElement(producerReference, self.nsWSA + "Metadata")
-        ET.SubElement(metadata, self.nsWSA + "MessageID").text = socket.gethostname() + ":acas.plugin.results:local:" + str(refNumber)
+        ET.SubElement(metadata, self.nsWSA + "MessageID").text = socket.gethostname() + ":acas.iavm.results:local:" + str(refNumber)
         ET.SubElement(metadata, self.nsTaggedValue + "taggedString", name="MIST", value="0.1") 
 
     def getSCInfo(self, sc):
@@ -98,40 +97,33 @@ class Plugin_ASR:
             assetIPDict[ip] = asset
         return assetIPDict
 
-    def querySC(self, sc, assetList, data, pluginDict):
+
+    def querySC(self, sc, assetList, data, iavmDict):
         assetIPDict = self.getIPList(assetList)
         results = sc.query('vuln', 'query', data)
         if results:
             for result in results['results']:
-                if result['pluginID']:
-                    pluginID = result['pluginID']
+                if result['xref']:
+                    xrefGroup = result['xref'].split(",")
                     ip = result['ip']
-                    if ip in assetIPDict:
-                        if not pluginID in pluginDict:
-                            pluginDict[pluginID] = []
-                        if not assetIPDict[ip] in pluginDict[pluginID]:
-                            pluginDict[pluginID].append(assetIPDict[ip])
-        return pluginDict
+                    iavmGroup = []
+                    for xref in xrefGroup:
+                        if xref.startswith('IAVA:'):
+                            iavmGroup.append(xref.split(":")[1])
+                    for iavm in iavmGroup:
+                        if not iavm in iavmDict:
+                            iavmDict[iavm] = []
+                        if not assetIPDict[ip] in iavmDict[iavm]:
+                            iavmDict[iavm].append(assetIPDict[ip])
+        return iavmDict
             
-    def buildSummResult(self, benchmark, pluginDict, count, resultType):
-        sortedDict = collections.OrderedDict(sorted(pluginDict.items()))
-        for pluginID, assetList in sortedDict.iteritems():
-            count += 1
-            ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID= pluginID)
-            ET.SubElement(ruleResult, self.nsSummRes + "ident").text = pluginID
-            ruleComplianceItem = ET.SubElement(ruleResult, self.nsSummRes + "ruleComplianceItem", ruleResult=resultType)
-            result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
-            for asset in assetList:
-                ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
-        return count
-
     def getNumDaysSincePublish(self, sc, repo):
         #Get the current time
         timeFormat = '%Y-%m-%d %H:%M:%S'
         currentTime = datetime.datetime.now()
 
         #Get the last publish time
-        timeResults = self.db.execute('SELECT pluginLast FROM repoPublishTimes WHERE repoID = ' + str(repo) + ' and scID="' + sc + '"')
+        timeResults = self.db.execute('SELECT iavmLast FROM repoPublishTimes WHERE repoID = ' + str(repo) + ' and scID="' + sc + '"')
         lastPublished = None
         for result in timeResults:
             lastPublished = result[0]
@@ -165,12 +157,11 @@ class Plugin_ASR:
         benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark")
         benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
         ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
-        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = "acas.plugin.results"
+        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = "acas.iavm.results"
 
         #Gather the CVE totals and who they belong to
-        pluginFailDict = {}
-        pluginInfoDict = {}
-        pluginMitigatedDict = {}
+        iavmFailDict = {}
+        iavmMitigatedDict = {}
         for scID, repoDict in assetDict.iteritems():
             server = self.getSCInfo(scID)
             sc = GatherSCData()
@@ -179,34 +170,40 @@ class Plugin_ASR:
             for repo, assetList in repoDict.iteritems():
                 #Get the assets last publish date
                 interval = self.getNumDaysSincePublish(scID, repo)
-    
+            
                 #Gather All the failed cve's
                 if self.allScan or interval == "All":
-                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'!=', 'value': 0}]
+                    filters = [{'filterName': 'iavmID', 'operator': '=', 'value': '-'}, {'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}]
                 else:
-                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'!=', 'value': 0}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
+                    filters = [{'filterName': 'iavmID', 'operator': '=', 'value': '-'}, {'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
                 data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
-                pluginFailDict = self.querySC(sc, assetList, data, pluginFailDict)
+                iavmFailDict = self.querySC(sc, assetList, data, iavmFailDict)
 
                 #Gather All the mitigated cve's
                 data = {'tool':'vulndetails', 'sourceType':'patched', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
-                pluginMitigatedDict = self.querySC(sc, assetList, data, pluginMitigatedDict)
-
-                #gather the informational
-                if self.allScan or interval == "All":
-                    infoFilters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'=', 'value': 0}]
-                else:
-                    infoFilters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'=', 'value': 0}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
-                data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': infoFilters}
-                pluginInfoDict = self.querySC(sc, assetList, data, pluginInfoDict)
+                iavmMitigatedDict = self.querySC(sc, assetList, data, iavmMitigatedDict)
         
-        pluginCount = 0
-        pluginCount = pluginCount + self.buildSummResult(benchmark, pluginFailDict, pluginCount, "fail")
-        pluginCount = pluginCount + self.buildSummResult(benchmark, pluginInfoDict, pluginCount, "informational")
-        pluginCount = pluginCount + self.buildSummResult(benchmark, pluginMitigatedDict, pluginCount, "fixed")        
+        #Write summRes for each CVE fail
+        iavmCount = 0
+        for iavmID, assetList in iavmFailDict.iteritems():
+            iavmCount += 1
+            ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID="IAVM " + str(iavmID))
+            ET.SubElement(ruleResult, self.nsSummRes + "ident").text = "IAVM " + str(iavmID)
+            ruleComplianceItem = ET.SubElement(ruleResult, self.nsSummRes + "ruleComplianceItem", ruleResult="fail")
+            result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
+            for asset in assetList:
+                ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
 
-        return pluginCount
-
+        for iavmID, assetList in iavmMitigatedDict.iteritems():
+            iavmCount += 1
+            ruleResult = ET.SubElement(benchmark, self.nsSummRes + "ruleResult", ruleID="IAVM " + iavmID)
+            ET.SubElement(ruleResult, self.nsSummRes + "ident").text = "IAVM " + iavmID
+            ruleComplianceItem = ET.SubElement(ruleResult, self.nsSummRes + "ruleComplianceItem", ruleResult="fixed")
+            result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
+            for asset in assetList:
+                ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
+            
+        return iavmCount
     
     def buildXML(self, assetDict, refNumber, tempDirectory):
 
@@ -220,11 +217,11 @@ class Plugin_ASR:
         self.message = ET.SubElement(self.notificationMessage, self.nsWSNT + "Message")
 
         #build the report
-        pluginCount = self.buildReport(assetDict)
+        iavmCount = self.buildReport(assetDict)
 
         #Build the XML Tree
         tree = ET.ElementTree(self.root)
         #Output the tree to a file
-        if pluginCount > 0:
-            tree.write(tempDirectory + "/" + str(refNumber) + ".plugin.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+        if iavmCount > 0:
+            tree.write(tempDirectory + "/" + str(refNumber) + ".iavm.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
 
