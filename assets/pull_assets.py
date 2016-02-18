@@ -10,12 +10,12 @@ from sqlalchemy import *
 
 # Path for SC module
 from modules import securitycenter4
-# from modules import securitycenter5
+from modules import securitycenter5
 
 
 class SecurityCenter:
 
-    def __init__(self, hostname, version, cert, key, log, db):
+    def __init__(self, hostname, version, cert, key, log):
         self.host = hostname
         self.cert = cert
         self.key = key
@@ -23,8 +23,8 @@ class SecurityCenter:
         self.log = log
         if version == '4':
             self.sc = securitycenter4.SecurityCenter(self.host, self.cert, self.key, self.log)
-        # elif version == '5':
-            # self.sc = securitycenter5.SecurityCenter(self.host, self.cert, self.key, self.log)
+        elif version == '5':
+            self.sc = securitycenter5.SecurityCenter(self.host, self.cert, self.key, self.log)
 
     def get_user_password(self):
         connection_string = 'mysql://' + config.username + ':' + base64.b64decode(config.password) + '@mistDB:3306/MIST'
@@ -224,7 +224,7 @@ def main():
     for security_center_dict in sc_list:
         # Log into that security center
         sc = SecurityCenter(security_center_dict['server'], security_center_dict['version'],
-                            security_center_dict['cert'], security_center_dict['key'], log_file, mist_database)
+                            security_center_dict['cert'], security_center_dict['key'], log_file)
         sc_id = sc.get_sc_id()
         sc_login = sc.login()
 
