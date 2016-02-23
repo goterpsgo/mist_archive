@@ -148,6 +148,19 @@ class Database:
         i = self.repo_table.insert()
         i.execute(values)
 
+    def update_repo(self, repo_dict, sec_center_id):
+        for repo_id, repo_name in repo_dict.iteritems():
+            sql = "SELECT id FROM Repos WHERE repoID=" + str(repo_id) + " and scID = '" + str(sec_center_id) + "'"
+            results = self.db.execute(sql)
+            ids = []
+            for result in results:
+                ids.append(result[0])
+
+            if ids:
+                for id in ids:
+                    sql = "UPDATE Repos SET repoName='" + repo_name + "' WHERE id = " + str(id)
+                    self.db.execute(sql)
+
     def insert_asset(self, asset_dict):
         # Set the static variables
         fields = self.insert_fields
@@ -246,6 +259,9 @@ def main():
             # Getting all the repos names
             repo_dict = sc.get_repo_mapping()
 
+            # Update Repos that already exists
+            mist_database.update_repo(repo_dict, sc_id)
+
             # Get a list of assets
             asset_list = sc.get_asset_list(needed_fields)
 
@@ -267,6 +283,7 @@ def main():
                     if not repo:
                         mist_database.insert_repo(asset['repositoryID'], sc_id, repo_dict[asset['repositoryID']],
                                                   security_center_dict['server'], int(asset_id))
+
 
 if __name__ == "__main__":
     main()
