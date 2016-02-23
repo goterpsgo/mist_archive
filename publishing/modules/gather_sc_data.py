@@ -1,6 +1,7 @@
 
 import os
 import securitycenter4
+import securitycenter5
 import base64
 
 # databse stuff
@@ -86,8 +87,12 @@ class GatherSCData:
                     self.sc = securitycenter5.SecurityCenter(server, self.log_file, cert, key)
                 # Log into SC with cert and key
                 self.sc.login()
-    
+
+    def get_ip_info(self, data):
+        results = self.sc.get_ip_info(data)
+        return results
+
     def query(self, module, action, data):
-        results = self.sc.connect(module, action, data)
+        results = self.sc.query(module, action, data)
         return results
 

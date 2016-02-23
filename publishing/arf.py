@@ -186,10 +186,10 @@ class ARF:
         sc.login(server)
         #query the SC on the asset
         data = {'ip':ip, 'repositories':[{'id':repo}]}
-        results = sc.query('vuln', 'getIP', data)
+        results = sc.get_ip_info(data)
         #Set the values from Security Center
-        if results['records']:
-            scValues = results['records'][0]
+        if results:
+            scValues = results
             #retrieve the fields needed
             tagValues = {'LastCredScanPluginVers':scValues['pluginSet'], 'ScanPolicy':scValues['policyName'],
                          'LastCredScan':scValues['lastAuthRun'], 'BIOSGUID':scValues['biosGUID'],

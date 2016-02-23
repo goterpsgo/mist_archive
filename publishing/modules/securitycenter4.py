@@ -46,6 +46,14 @@ class SecurityCenter:
 
         self.token, self.cookie = resp['token'], resp['sessionID']
 
+    def get_ip_info(self, data):
+        results = self.connect('vuln', 'getIP', data)
+        return results['records'][0]
+
+    def query(self, module, action, data):
+        results = self.connect(module, action, data)
+        return results
+
     def connect(self, module, action, sc_input={}):
         # Set parameters for query against SC
         data = {'module': module,

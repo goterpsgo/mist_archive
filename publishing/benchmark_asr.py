@@ -114,6 +114,11 @@ class Benchmark_ASR:
                     else:
                         if result['severity'] == '0':
                             pluginResult = 'pass'
+                        elif result['severity'] == '2':
+                            if 'NOT SELECTED' in result['pluginText']:
+                                continue
+                            else:
+                                pluginResult = 'error'
                         else:
                             pluginResult = 'fail'
             
