@@ -18,8 +18,10 @@ from benchmark_asr import Benchmark_ASR
 # database stuff
 import sys
 sys.path.insert(0, '/opt/mist/database')
+sys.path.insert(0, '/opt/mist/assets')
 import config
 from sqlalchemy import *
+import pull_assets
 
 
 def get_asset_list(asset_dict):
@@ -166,6 +168,9 @@ def main():
         site = options.site
 
     try:
+        # pull assets before publishing
+        pull_assets.main()
+
         # Initialize jobID
         job_id = None
 
