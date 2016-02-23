@@ -203,6 +203,20 @@ def get_security_centers(master_dir, sc_file):
     return security_center_list
 
 
+def is_asset(asset):
+    unique_asset = False
+    if asset['biosGUID']:
+        unique_asset = True
+    if asset['dnsName']:
+        unique_asset = True
+    if asset['netbiosName']:
+        unique_asset = True
+    if asset['ip'] and asset['macAddress']:
+        unique_asset = True
+
+    return unique_asset
+
+
 def main():
     # Create log directory if it does not exist
     if not os.path.exists('/var/log/MIST'):
@@ -237,6 +251,9 @@ def main():
 
             # Loop through all assets
             for asset in asset_list:
+                # Check to see if asset has enough fields to be added
+                if not is_asset(asset):
+                    continue
                 # Check to see if asset exists
                 asset_exists, asset_id = mist_database.check_asset(asset)
                 if asset_exists:
