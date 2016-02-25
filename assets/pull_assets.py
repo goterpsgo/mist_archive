@@ -185,6 +185,93 @@ class Database:
             last_id = row[0]
         return last_id
 
+    def get_mist_repo_mapping(self, sc_id):
+        sql = "SELECT DISTINCT repoID, repoName FROM Repos WHERE scID = '" + sc_id + "'"
+        results = self.db.execute(sql)
+        mist_repo_mapping = {}
+        for result in results:
+            mist_repo_mapping[result[0]] = result[1]
+        return mist_repo_mapping
+
+    def get_unique_repo_assets(self, repo_id, sc_id):
+        unique_assets = []
+        sql = "SELECT assetID FROM Repos WHERE repoID=%s and scID='%s'" % (str(repo_id), sc_id)
+        results = self.db.execute(sql)
+        assets_in_repo = []
+        for result in results:
+            assets_in_repo.append(result[0])
+        for asset in assets_in_repo:
+            sql = "SELECT EXISTS(SELECT id FROM Repos WHERE (Not(scID) = '%s' or Not(repoID)= %s) and assetID =%s)" % \
+                  (sc_id, str(repo_id), str(asset))
+            results = self.db.execute(sql)
+            for result in results:
+                if result[0] == 0:
+                    unique_assets.append(asset)
+        return unique_assets
+
+    def remove_repo(self, repo, sc_id):
+        sql_repo = "DELETE FROM Repos WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
+        sql_tag = "DELETE FROM taggedRepos WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
+        sql_user = "DELETE FROM userAccess WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
+        sql_publish = "DELETE FROM repoPublishTimes WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
+        self.db.execute(sql_repo)
+        self.db.execute(sql_tag)
+        self.db.execute(sql_user)
+        self.db.execute(sql_publish)
+
+    def remove_asset(self, asset):
+        sql_asset = "DELETE FROM Assets WHERE assetID = %s" % (str(asset))
+        sql_tag = "DELETE FROM taggedAssets WHERE assetID = %s" % (str(asset))
+        self.db.execute(sql_asset)
+        self.db.execute(sql_tag)
+
+    def update_removed_repos(self, repo, sc_id):
+        sql = "INSERT INTO removedRepos (repoID, scID, removeDate, ack) VALUES (%s,'%s',DEFAULT,'No')" % \
+              (str(repo), sc_id)
+        self.db.execute(sql)
+
+
+class RepoRemoval:
+
+    def __init__(self, sc_repo_mapping, sc_id, mist_db):
+        self.sc_repo_mapping = sc_repo_mapping
+        self.sc_id = sc_id
+        self.mist_db = mist_db
+
+    def clean(self):
+        repos_to_be_removed = self.compare_repo_list()
+
+        assets_to_be_removed = []
+        for repo in repos_to_be_removed:
+            unique_assets = self.mist_db.get_unique_repo_assets(repo, self.sc_id)
+            for asset in unique_assets:
+                if asset not in assets_to_be_removed:
+                    assets_to_be_removed.append(asset)
+
+        self.remove_repos(repos_to_be_removed)
+        self.remove_assets(assets_to_be_removed)
+        self.update_removed_repos(repos_to_be_removed)
+
+    def compare_repo_list(self):
+        repos_to_be_removed = []
+        mist_repo_mapping = self.mist_db.get_mist_repo_mapping(self.sc_id)
+        for repo_id in mist_repo_mapping:
+            if str(repo_id) not in self.sc_repo_mapping:
+                repos_to_be_removed.append(repo_id)
+        return repos_to_be_removed
+
+    def remove_repos(self, repo_list):
+        for repo in repo_list:
+            self.mist_db.remove_repo(repo, self.sc_id)
+
+    def remove_assets(self, asset_list):
+        for asset in asset_list:
+            self.mist_db.remove_asset(asset)
+
+    def update_removed_repos(self, repo_list):
+        for repo in repo_list:
+            self.mist_db.update_removed_repos(repo, self.sc_id)
+
 
 def get_security_centers(master_dir, sc_file):
     # get all the directories in the Security Center Folder, and get sc info
@@ -261,6 +348,10 @@ def main():
 
             # Update Repos that already exists
             mist_database.update_repo(repo_dict, sc_id)
+
+            # Remove Repos that dont exist in the SC anymore
+            repo_removal = RepoRemoval(repo_dict, sc_id, mist_database)
+            repo_removal.clean()
 
             # Get a list of assets
             asset_list = sc.get_asset_list(needed_fields)
