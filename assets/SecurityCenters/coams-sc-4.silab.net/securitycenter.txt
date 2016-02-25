@@ -1,2 +1,0 @@
-server=coams-sc-4.silab.net
-version=4
