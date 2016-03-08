@@ -1,6 +1,7 @@
 
 import os
 import base64
+import mist_logging
 
 # databse stuff
 import sys
@@ -15,16 +16,15 @@ from modules import securitycenter5
 
 class SecurityCenter:
 
-    def __init__(self, hostname, version, cert, key, log):
+    def __init__(self, hostname, version, cert, key):
         self.host = hostname
         self.cert = cert
         self.key = key
         self.version = version
-        self.log = log
         if version == '4':
-            self.sc = securitycenter4.SecurityCenter(self.host, self.cert, self.key, self.log)
+            self.sc = securitycenter4.SecurityCenter(self.host, self.cert, self.key)
         elif version == '5':
-            self.sc = securitycenter5.SecurityCenter(self.host, self.cert, self.key, self.log)
+            self.sc = securitycenter5.SecurityCenter(self.host, self.cert, self.key)
 
     def get_user_password(self):
         connection_string = 'mysql://' + config.username + ':' + base64.b64decode(config.password) + '@mistDB:3306/MIST'
@@ -76,10 +76,19 @@ class Database:
         self.repo_table = Table('Repos', self.metadata, autoload=True)
         self.update_fields = needed_fields
         self.insert_fields = needed_fields + ['state']
+        self.log = mist_logging.Log()
+
+    def execute_sql(self, sql):
+        try:
+            results = self.db.execute(sql)
+            return results
+        except Exception, e:
+            error = ['Database Error: ', str(e)]
+            self.log.error_assets(error)
 
     def check_exists(self, sql):
         # Execute SQL query
-        rs = self.db.execute(sql)
+        rs = self.execute_sql(sql)
         found = False
         primary_key = 0
         for row in rs:
@@ -128,7 +137,7 @@ class Database:
             if info is not "repositoryID":
                 sql = sql + info + "='" + str(asset_dict[info]) + "', "
         sql = sql[:-2] + " WHERE assetID = " + str(mist_id)
-        self.db.execute(sql)
+        self.execute_sql(sql)
 
     def check_repo(self, mist_id, repo_id, sec_center_id):
         # Check the repo to make sure asset has already been added to it
@@ -148,10 +157,19 @@ class Database:
         i = self.repo_table.insert()
         i.execute(values)
 
+        # Log the event
+        sql = "SELECT COUNT(*) FROM Repos WHERE repoName = '%s' and serverName='%s'" % (repo_name, server_name)
+        results = self.execute_sql(sql)
+        count = 0
+        for result in results:
+            count = result[0]
+        if count == 1:
+            self.log.add_repo(repo_name, server_name)
+
     def update_repo(self, repo_dict, sec_center_id):
         for repo_id, repo_name in repo_dict.iteritems():
             sql = "SELECT id FROM Repos WHERE repoID=" + str(repo_id) + " and scID = '" + str(sec_center_id) + "'"
-            results = self.db.execute(sql)
+            results = self.execute_sql(sql)
             ids = []
             for result in results:
                 ids.append(result[0])
@@ -159,7 +177,7 @@ class Database:
             if ids:
                 for id in ids:
                     sql = "UPDATE Repos SET repoName='" + repo_name + "' WHERE id = " + str(id)
-                    self.db.execute(sql)
+                    self.execute_sql(sql)
 
     def insert_asset(self, asset_dict):
         # Set the static variables
@@ -177,17 +195,20 @@ class Database:
         sql_columns = sql_columns[:-1] + ")"
         sql_values = sql_values[:-1] + ")"
         sql = sql_columns + sql_values
-        self.db.execute(sql)
+        self.execute_sql(sql)
 
-        results = self.db.execute("Select assetID from Assets ORDER BY assetID DESC LIMIT 1")
+        results = self.execute_sql("Select assetID from Assets ORDER BY assetID DESC LIMIT 1")
         last_id = 0
         for row in results:
             last_id = row[0]
+
+        # Log event
+        self.log.add_asset(last_id)
         return last_id
 
     def get_mist_repo_mapping(self, sc_id):
         sql = "SELECT DISTINCT repoID, repoName FROM Repos WHERE scID = '" + sc_id + "'"
-        results = self.db.execute(sql)
+        results = self.execute_sql(sql)
         mist_repo_mapping = {}
         for result in results:
             mist_repo_mapping[result[0]] = result[1]
@@ -196,14 +217,14 @@ class Database:
     def get_unique_repo_assets(self, repo_id, sc_id):
         unique_assets = []
         sql = "SELECT assetID FROM Repos WHERE repoID=%s and scID='%s'" % (str(repo_id), sc_id)
-        results = self.db.execute(sql)
+        results = self.execute_sql(sql)
         assets_in_repo = []
         for result in results:
             assets_in_repo.append(result[0])
         for asset in assets_in_repo:
             sql = "SELECT EXISTS(SELECT id FROM Repos WHERE (Not(scID) = '%s' or Not(repoID)= %s) and assetID =%s)" % \
                   (sc_id, str(repo_id), str(asset))
-            results = self.db.execute(sql)
+            results = self.execute_sql(sql)
             for result in results:
                 if result[0] == 0:
                     unique_assets.append(asset)
@@ -214,21 +235,34 @@ class Database:
         sql_tag = "DELETE FROM taggedRepos WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
         sql_user = "DELETE FROM userAccess WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
         sql_publish = "DELETE FROM repoPublishTimes WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
-        self.db.execute(sql_repo)
-        self.db.execute(sql_tag)
-        self.db.execute(sql_user)
-        self.db.execute(sql_publish)
+        self.execute_sql(sql_repo)
+        self.execute_sql(sql_tag)
+        self.execute_sql(sql_user)
+        self.execute_sql(sql_publish)
+
+        # Log the event
+        sql = "SELECT DISTINCT serverName, repoName FROM Repos WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
+        results = self.execute_sql(sql)
+        server = ''
+        repo_name = ''
+        for result in results:
+            server = result[1]
+            repo_name = result[0]
+        self.log.remove_repo(repo_name, server)
 
     def remove_asset(self, asset):
         sql_asset = "DELETE FROM Assets WHERE assetID = %s" % (str(asset))
         sql_tag = "DELETE FROM taggedAssets WHERE assetID = %s" % (str(asset))
-        self.db.execute(sql_asset)
-        self.db.execute(sql_tag)
+        self.execute_sql(sql_asset)
+        self.execute_sql(sql_tag)
+
+        # Log the event
+        self.log.remove_asset(asset)
 
     def update_removed_repos(self, repo, sc_id):
         sql = "INSERT INTO removedRepos (repoID, scID, removeDate, ack) VALUES (%s,'%s',DEFAULT,'No')" % \
               (str(repo), sc_id)
-        self.db.execute(sql)
+        self.execute_sql(sql)
 
 
 class RepoRemoval:
@@ -318,10 +352,6 @@ def is_asset(asset):
 
 
 def main():
-    # Create log directory if it does not exist
-    if not os.path.exists('/var/log/MIST'):
-        os.makedirs('/var/log/MIST')
-    log_file = '/var/log/MIST/asset_gathering.log'
 
     # fields needed from the asset dictionary returned from Security Center
     needed_fields = ['repositoryID', 'biosGUID', 'macAddress', 'ip', 'dnsName', 'lastAuthRun', 'lastUnauthRun',
@@ -338,7 +368,7 @@ def main():
     for security_center_dict in sc_list:
         # Log into that security center
         sc = SecurityCenter(security_center_dict['server'], security_center_dict['version'],
-                            security_center_dict['cert'], security_center_dict['key'], log_file)
+                            security_center_dict['cert'], security_center_dict['key'])
         sc_id = sc.get_sc_id()
         sc_login = sc.login()
 

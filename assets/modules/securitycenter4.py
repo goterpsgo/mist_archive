@@ -4,7 +4,7 @@ import urllib2
 import urllib
 import json
 import datetime
-
+import mist_logging
 
 class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
     '''Class to handle SSL certificate authentication.'''
@@ -28,13 +28,13 @@ class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
 
 class SecurityCenter:
     
-    def __init__(self, server, cert, key, log_file):
+    def __init__(self, server, cert, key):
         self.server = server
         self.cert = cert
         self.key = key
-        self.log = log_file
         self.token = ''
         self.cookie = ''
+        self.log = mist_logging.Log()
 
     def login(self, username=None, password=None):
         if username and password:
@@ -110,18 +110,19 @@ class SecurityCenter:
             # Read data which is returned in json format
             content = json.loads(resp.read())
 
+            # This wil catch error messages from the API and log them
+            if content['error_code'] != 0:
+                error = ['Error returned from API on server ', self.server, ': ', content['error_msg']]
+                self.log.error_assets(error)
+
             return content['response']
             
         except Exception, e:
             # If we have error connecting log it to file
-            f = open(self.log, 'a+')
             if self.cert:
-                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " Error connecting with cert " +
-                        str(self.cert) + ":\n")
-                f.write("     Error: " + str(e) + "\n")
+                error = ["Error while connect to ", self.server, " with cert ", str(self.cert), ": ", repr(e)]
+                self.log.error_assets(error)
             else:
-                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') +
-                        " Error connecting with credentials provided\n")
-                f.write("     Error: " + str(e) + "\n")
-                f.close()
+                error = ["Error connecting to ", self.server, " with credentials provided: ", repr(e)]
+                self.log.error_assets(error)
             return None

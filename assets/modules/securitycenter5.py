@@ -2,15 +2,17 @@
 import requests
 import json
 import datetime
+import mist_logging
 
 
 class SecurityCenter:
 
-    def __init__(self, server, cert, key, log_file, port="443", ssl_verify=False, scheme='https'):
+    def __init__(self, server, cert, key, port="443", ssl_verify=False, scheme='https'):
         self.ssl_verify = ssl_verify
         self.base_url = scheme + "://" + server + ":" + port + "/rest"
+        self.server = server
         self.cert = cert
-        self.log = log_file
+        self.log = mist_logging.Log()
         self.token = ''
         self.cookies = ''
         if cert and key:
@@ -73,6 +75,20 @@ class SecurityCenter:
 
         return asset_list
 
+    def log_exception_error(self, e):
+        if self.cert_group:
+            error = ["Error connecting to ", self.server, " with cert " + str(self.cert) + ":", "Error: " + repr(e)]
+            self.log.error_assets(error)
+        else:
+            error = ["Error connecting to ", self.server, " with credentials provided:", "Error: " + repr(e)]
+            self.log.error_assets(error)
+
+    def log_api_error(self, response):
+        # This wil catch error messages from the API and log them
+        if response.json()['error_code'] != 0:
+                error = ['Error returned from API on server ', self.server, ': ', response.json()['error_msg']]
+                self.log.error_assets(error)
+
     def analysis(self, headers, query_type, query_tool, query_source, query_start, query_end, query_filters=[]):
         query = {"type": query_type, "query": {"tool": query_tool, "type": query_type, "filters": [],
                                                "startOffset": query_start, "endOffset": query_end},
@@ -92,19 +108,14 @@ class SecurityCenter:
                                         cert=self.cert_group)
             else:
                 response = requests.get(url, headers=headers, cookies=self.cookies, verify=self.ssl_verify)
+
+            # Check For API errors:
+            self.log_api_error(response)
+
             return response
 
         except Exception, e:
-            f = open(self.log, 'a+')
-            if self.cert_group:
-                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " Error connecting with cert " +
-                        str(self.cert) + ":\n")
-                f.write("     Error: " + str(e) + "\n")
-            else:
-                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') +
-                        " Error connecting with credentials provided\n")
-                f.write("     Error: " + str(e) + "\n")
-                f.close()
+            self.log_exception_error(e)
             return None
 
     def post(self, resource, headers, values={}):
@@ -116,17 +127,12 @@ class SecurityCenter:
             else:
                 response = requests.post(url, json.dumps(values), headers=headers, cookies=self.cookies,
                                          verify=self.ssl_verify)
+            # Check for API errors:
+            self.log_api_error(response)
+
             return response
+
         except Exception, e:
-            f = open(self.log, 'a+')
-            if self.cert_group:
-                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " Error connecting with cert " +
-                        str(self.cert) + ":\n")
-                f.write("     Error: " + str(e) + "\n")
-            else:
-                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') +
-                        " Error connecting with credentials provided\n")
-                f.write("     Error: " + str(e) + "\n")
-                f.close()
+            self.log_exception_error(e)
             return None
 
