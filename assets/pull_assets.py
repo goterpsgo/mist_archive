@@ -231,6 +231,16 @@ class Database:
         return unique_assets
 
     def remove_repo(self, repo, sc_id):
+        # Log the event
+        sql = "SELECT DISTINCT serverName, repoName FROM Repos WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
+        results = self.execute_sql(sql)
+        server = ''
+        repo_name = ''
+        for result in results:
+            server = result[0]
+            repo_name = result[1]
+        self.log.remove_repo(repo_name, server)
+
         sql_repo = "DELETE FROM Repos WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
         sql_tag = "DELETE FROM taggedRepos WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
         sql_user = "DELETE FROM userAccess WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
@@ -239,16 +249,6 @@ class Database:
         self.execute_sql(sql_tag)
         self.execute_sql(sql_user)
         self.execute_sql(sql_publish)
-
-        # Log the event
-        sql = "SELECT DISTINCT serverName, repoName FROM Repos WHERE repoID = %s and scID='%s'" % (str(repo), sc_id)
-        results = self.execute_sql(sql)
-        server = ''
-        repo_name = ''
-        for result in results:
-            server = result[1]
-            repo_name = result[0]
-        self.log.remove_repo(repo_name, server)
 
     def remove_asset(self, asset):
         sql_asset = "DELETE FROM Assets WHERE assetID = %s" % (str(asset))

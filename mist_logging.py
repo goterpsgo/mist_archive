@@ -33,7 +33,7 @@ class Log:
     def remove_repo(self, repo_name, server_name):
         with open(self.asset_event, "a+") as lf:
             lf.write(self.get_date())
-            event = ['[Repository Removed] ', "The repo , ", repo_name, " on Security Center ", server_name,
+            event = ['[Repository Removed] ', "The repo ", repo_name, ", on Security Center ", server_name,
                      " was removed from MIST\n"]
             for message in event:
                 lf.write(message)
