@@ -30,6 +30,13 @@ class Log:
             for error_message in messages:
                 lf.write(error_message)
 
+    def error_publishing(self, messages):
+        with open(self.publishing_error, "a+") as lf:
+            lf.write(self.get_date())
+            lf.write('[Error] ')
+            for error_message in messages:
+                lf.write(error_message)
+
     def remove_repo(self, repo_name, server_name):
         with open(self.asset_event, "a+") as lf:
             lf.write(self.get_date())
@@ -60,9 +67,17 @@ class Log:
             for message in event:
                 lf.write(message)
 
-    def log_publishing_event(self, messages):
+    def web_publish(self, username, url):
         with open(self.publishing_event, "a+") as lf:
             lf.write(self.get_date())
-            for error_message in messages:
-                lf.write(error_message)
+            event = ['[Web Publish] ', "User ", username, "successfully published to ", url, '\n']
+            for message in event:
+                lf.write(message)
+
+    def local_publish(self, username, filename):
+        with open(self.publishing_event, "a+") as lf:
+            lf.write(self.get_date())
+            event = ['[Local Publishing] ', 'User ', username, 'locally published file: ', filename, '\n']
+            for message in event:
+                lf.write(message)
 

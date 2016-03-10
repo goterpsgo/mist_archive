@@ -75,19 +75,21 @@ class SecurityCenter:
             resp = opener.open(url, urllib.urlencode(data))
             # Read data which is returned in json format
             content = json.loads(resp.read())
+
+            # This wil catch error messages from the API and log them
+            if content['error_code'] != 0:
+                error = ['Error returned from API on server ', self.server, ': ', content['error_msg']]
+                self.log.error_publishing(error)
+
             return content['response']
 
         except Exception, e:
             # If we have error connecting log it to file
-            f = open(self.log, 'a+')
             if self.cert:
-                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " Error connecting with cert " +
-                        str(self.cert) + ":\n")
-                f.write("     Error: " + str(e) + "\n")
+                error = ["Error while connect to ", self.server, " with cert ", str(self.cert), ": ", repr(e)]
+                self.log.error_publishing(error)
             else:
-                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') +
-                        " Error connecting with credentials provided\n")
-                f.write("     Error: " + str(e) + "\n")
-                f.close()
+                error = ["Error connecting to ", self.server, " with credentials provided: ", repr(e)]
+                self.log.error_publishing(error)
             return None
 

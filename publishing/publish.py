@@ -6,6 +6,7 @@ import zipfile
 import shutil
 import traceback
 import requests
+import mist_logging
 
 # External Classes
 from opattr import OpAttributes 
@@ -167,16 +168,19 @@ def main():
         user_id = options.userID
         site = options.site
 
+    # Set up log constructor
+    log = mist_logging.Log()
+
+    # pull assets before publishing
+    pull_assets.main()
+
+    # Initialize jobID
+    job_id = None
+
+    # create database instance
+    db = get_db()
+
     try:
-        # pull assets before publishing
-        pull_assets.main()
-
-        # Initialize jobID
-        job_id = None
-
-        # create database instance
-        db = get_db()
-
         # Keep track of who published which XML
         username, ref_number = set_ref_number(db, user_id)
 
@@ -251,6 +255,8 @@ def main():
                 db.execute("UPDATE publishJobs set finishTime = DEFAULT, status = 'Completed', filename = '" +
                            zip_file_name + "' WHERE jobID = " + str(job_id))
 
+                log.local_publish(username, zip_file_name)
+
             else:
                 url = site
                 headers = {'Accept': 'application/soap+xml', 'Content-Type': 'text/xml',
@@ -286,16 +292,24 @@ def main():
                         try:
                             resp = requests.post(url, cert=cert_and_key, data=payload, headers=headers, verify=ca)
                         except requests.exceptions.SSLError as e:
+                            error = ["Error with  publishing to ", url, ": ", repr(e)]
+                            log.error_publishing(error)
                             publish_error(db, "SSL Error: " + str(e).split("SSL routines:", 1)[1], job_id)
                         except requests.exceptions.ConnectTimeout as e:
+                            error = ["Error with  publishing to ", url, ": ", repr(e)]
+                            log.error_publishing(error)
                             publish_error(db, "Connection Timeout", job_id)
                         except requests.exceptions.ConnectionError as e:
-                            publish_error(db, "Could Not Connet: " + str(e), job_id)
+                            error = ["Error with  publishing to ", url, ": ", repr(e)]
+                            log.error_publishing(error)
+                            publish_error(db, "Could Not Connect: " + str(e), job_id)
 
                         # Handle errors sent via the web
                         try:
                             resp.raise_for_status()
                         except requests.exceptions.HTTPError as e:
+                            error = ["Error with  publishing to ", url, " site responded with: ", repr(e)]
+                            log.error_publishing(error)
                             publish_error(db, "Web Error: " + str(e), job_id)
 
                     # Mark all the assets just published as 'P' in the Assets table
@@ -305,6 +319,9 @@ def main():
                 # Mark the job as complete and give the name of file
                 db.execute("UPDATE publishJobs set finishTime = DEFAULT, status = 'Completed', "
                            "filename = 'published to " + url + "' WHERE jobID = " + str(job_id))
+
+                # Log successful publish
+                log.web_publish(username, url)
 
             # Mark who published it
             db.execute("UPDATE published set timestamp = DEFAULT WHERE id = " + str(ref_number))
@@ -317,8 +334,8 @@ def main():
         shutil.rmtree('/opt/mist/publishing/tmp')
 
     except Exception as e:
-        print e
-        print traceback.print_exc()
+        error = ["Error with  publishing CMRS files:", repr(e)]
+        log.error_publishing(error)
         # Remove the tmp folder
         shutil.rmtree('/opt/mist/publishing/tmp')
         if job_id:
