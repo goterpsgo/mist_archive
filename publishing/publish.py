@@ -131,6 +131,17 @@ def publish_error(db, error_message, job_id):
     sys.exit(1)
 
 
+def check_for_still_running(db, job_id):
+    results = db.execute('SELECT status FROM publishJobs WHERE jobID = ' + str(job_id))
+    status = None
+    for result in results:
+        status = result[0]
+
+    if status == 'running':
+        sql = "UPDATE publishJobs SET status='Error', filename = 'Error While Publishing' WHERE jobID = " + str(job_id)
+        db.execute(sql)
+
+
 def main():
     # Set parser options
     parser = optparse.OptionParser()
@@ -303,6 +314,10 @@ def main():
                             error = ["Error with  publishing to ", url, ": ", repr(e)]
                             log.error_publishing(error)
                             publish_error(db, "Could Not Connect: " + str(e), job_id)
+                        except Exception, e:
+                            error = ['Error with publishing to ', url, ": ", repr(e)]
+                            log.error_publishing(error)
+                            publish_error(db, "Error publishing to site " + str(e), job_id)
 
                         # Handle errors sent via the web
                         try:
@@ -332,6 +347,10 @@ def main():
 
         # Remove the tmp folder
         shutil.rmtree('/opt/mist/publishing/tmp')
+
+        # Check if the job is still marked as running, which means it errored but was not caught
+        if job_id:
+            check_for_still_running(db, job_id)
 
     except Exception as e:
         error = ["Error with  publishing CMRS files:", repr(e)]

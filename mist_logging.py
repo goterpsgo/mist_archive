@@ -1,24 +1,38 @@
 
 import os
 import datetime
+import pwd
+import grp
 
 
 class Log:
 
     def __init__(self):
+        # Initialize Variables
+        self.user = 'mist'
+        self.group = 'mist'
+        self.path = "/var/log/MIST"
+
         # Create the directories needed
-        if not os.path.exists('/var/log/MIST/assets'):
-            os.makedirs('/var/log/MIST/assets')
-        if not os.path.exists('/var/log/MIST/publishing'):
-            os.makedirs('/var/log/MIST/publishing')
-        if not os.path.exists('/var/log/MIST/tagging'):
-            os.makedirs('/var/log/MIST/tagging')
+        if not os.path.exists(self.path + "/assets"):
+            os.makedirs(self.path + "/assets")
+        if not os.path.exists(self.path + "/publishing"):
+            os.makedirs(self.path + "/publishing")
+        if not os.path.exists(self.path + '/tagging'):
+            os.makedirs(self.path + '/tagging')
 
         # Set the file names for the logs
-        self.asset_error = "/var/log/MIST/assets/error.log"
-        self.asset_event = "/var/log/MIST/assets/events.log"
-        self.publishing_error = "/var/log/MIST/publishing/error.log"
-        self.publishing_event = "/var/log/MIST/publishing/event.log"
+        self.asset_error = self.path + "/assets/error.log"
+        self.asset_event = self.path + "/assets/events.log"
+        self.publishing_error = self.path + "/publishing/error.log"
+        self.publishing_event = self.path + "/publishing/event.log"
+
+    def set_log_ownership(self):
+        for root, dirs, files in os.walk(self.path):
+            for directory in dirs:
+                os.chown(os.path.join(root, directory), pwd.getpwnam(self.user).pw_uid, grp.getgrnam(self.group).gr_gid)
+            for log_file in files:
+                os.chown(os.path.join(root, log_file), pwd.getpwnam(self.user).pw_uid, grp.getgrnam(self.group).gr_gid)
 
     def get_date(self):
         return '[' + datetime.datetime.now().strftime("%a %b %d %H:%M:%S %Y") + '] '
