@@ -21,18 +21,26 @@ class Log:
         if not os.path.exists(self.path + '/tagging'):
             os.makedirs(self.path + '/tagging')
 
+        # Set file ownership
+        self.set_log_ownership()
+
         # Set the file names for the logs
         self.asset_error = self.path + "/assets/error.log"
         self.asset_event = self.path + "/assets/events.log"
         self.publishing_error = self.path + "/publishing/error.log"
         self.publishing_event = self.path + "/publishing/event.log"
+        self.tag_event = self.path + "/tagging/tag_events.log"
 
     def set_log_ownership(self):
         for root, dirs, files in os.walk(self.path):
             for directory in dirs:
-                os.chown(os.path.join(root, directory), pwd.getpwnam(self.user).pw_uid, grp.getgrnam(self.group).gr_gid)
+                if directory != 'frontend':
+                    os.chown(os.path.join(root, directory), pwd.getpwnam(self.user).pw_uid,
+                             grp.getgrnam(self.group).gr_gid)
             for log_file in files:
-                os.chown(os.path.join(root, log_file), pwd.getpwnam(self.user).pw_uid, grp.getgrnam(self.group).gr_gid)
+                if root != self.path + "/frontend":
+                    os.chown(os.path.join(root, log_file), pwd.getpwnam(self.user).pw_uid,
+                             grp.getgrnam(self.group).gr_gid)
 
     def get_date(self):
         return '[' + datetime.datetime.now().strftime("%a %b %d %H:%M:%S %Y") + '] '
@@ -84,14 +92,27 @@ class Log:
     def web_publish(self, username, url):
         with open(self.publishing_event, "a+") as lf:
             lf.write(self.get_date())
-            event = ['[Web Publish] ', "User ", username, "successfully published to ", url, '\n']
+            event = ['[Web Publish] ', "User ", username, " successfully published to ", url, '\n']
             for message in event:
                 lf.write(message)
 
     def local_publish(self, username, filename):
         with open(self.publishing_event, "a+") as lf:
             lf.write(self.get_date())
-            event = ['[Local Publishing] ', 'User ', username, 'locally published file: ', filename, '\n']
+            event = ['[Local Publishing] ', 'User ', username, ' locally published file: ', filename, '\n']
             for message in event:
                 lf.write(message)
 
+    def user_collision(self, result):
+        tag_method, username, assets, repo, error_message = result
+        if tag_method == 'Manual':
+            asset_list = assets[:-1]
+            messages = ['[User Collision] ', 'User {', username, '} attempted to tag assets {', asset_list,
+                        '} but received error message {', error_message, '}\n']
+        else:
+            messages = ['[User Collision] ', 'User {', username, '} attempted to tag repo {', repo,
+                        '} but received error message {', error_message, '}\n']
+        with open(self.tag_event, "a+") as lf:
+            lf.write(self.get_date())
+            for message in messages:
+                lf.write(message)

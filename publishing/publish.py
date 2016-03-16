@@ -125,13 +125,16 @@ def get_db():
 
 def publish_error(db, error_message, job_id):
     # Remove the tmp folder
-    shutil.rmtree('/opt/mist/publishing/tmp')
-    db.execute("UPDATE publishJobs set finishTime = DEFAULT, status = 'Error', filename = '" +
-               error_message + "' WHERE jobID = " + str(job_id))
+    error_message = error_message.replace("'", '"')
+    sql = "UPDATE publishJobs set finishTime = DEFAULT, status = 'Error', filename = '%s' WHERE jobID = %s" % \
+          (error_message, str(job_id))
+    db.execute(sql)
+    if os.path.exists('/opt/mist/publishing/tmp'):
+        shutil.rmtree('/opt/mist/publishing/tmp')
     sys.exit(1)
 
 
-def check_for_still_running(db, job_id):
+def check_for_still_running(db, job_id, log):
     results = db.execute('SELECT status FROM publishJobs WHERE jobID = ' + str(job_id))
     status = None
     for result in results:
@@ -140,6 +143,7 @@ def check_for_still_running(db, job_id):
     if status == 'running':
         sql = "UPDATE publishJobs SET status='Error', filename = 'Error While Publishing' WHERE jobID = " + str(job_id)
         db.execute(sql)
+        log.error_publishing(["MIST publishing failed for unknown reason\n"])
 
 
 def main():
@@ -303,19 +307,19 @@ def main():
                         try:
                             resp = requests.post(url, cert=cert_and_key, data=payload, headers=headers, verify=ca)
                         except requests.exceptions.SSLError as e:
-                            error = ["Error with  publishing to ", url, ": ", repr(e)]
+                            error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
                             log.error_publishing(error)
                             publish_error(db, "SSL Error: " + str(e).split("SSL routines:", 1)[1], job_id)
                         except requests.exceptions.ConnectTimeout as e:
-                            error = ["Error with  publishing to ", url, ": ", repr(e)]
+                            error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
                             log.error_publishing(error)
                             publish_error(db, "Connection Timeout", job_id)
                         except requests.exceptions.ConnectionError as e:
-                            error = ["Error with  publishing to ", url, ": ", repr(e)]
+                            error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
                             log.error_publishing(error)
                             publish_error(db, "Could Not Connect: " + str(e), job_id)
                         except Exception, e:
-                            error = ['Error with publishing to ', url, ": ", repr(e)]
+                            error = ['Error with publishing to ', url, ": ", repr(e), "\n"]
                             log.error_publishing(error)
                             publish_error(db, "Error publishing to site " + str(e), job_id)
 
@@ -323,7 +327,7 @@ def main():
                         try:
                             resp.raise_for_status()
                         except requests.exceptions.HTTPError as e:
-                            error = ["Error with  publishing to ", url, " site responded with: ", repr(e)]
+                            error = ["Error with  publishing to ", url, " site responded with: ", repr(e), "\n"]
                             log.error_publishing(error)
                             publish_error(db, "Web Error: " + str(e), job_id)
 
@@ -350,16 +354,17 @@ def main():
 
         # Check if the job is still marked as running, which means it errored but was not caught
         if job_id:
-            check_for_still_running(db, job_id)
+            check_for_still_running(db, job_id, log)
 
     except Exception as e:
-        error = ["Error with  publishing CMRS files:", repr(e)]
+        error = ["Error with  publishing CMRS files: ", repr(e), "\n"]
         log.error_publishing(error)
-        # Remove the tmp folder
-        shutil.rmtree('/opt/mist/publishing/tmp')
         if job_id:
             error_string = "Error no publication generated"
             publish_error(db, error_string, job_id)
+        # Remove the tmp folder
+        shutil.rmtree('/opt/mist/publishing/tmp')
+
 
 if __name__ == "__main__":
     main()
