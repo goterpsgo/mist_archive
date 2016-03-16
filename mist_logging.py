@@ -105,6 +105,7 @@ class Log:
 
     def user_collision(self, result):
         tag_method, username, assets, repo, error_message = result
+        error_message = error_message.strip()
         if tag_method == 'Manual':
             asset_list = assets[:-1]
             messages = ['[User Collision] ', 'User {', username, '} attempted to tag assets {', asset_list,
