@@ -250,6 +250,8 @@ class Database:
         self.execute_sql(sql_user)
         self.execute_sql(sql_publish)
 
+        return repo_name, server
+
     def remove_asset(self, asset):
         sql_asset = "DELETE FROM Assets WHERE assetID = %s" % (str(asset))
         sql_tag = "DELETE FROM taggedAssets WHERE assetID = %s" % (str(asset))
@@ -259,9 +261,9 @@ class Database:
         # Log the event
         self.log.remove_asset(asset)
 
-    def update_removed_repos(self, repo, sc_id):
-        sql = "INSERT INTO removedRepos (repoID, scID, removeDate, ack) VALUES (%s,'%s',DEFAULT,'No')" % \
-              (str(repo), sc_id)
+    def update_removed_repos(self, repo_name, server_name):
+        sql = "INSERT INTO removedRepos (repoName, serverName, removeDate, ack) VALUES ('%s','%s',DEFAULT,'No')" % \
+              (repo_name, server_name)
         self.execute_sql(sql)
 
 
@@ -282,9 +284,9 @@ class RepoRemoval:
                 if asset not in assets_to_be_removed:
                     assets_to_be_removed.append(asset)
 
-        self.remove_repos(repos_to_be_removed)
+        server_name, repo_name_list = self.remove_repos(repos_to_be_removed)
         self.remove_assets(assets_to_be_removed)
-        self.update_removed_repos(repos_to_be_removed)
+        self.update_removed_repos(server_name, repo_name_list)
 
     def compare_repo_list(self):
         repos_to_be_removed = []
@@ -295,16 +297,21 @@ class RepoRemoval:
         return repos_to_be_removed
 
     def remove_repos(self, repo_list):
+        repo_name_list = []
+        server_name = ''
         for repo in repo_list:
-            self.mist_db.remove_repo(repo, self.sc_id)
+            repo_name, server = self.mist_db.remove_repo(repo, self.sc_id)
+            repo_name_list.append(repo_name)
+            server_name = server
+        return server_name, repo_name_list
 
     def remove_assets(self, asset_list):
         for asset in asset_list:
             self.mist_db.remove_asset(asset)
 
-    def update_removed_repos(self, repo_list):
-        for repo in repo_list:
-            self.mist_db.update_removed_repos(repo, self.sc_id)
+    def update_removed_repos(self, server_name, repo_name_list):
+        for repo_name in repo_name_list:
+            self.mist_db.update_removed_repos(repo_name, server_name)
 
 
 def get_security_centers(master_dir, sc_file):
