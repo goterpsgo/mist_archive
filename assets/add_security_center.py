@@ -6,7 +6,7 @@ if __name__ == "__main__":
     if not os.path.exists(sc_dir):
         os.makedirs(sc_dir)
 
-    server = raw_input('\nEnter the DNS name of the Security Center you wish to add: ')
+    server = raw_input('\nEnter the FQDN or IP of the Security Center you wish to add: ')
 
     # Check if the directory for that server is already there
     if os.path.isdir(sc_dir + '/' + server):

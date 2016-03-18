@@ -22,6 +22,10 @@ from tzlocal import get_localzone
 class OpAttributes:
 
     def __init__(self):
+
+        # Set max size of xml
+        self.max_size = 19922944
+        self.doc_count = 1
         
         #Static Name Defs
         wsnt = "http://docs.oasis-open.org/wsn/b-2"
@@ -126,8 +130,14 @@ class OpAttributes:
         
         return tagList
 
-    def buildReport(self, assetIDList):
-        assessmentReport = ET.SubElement(self.message, self.nsAR + "AssessmentReport")
+    def get_xml_size(self):
+        xmlstr = ET.tostring(self.root, encoding='utf-8', method='xml', pretty_print=True)
+        if sys.getsizeof(xmlstr) > self.max_size:
+            return True
+        return False
+
+    def buildReport(self, assetIDList, tempDirectory, refNumber, assessmentReport):
+        #assessmentReport = ET.SubElement(self.message, self.nsAR + "AssessmentReport")
         required_tags = self.get_required_tags()
         for assetID in assetIDList:
             tagList = self.getTagList(assetID)
@@ -155,10 +165,12 @@ class OpAttributes:
                         ET.SubElement(device, self.nsTaggedValue + "taggedString", name=definition, value=nameID, timestamp=tag_date)
                     else:
                         ET.SubElement(device, self.nsTaggedValue + "taggedString", name=definition, value=nameID, timestamp=tag_date, status=tagStatus.lower())
+            print_file = self.get_xml_size()
+            if print_file:
+                self.write_file(tempDirectory, refNumber)
+                assessmentReport = self.build_xml_header(refNumber)
                 
-    
-    def buildXML(self, assetIDList, refNumber, tempDirectory):
-
+    def build_xml_header(self, refNumber):
         #build the static portion
         self.buildStatic()
 
@@ -168,12 +180,24 @@ class OpAttributes:
         #Message Tag
         self.message = ET.SubElement(self.notificationMessage, self.nsWSNT + "Message")
 
-        #build the report
-        self.buildReport(assetIDList)
+        assessmentReport = ET.SubElement(self.message, self.nsAR + "AssessmentReport")
 
-        #Build the XML Tree
+        return assessmentReport
+
+    def write_file(self, tempDirectory, refNumber):
+        # Build the XML Tree
         tree = ET.ElementTree(self.root)
-        #Output the tree to a file
-        tree.write(tempDirectory + "/" + str(refNumber) + ".opattrs.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+        tree.write(tempDirectory + "/" + str(refNumber) + ".opattrs_" + str(self.doc_count) + ".xml", xml_declaration=True,
+                   encoding='utf-8', method='xml', pretty_print=True)
+        self.doc_count += 1
+
+    def buildXML(self, assetIDList, refNumber, tempDirectory):
+
+        assessmentReport = self.build_xml_header(refNumber)
+
+        #build the report
+        self.buildReport(assetIDList, tempDirectory, refNumber, assessmentReport)
+
+        self.write_file(tempDirectory, refNumber)
 
 

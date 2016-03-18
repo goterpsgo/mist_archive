@@ -24,6 +24,10 @@ class Benchmark_ASR:
 
         #Set wether or not to include all scan data
         self.allScan = allScan
+
+        # Set max size of xml
+        self.max_size = 19922944
+        self.doc_count = 1
         
         #Static Name Defs
         wsnt = "http://docs.oasis-open.org/wsn/b-2"
@@ -163,17 +167,13 @@ class Benchmark_ASR:
 
         return interval
 
-    def buildReport(self, assetDict):
-        resultsPackage = ET.SubElement(self.message, self.nsSummRes + "ResultsPackage")
+    def get_xml_size(self):
+        xmlstr = ET.tostring(self.root, encoding='utf-8', method='xml', pretty_print=True)
+        if sys.getsizeof(xmlstr) > self.max_size:
+            return True
+        return False
 
-        #Set population chiaracteritics
-        assetCount = 0
-        for scID, repoDict in assetDict.iteritems():
-            for repo, assetList in repoDict.iteritems():
-                assetCount = assetCount + len(assetList)
-        popChar = ET.SubElement(resultsPackage, self.nsSummRes + "PopulationCharacteristics", populationSize=str(assetCount))
-        ET.SubElement(popChar, self.nsSummRes + "resource").text = socket.gethostname()
-        
+    def buildReport(self, assetDict, tempDirectory, refNumber, resultsPackage):
         #Gather the CVE totals and who they belong to
         cceBenchmarkDict = {}
         cceMitigatedDict = {}
@@ -199,17 +199,14 @@ class Benchmark_ASR:
                 cceBenchmarkDict = self.querySC(sc, assetList, data, cceBenchmarkDict)
         
         benchmarkCount = 0
-        for benchmark, cceDict in cceBenchmarkDict.iteritems():
+        for benchmark_sc, cceDict in cceBenchmarkDict.iteritems():
             benchmarkCount += 1
-            benchmarkSplit = benchmark.split(":")
+            benchmarkSplit = benchmark_sc.split(":")
             benchmarkProfile, benchmarkIdentifier = benchmarkSplit[0], benchmarkSplit[1]
             
             #Set the benchmark ID
-            benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark", profile=benchmarkProfile)
-            benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
-            ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
-            ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = benchmarkIdentifier
-            
+            benchmark = self.build_xml_profile(resultsPackage, benchmarkProfile, benchmarkIdentifier)
+
             #Print out the cce for particular profile
             for cceRuleID, assetList in cceDict.iteritems():
                 cceRuleSplit = cceRuleID.split(":")
@@ -221,10 +218,21 @@ class Benchmark_ASR:
                 result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
                 for asset in assetList:
                     ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
+                print_report = self.get_xml_size()
+                if print_report:
+                    self.write_file(tempDirectory, refNumber)
+                    resultsPackage = self.build_xml_header(refNumber, assetDict)
+                    benchmark = self.build_xml_profile(resultsPackage, benchmarkProfile, benchmarkIdentifier)
         return benchmarkCount
-    
-    def buildXML(self, assetDict, refNumber, tempDirectory):
 
+    def build_xml_profile(self, resultsPackage, benchmarkProfile, benchmarkIdentifier):
+        benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark", profile=benchmarkProfile)
+        benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
+        ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
+        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = benchmarkIdentifier
+        return benchmark
+
+    def build_xml_header(self, refNumber, assetDict):
         #build the static portion
         self.buildStatic()
 
@@ -234,12 +242,34 @@ class Benchmark_ASR:
         #Message Tag
         self.message = ET.SubElement(self.notificationMessage, self.nsWSNT + "Message")
 
-        #build the report
-        benchmarkCount = self.buildReport(assetDict)
+        resultsPackage = ET.SubElement(self.message, self.nsSummRes + "ResultsPackage")
 
-        #Build the XML Tree
+        #Set population chiaracteritics
+        assetCount = 0
+        for scID, repoDict in assetDict.iteritems():
+            for repo, assetList in repoDict.iteritems():
+                assetCount = assetCount + len(assetList)
+        popChar = ET.SubElement(resultsPackage, self.nsSummRes + "PopulationCharacteristics", populationSize=str(assetCount))
+        ET.SubElement(popChar, self.nsSummRes + "resource").text = socket.gethostname()
+
+        return resultsPackage
+
+    def write_file(self, tempDirectory, refNumber):
+        # Build the XML Tree
         tree = ET.ElementTree(self.root)
+        tree.write(tempDirectory + "/" + str(refNumber) + ".benchmark.asr_" + str(self.doc_count) + ".xml",
+                   xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+        self.doc_count += 1
+    
+    def buildXML(self, assetDict, refNumber, tempDirectory):
+
+        resultsPackage = self.build_xml_header(refNumber, assetDict)
+
+        #build the report
+        benchmarkCount = self.buildReport(assetDict, tempDirectory, refNumber, resultsPackage)
+
         #Output the tree to a file
         if benchmarkCount > 0:
-            tree.write(tempDirectory + "/" + str(refNumber) + ".benchmark.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+            self.write_file(tempDirectory, refNumber)
+
 

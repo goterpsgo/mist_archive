@@ -23,7 +23,11 @@ class IAVM_ASR:
     def __init__(self, allScan):
 
         #Set wether or not to include all scan data
-        self.allScan  = allScan
+        self.allScan = allScan
+
+        # Set max size of xml
+        self.max_size = 19922944
+        self.doc_count = 1
         
         #Static Name Defs
         wsnt = "http://docs.oasis-open.org/wsn/b-2"
@@ -97,7 +101,6 @@ class IAVM_ASR:
             assetIPDict[ip] = asset
         return assetIPDict
 
-
     def querySC(self, sc, assetList, data, iavmDict):
         assetIPDict = self.getIPList(assetList)
         results = sc.query('vuln', 'query', data)
@@ -142,22 +145,15 @@ class IAVM_ASR:
 
         return interval
 
-    def buildReport(self, assetDict):
-        resultsPackage = ET.SubElement(self.message, self.nsSummRes + "ResultsPackage")
+    def get_xml_size(self):
+        xmlstr = ET.tostring(self.root, encoding='utf-8', method='xml', pretty_print=True)
+        if sys.getsizeof(xmlstr) > self.max_size:
+            return True
+        return False
 
-        #Set population characteritics
-        assetCount = 0
-        for scID, repoDict in assetDict.iteritems():
-            for repo, assetList in repoDict.iteritems():
-                assetCount = assetCount + len(assetList)
-        popChar = ET.SubElement(resultsPackage, self.nsSummRes + "PopulationCharacteristics", populationSize=str(assetCount))
-        ET.SubElement(popChar, self.nsSummRes + "resource").text = socket.gethostname()
-        
-        #Set the benchmark ID
-        benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark")
-        benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
-        ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
-        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = "acas.iavm.results"
+    def buildReport(self, assetDict, tempDirectory, refNumber, resultsPackage):
+        benchmark = self.build_xml_profile(resultsPackage)
+
 
         #Gather the CVE totals and who they belong to
         iavmFailDict = {}
@@ -193,6 +189,11 @@ class IAVM_ASR:
             result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
             for asset in assetList:
                 ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
+            print_report = self.get_xml_size()
+            if print_report:
+                self.write_file(tempDirectory, refNumber)
+                resultsPackage = self.build_xml_header(refNumber, assetDict)
+                benchmark = self.build_xml_profile(resultsPackage)
 
         for iavmID, assetList in iavmMitigatedDict.iteritems():
             iavmCount += 1
@@ -202,11 +203,23 @@ class IAVM_ASR:
             result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
             for asset in assetList:
                 ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
+            print_report = self.get_xml_size()
+            if print_report:
+                self.write_file(tempDirectory, refNumber)
+                resultsPackage = self.build_xml_header(refNumber, assetDict)
+                benchmark = self.build_xml_profile(resultsPackage)
             
         return iavmCount
-    
-    def buildXML(self, assetDict, refNumber, tempDirectory):
 
+    def build_xml_profile(self, resultsPackage):
+        #Set the benchmark ID
+        benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark")
+        benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
+        ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
+        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = "acas.iavm.results"
+        return benchmark
+
+    def build_xml_header(self, refNumber, assetDict):
         #build the static portion
         self.buildStatic()
 
@@ -216,12 +229,30 @@ class IAVM_ASR:
         #Message Tag
         self.message = ET.SubElement(self.notificationMessage, self.nsWSNT + "Message")
 
-        #build the report
-        iavmCount = self.buildReport(assetDict)
+        resultsPackage = ET.SubElement(self.message, self.nsSummRes + "ResultsPackage")
 
-        #Build the XML Tree
+        #Set population chiaracteritics
+        assetCount = 0
+        for scID, repoDict in assetDict.iteritems():
+            for repo, assetList in repoDict.iteritems():
+                assetCount = assetCount + len(assetList)
+        popChar = ET.SubElement(resultsPackage, self.nsSummRes + "PopulationCharacteristics", populationSize=str(assetCount))
+        ET.SubElement(popChar, self.nsSummRes + "resource").text = socket.gethostname()
+
+        return resultsPackage
+
+    def write_file(self, tempDirectory, refNumber):
+        # Build the XML Tree
         tree = ET.ElementTree(self.root)
-        #Output the tree to a file
-        if iavmCount > 0:
-            tree.write(tempDirectory + "/" + str(refNumber) + ".iavm.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+        tree.write(tempDirectory + "/" + str(refNumber) + ".iavm.asr_" + str(self.doc_count) + ".xml",
+                   xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+        self.doc_count += 1
 
+    def buildXML(self, assetDict, refNumber, tempDirectory):
+
+        resultsPackage = self.build_xml_header(refNumber, assetDict)
+
+        iavmCount = self.buildReport(assetDict, tempDirectory, refNumber, resultsPackage)
+
+        if iavmCount > 0:
+            self.write_file(tempDirectory, refNumber)

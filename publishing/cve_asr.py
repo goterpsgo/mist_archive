@@ -25,6 +25,10 @@ class CVE_ASR:
         #Set wether or not to include all scan data
         self.allScan = allScan
 
+        # Set max size of xml
+        self.max_size = 19922944
+        self.doc_count = 1
+
         #Static Name Defs
         wsnt = "http://docs.oasis-open.org/wsn/b-2"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
@@ -137,24 +141,16 @@ class CVE_ASR:
         else:
             interval = "All"
     
-        return interval 
+        return interval
 
-    def buildReport(self, assetDict):
-        resultsPackage = ET.SubElement(self.message, self.nsSummRes + "ResultsPackage")
+    def get_xml_size(self):
+        xmlstr = ET.tostring(self.root, encoding='utf-8', method='xml', pretty_print=True)
+        if sys.getsizeof(xmlstr) > self.max_size:
+            return True
+        return False
 
-        #Set population characseritics
-        assetCount = 0
-        for scID, repoDict in assetDict.iteritems():
-            for repo, assetList in repoDict.iteritems():
-                assetCount = assetCount + len(assetList)
-        popChar = ET.SubElement(resultsPackage, self.nsSummRes + "PopulationCharacteristics", populationSize=str(assetCount))
-        ET.SubElement(popChar, self.nsSummRes + "resource").text = socket.gethostname()
-        
-        #Set the benchmark ID
-        benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark")
-        benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
-        ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
-        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = "acas.cve.results"
+    def buildReport(self, assetDict, tempDirectory, refNumber, resultsPackage):
+        benchmark = self.build_xml_profile(resultsPackage)
 
         #Gather the CVE totals and who they belong to
         cveFailDict = {}
@@ -180,7 +176,7 @@ class CVE_ASR:
                 data = {'tool':'vulndetails', 'sourceType':'patched', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
                 cveMitigatedDict = self.querySC(sc, assetList, data, cveMitigatedDict)
 
-        #Write summRes for each CVE fail
+        # Write summRes for each CVE fail
         cveCount = 0
         for cveID, assetList in cveFailDict.iteritems():
             cveCount += 1
@@ -190,6 +186,12 @@ class CVE_ASR:
             result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
             for asset in assetList:
                 ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
+            print_report = self.get_xml_size()
+            if print_report:
+                self.write_file(tempDirectory, refNumber)
+                resultsPackage = self.build_xml_header(refNumber, assetDict)
+                benchmark = self.build_xml_profile(resultsPackage)
+
 
         for cveID, assetList in cveMitigatedDict.iteritems():
             cveCount += 1
@@ -199,12 +201,23 @@ class CVE_ASR:
             result = ET.SubElement(ruleComplianceItem, self.nsSummRes + "result", count=str(len(assetList)))
             for asset in assetList:
                 ET.SubElement(result, self.nsSummRes + "deviceRecord", record_identifier=str(asset))
+            print_report = self.get_xml_size()
+            if print_report:
+                self.write_file(tempDirectory, refNumber)
+                resultsPackage = self.build_xml_header(refNumber, assetDict)
+                benchmark = self.build_xml_profile(resultsPackage)
         
         return cveCount
 
-    
-    def buildXML(self, assetDict, refNumber, tempDirectory):
+    def build_xml_profile(self, resultsPackage):
+        #Set the benchmark ID
+        benchmark = ET.SubElement(resultsPackage, self.nsSummRes + "benchmark")
+        benchmarkID = ET.SubElement(benchmark, self.nsSummRes + "benchMarkID")
+        ET.SubElement(benchmarkID, self.nsCNDC + "resource").text = socket.gethostname()
+        ET.SubElement(benchmarkID, self.nsCNDC + "record_identifier").text = "acas.cve.results"
+        return benchmark
 
+    def build_xml_header(self, refNumber, assetDict):
         #build the static portion
         self.buildStatic()
 
@@ -214,12 +227,31 @@ class CVE_ASR:
         #Message Tag
         self.message = ET.SubElement(self.notificationMessage, self.nsWSNT + "Message")
 
-        #build the report
-        cveCount = self.buildReport(assetDict)
+        resultsPackage = ET.SubElement(self.message, self.nsSummRes + "ResultsPackage")
 
-        #Build the XML Tree
+        #Set population chiaracteritics
+        assetCount = 0
+        for scID, repoDict in assetDict.iteritems():
+            for repo, assetList in repoDict.iteritems():
+                assetCount = assetCount + len(assetList)
+        popChar = ET.SubElement(resultsPackage, self.nsSummRes + "PopulationCharacteristics", populationSize=str(assetCount))
+        ET.SubElement(popChar, self.nsSummRes + "resource").text = socket.gethostname()
+
+        return resultsPackage
+
+    def write_file(self, tempDirectory, refNumber):
+        # Build the XML Tree
         tree = ET.ElementTree(self.root)
-        #Output the tree to a file
+        tree.write(tempDirectory + "/" + str(refNumber) + ".cve.asr_" + str(self.doc_count) + ".xml",
+                   xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+        self.doc_count += 1
+
+    def buildXML(self, assetDict, refNumber, tempDirectory):
+
+        resultsPackage = self.build_xml_header(refNumber, assetDict)
+
+        cveCount = self.buildReport(assetDict, tempDirectory, refNumber, resultsPackage)
+
         if cveCount > 0:
-            tree.write(tempDirectory + "/" + str(refNumber) + ".cve.asr.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+            self.write_file(tempDirectory, refNumber)
 

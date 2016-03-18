@@ -26,6 +26,10 @@ class ARF:
         #Set wether to publish all or to just publish assets since last publish
         self.publishAll = publishAll        
 
+        # Set max size of xml
+        self.max_size = 19922944
+        self.doc_count = 1
+
         #Static Name Defs
         wsnt = "http://docs.oasis-open.org/wsn/b-2"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
@@ -233,9 +237,14 @@ class ARF:
         else:
             self.db.execute("UPDATE assetPublishTimes Set arfLast = '" + currentTime + "' WHERE assetID = " + str(assetID))
 
+    def get_xml_size(self):
+        xmlstr = ET.tostring(self.root, encoding='utf-8', method='xml', pretty_print=True)
+        if sys.getsizeof(xmlstr) > self.max_size:
+            return True
+        return False
 
-    def buildReport(self, assetIDList):
-        assessmentReport = ET.SubElement(self.message, self.nsAR + "AssessmentReport")
+    def buildReport(self, assetIDList, tempDirectory, refNumber, assessmentReport):
+        # assessmentReport = ET.SubElement(self.message, self.nsAR + "AssessmentReport")
         timeFormat = '%Y-%m-%d %H:%M:%S'
         currentTime = datetime.datetime.now().strftime(timeFormat)
         assetCount = 0
@@ -245,6 +254,12 @@ class ARF:
                 self.buildReportObject(assetID, assessmentReport)
                 #update last publish date of the asset
                 self.updateAssetPublishDate(assetID, currentTime)
+                # Check size of self.root, then write file and move to next one
+                print_file = self.get_xml_size()
+                if print_file:
+                    self.write_file(tempDirectory, refNumber)
+                    assessmentReport = self.build_xml_header(refNumber)
+
             else:
                 printAsset = self.checkAsset(assetID, timeFormat)
                 if printAsset:
@@ -252,10 +267,15 @@ class ARF:
                     self.buildReportObject(assetID, assessmentReport)
                     #update last publish date of the asset
                     self.updateAssetPublishDate(assetID, currentTime)
-        return assetCount
-    
-    def buildXML(self, assetIDList, refNumber, tempDirectory):
+                    # Check size of self.root, then write file and move to next one
+                    print_file = self.get_xml_size()
+                    if print_file:
+                        self.write_file(tempDirectory, refNumber)
+                        assessmentReport = self.build_xml_header(refNumber)
 
+        return assetCount
+
+    def build_xml_header(self, refNumber):
         #build the static portion
         self.buildStatic()
 
@@ -265,14 +285,26 @@ class ARF:
         #Message Tag
         self.message = ET.SubElement(self.notificationMessage, self.nsWSNT + "Message")
 
-        #build the report
-        assetCount = self.buildReport(assetIDList)
+        assessmentReport = ET.SubElement(self.message, self.nsAR + "AssessmentReport")
 
-        #Build the XML Tree
+        return assessmentReport
+
+    def write_file(self, tempDirectory, refNumber):
+        # Build the XML Tree
         tree = ET.ElementTree(self.root)
-        #Output the tree to a file
+        tree.write(tempDirectory + "/" + str(refNumber) + ".arf_" + str(self.doc_count) + ".xml", xml_declaration=True,
+                   encoding='utf-8', method='xml', pretty_print=True)
+        self.doc_count += 1
+
+    def buildXML(self, assetIDList, refNumber, tempDirectory):
+
+        #build the header info
+        assessmentReport = self.build_xml_header(refNumber)
+
+        assetCount = self.buildReport(assetIDList, tempDirectory, refNumber, assessmentReport)
+
         if assetCount > 0:
-            tree.write(tempDirectory + "/" + str(refNumber) + ".arf.xml", xml_declaration=True, encoding='utf-8', method='xml', pretty_print=True)
+            self.write_file(tempDirectory, refNumber)
             return True
         else:
             return False
