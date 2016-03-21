@@ -51,6 +51,8 @@ class Log:
             lf.write('[Error] ')
             for error_message in messages:
                 lf.write(error_message)
+        # Set file ownership
+        self.set_log_ownership()
 
     def error_publishing(self, messages):
         with open(self.publishing_error, "a+") as lf:
@@ -58,6 +60,8 @@ class Log:
             lf.write('[Error] ')
             for error_message in messages:
                 lf.write(error_message)
+        # Set file ownership
+        self.set_log_ownership()
 
     def remove_repo(self, repo_name, server_name):
         with open(self.asset_event, "a+") as lf:
@@ -66,6 +70,8 @@ class Log:
                      " was removed from MIST\n"]
             for message in event:
                 lf.write(message)
+        # Set file ownership
+        self.set_log_ownership()
 
     def add_repo(self, repo_name, server_name):
         with open(self.asset_event, "a+") as lf:
@@ -74,6 +80,8 @@ class Log:
                      " was added to MIST\n"]
             for message in event:
                 lf.write(message)
+        # Set file ownership
+        self.set_log_ownership()
 
     def remove_asset(self, asset_id):
         with open(self.asset_event, "a+") as lf:
@@ -81,6 +89,8 @@ class Log:
             event = ['[Asset Removed] ', "Asset ", str(asset_id), " was removed from MIST\n"]
             for message in event:
                 lf.write(message)
+        # Set file ownership
+        self.set_log_ownership()
 
     def add_asset(self, asset_id):
         with open(self.asset_event, "a+") as lf:
@@ -88,6 +98,8 @@ class Log:
             event = ['[Asset Added] ', "Asset ", str(asset_id), " was added to MIST\n"]
             for message in event:
                 lf.write(message)
+        # Set file ownership
+        self.set_log_ownership()
 
     def web_publish(self, username, url):
         with open(self.publishing_event, "a+") as lf:
@@ -95,6 +107,8 @@ class Log:
             event = ['[Web Publish] ', "User ", username, " successfully published to ", url, '\n']
             for message in event:
                 lf.write(message)
+        # Set file ownership
+        self.set_log_ownership()
 
     def local_publish(self, username, filename):
         with open(self.publishing_event, "a+") as lf:
@@ -102,6 +116,8 @@ class Log:
             event = ['[Local Publishing] ', 'User ', username, ' locally published file: ', filename, '\n']
             for message in event:
                 lf.write(message)
+        # Set file ownership
+        self.set_log_ownership()
 
     def user_collision(self, result):
         tag_method, username, assets, repo, error_message = result
@@ -117,3 +133,5 @@ class Log:
             lf.write(self.get_date())
             for message in messages:
                 lf.write(message)
+        # Set file ownership
+        self.set_log_ownership()
