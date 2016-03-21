@@ -1,5 +1,6 @@
 
 import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import json
 import datetime
 import mist_logging
@@ -9,6 +10,7 @@ class SecurityCenter:
 
     def __init__(self, server, cert, key, port="443", ssl_verify=False, scheme='https'):
         self.ssl_verify = ssl_verify
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         self.base_url = scheme + "://" + server + ":" + port + "/rest"
         self.server = server
         self.cert = cert
