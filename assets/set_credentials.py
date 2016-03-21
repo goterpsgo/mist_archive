@@ -82,8 +82,10 @@ if __name__ == "__main__":
                         print ""
                         if len(results) < 1:
                             insert_user(connection)
+                            break
                         elif len(results) == 1:
                             update_user(connection, results)
+                            break
                         else:
                             print "Error there are too many entries for this security center, " \
                                   "someone must have entered entry manually!"
