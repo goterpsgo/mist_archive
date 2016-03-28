@@ -185,7 +185,7 @@ class Plugin_ASR:
                 if self.allScan or interval == "All":
                     filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'!=', 'value': 0}]
                 else:
-                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'!=', 'value': 0}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
+                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'!=', 'value': 0}, {'filterName':'lastSeen', 'operator': '=', 'value':'0:' + str(interval)}]
                 data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
                 pluginFailDict = self.querySC(sc, assetList, data, pluginFailDict)
 

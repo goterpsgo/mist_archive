@@ -168,7 +168,7 @@ class CVE_ASR:
                 if self.allScan or interval == "All":
                     filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'cveID', 'operator':'=', 'value':'CVE'}]
                 else:
-                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}, {'filterName':'cveID', 'operator':'=', 'value':'CVE'}]
+                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'lastSeen', 'operator': '=', 'value':'0:' + str(interval)}, {'filterName':'cveID', 'operator':'=', 'value':'CVE'}]
                 data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
                 cveFailDict = self.querySC(sc, assetList, data, cveFailDict)
 

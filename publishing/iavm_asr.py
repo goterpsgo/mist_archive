@@ -171,7 +171,7 @@ class IAVM_ASR:
                 if self.allScan or interval == "All":
                     filters = [{'filterName': 'iavmID', 'operator': '=', 'value': '-'}, {'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}]
                 else:
-                    filters = [{'filterName': 'iavmID', 'operator': '=', 'value': '-'}, {'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
+                    filters = [{'filterName': 'iavmID', 'operator': '=', 'value': '-'}, {'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'lastSeen', 'operator': '=', 'value':'0:' + str(interval)}]
                 data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
                 iavmFailDict = self.querySC(sc, assetList, data, iavmFailDict)
 

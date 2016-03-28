@@ -190,7 +190,7 @@ class Benchmark_ASR:
                 if self.allScan or interval == "All":
                     filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName': 'cceID', 'operator':'=', 'value':'CCE'}]
                 else:
-                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName': 'cceID', 'operator':'=', 'value':'CCE'}, {'filterName':'lastSeen', 'operator': '=', 'value':'"0:' + str(interval) + '"'}]
+                    filters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName': 'cceID', 'operator':'=', 'value':'CCE'}, {'filterName':'lastSeen', 'operator': '=', 'value': '0:' + str(interval)}]
                 data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
                 cceBenchmarkDict = self.querySC(sc, assetList, data, cceBenchmarkDict)
 
