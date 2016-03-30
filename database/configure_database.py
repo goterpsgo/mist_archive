@@ -113,7 +113,7 @@ def create_mist_admin():
     conn = db.connect()
     
     conn.execute("INSERT INTO mistUsers VALUES (DEFAULT, '" + username + "', '" + hex_pass +
-                 "', 2, '', 'admin', '', 'mist')")
+                 "', 2, '', 'admin', '', 'mist', DEFAULT)")
 
     conn.close()
 
