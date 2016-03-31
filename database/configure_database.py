@@ -22,7 +22,7 @@ class PasswordCheck:
 
     def check_password(self):
         # Get the complexity Rules
-        self.config.readfp(open('/opt/mist/database/password_complexity.conf'))
+        self.config.readfp(open('/opt/mist/database/.password_complexity.conf'))
 
         # Check complexity
         if not self.long_enough():
