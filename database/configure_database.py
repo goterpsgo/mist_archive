@@ -146,6 +146,9 @@ def main():
     # create inital admin account for mist
     create_mist_admin()
 
+    # Remove the sql file
+    os.remove('/opt/mist/database/mist_db.sql')
+
 
 if __name__ == "__main__":
 
