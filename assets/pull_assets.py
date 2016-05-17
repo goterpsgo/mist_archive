@@ -16,35 +16,24 @@ from modules import securitycenter5
 
 class SecurityCenter:
 
-    def __init__(self, hostname, version, cert, key):
+    def __init__(self, hostname, version, cert, key, username, password):
         self.host = hostname
         self.cert = cert
         self.key = key
+        self.username = username
+        self.password = password
         self.version = version
         if version == '4':
             self.sc = securitycenter4.SecurityCenter(self.host, self.cert, self.key)
         elif version == '5':
             self.sc = securitycenter5.SecurityCenter(self.host, self.cert, self.key)
 
-    def get_user_password(self):
-        connection_string = 'mysql://' + config.username + ':' + base64.b64decode(config.password) + '@mistDB:3306/MIST'
-        ssl_args = {'ssl': {'cert': '/opt/mist/database/certificates/mist-interface.crt',
-                            'key': '/opt/mist/database/certificates/mist-interface.key',
-                            'ca': '/opt/mist/database/certificates/si_ca.crt'}}
-        db = create_engine(connection_string, connect_args=ssl_args, echo=False)
-        connection = db.connect()
-        results = connection.execute("Select username, AES_DECRYPT(password,'" + base64.b64decode(config.password) +
-                                     "') FROM scUsers WHERE securityCenter = '" + self.host + "'").fetchone()
-        connection.close()
-        return results[0], results[1]
-
     def login(self):
         # Perform login with creds or cert and key
         if self.cert:
             sc_login_result = self.sc.login()
         else:
-            username, password = self.get_user_password()
-            sc_login_result = self.sc.login(username, password)
+            sc_login_result = self.sc.login(self.username, base64.b64decode(self.password))
 
         return sc_login_result
 
@@ -266,6 +255,15 @@ class Database:
               (repo_name, server_name)
         self.execute_sql(sql)
 
+    def get_sc_data(self):
+        sql = "SELECT fqdn_IP, version, username, pw, certificateFile, keyFile FROM securityCenters"
+        results = self.execute_sql(sql)
+        sc_list = []
+        for result in results:
+            sc_list.append({'server': result[0], 'version': result[1], 'username': result[2], 'password': result[3],
+                           'cert': result[4], 'key': result[5]})
+        return sc_list
+
 
 class RepoRemoval:
 
@@ -367,15 +365,14 @@ def main():
     # create the database stuff that we need
     mist_database = Database(needed_fields)
 
-    # get directories for all SC's to pull from
-    master_directory = os.path.dirname(os.path.realpath(__file__)) + '/SecurityCenters'
-    server_file_name = 'securitycenter.txt'
-    sc_list = get_security_centers(master_directory, server_file_name)
+    # getting a list of the Security Centers to pull from
+    sc_list = mist_database.get_sc_data()
 
     for security_center_dict in sc_list:
         # Log into that security center
         sc = SecurityCenter(security_center_dict['server'], security_center_dict['version'],
-                            security_center_dict['cert'], security_center_dict['key'])
+                            security_center_dict['cert'], security_center_dict['key'], security_center_dict['username'],
+                            security_center_dict['password'])
         sc_id = sc.get_sc_id()
         sc_login = sc.login()
 
