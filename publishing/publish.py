@@ -7,6 +7,7 @@ import shutil
 import traceback
 import requests
 import mist_logging
+import traceback
 
 # External Classes
 from opattr import OpAttributes 
@@ -146,6 +147,16 @@ def check_for_still_running(db, job_id, log):
         log.error_publishing(["MIST publishing failed for unknown reason\n"])
 
 
+def get_file_chunk_size(db):
+    sql = "SELECT chunkSize from mistParams"
+    results = db.execute(sql)
+    chunk_size = 19922944
+    for result in results:
+        chunk_size_mb = float(result[0])
+    chunk_size = int((chunk_size_mb - 0.1) * 1000000)
+    return chunk_size
+
+
 def main():
     # Set parser options
     parser = optparse.OptionParser()
@@ -195,6 +206,9 @@ def main():
     # create database instance
     db = get_db()
 
+    # Get file chunk size for publishcation docs
+    file_chunk_size = get_file_chunk_size(db)
+
     try:
         # Keep track of who published which XML
         username, ref_number = set_ref_number(db, user_id)
@@ -217,35 +231,35 @@ def main():
         asset_id_list = get_asset_list(asset_dict)
 
         # Build the ARF
-        arf = ARF(options.allAsset)
+        arf = ARF(options.allAsset, file_chunk_size)
         build_attr = arf.buildXML(asset_id_list, ref_number, temp_directory)
 
         if build_attr:
             # Build the Operational Attributes
-            attr = OpAttributes()
+            attr = OpAttributes(file_chunk_size)
             attr.buildXML(asset_id_list, ref_number, temp_directory)
 
         # Build CVE ASR
         if options.cve:
-            cve_asr = CVE_ASR(options.allScan)
+            cve_asr = CVE_ASR(options.allScan, file_chunk_size)
             cve_asr.buildXML(asset_dict, ref_number, temp_directory)
             insert_last_published(db, asset_dict, 'cveLast')
 
         # Build IAVM ASR
         if options.iavm:
-            iavm_asr = IAVM_ASR(options.allScan)
+            iavm_asr = IAVM_ASR(options.allScan, file_chunk_size)
             iavm_asr.buildXML(asset_dict, ref_number, temp_directory)
             insert_last_published(db, asset_dict, 'iavmLast')
 
         # Build the PLugin ASR
         if options.plugin:
-            plugin_asr = Plugin_ASR(options.allScan)
+            plugin_asr = Plugin_ASR(options.allScan, file_chunk_size)
             plugin_asr.buildXML(asset_dict, ref_number, temp_directory)
             insert_last_published(db, asset_dict, 'pluginLast')
 
         # Build the Benchmark ASR
         if options.benchmark:
-            benchmark_asr = Benchmark_ASR(options.allScan)
+            benchmark_asr = Benchmark_ASR(options.allScan, file_chunk_size)
             benchmark_asr.buildXML(asset_dict, ref_number, temp_directory)
             insert_last_published(db, asset_dict, 'benchmarkLast')
 
@@ -357,6 +371,7 @@ def main():
             check_for_still_running(db, job_id, log)
 
     except Exception as e:
+        print traceback.print_exc()
         error = ["Error with  publishing CMRS files: ", repr(e), "\n"]
         log.error_publishing(error)
         if job_id:

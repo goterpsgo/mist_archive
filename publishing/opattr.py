@@ -21,10 +21,10 @@ from tzlocal import get_localzone
 
 class OpAttributes:
 
-    def __init__(self):
+    def __init__(self, file_chunk_size):
 
         # Set max size of xml
-        self.max_size = 19922944
+        self.max_size = file_chunk_size
         self.doc_count = 1
         
         #Static Name Defs

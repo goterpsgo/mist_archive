@@ -20,13 +20,13 @@ from gather_sc_data import GatherSCData
 
 class IAVM_ASR:
 
-    def __init__(self, allScan):
+    def __init__(self, allScan, file_chunk_size):
 
         #Set wether or not to include all scan data
         self.allScan = allScan
 
         # Set max size of xml
-        self.max_size = 19922944
+        self.max_size = file_chunk_size
         self.doc_count = 1
         
         #Static Name Defs
