@@ -51,6 +51,7 @@ class Log:
             lf.write('[Error] ')
             for error_message in messages:
                 lf.write(error_message)
+            lf.write('\n')
         # Set file ownership
         self.set_log_ownership()
 
@@ -60,6 +61,7 @@ class Log:
             lf.write('[Error] ')
             for error_message in messages:
                 lf.write(error_message)
+            lf.write('\n')
         # Set file ownership
         self.set_log_ownership()
 
