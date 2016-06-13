@@ -16,25 +16,39 @@ def save_output_xml(ids, base_url, user, password):
 
     # Run through each name type and download the all XML
     for name_type, type_id in ids.iteritems():
-        print "Working On " + name_type
+        print "Working On " + name_type + "..."
 
         # Create file on local system
         output_file = base_folder + '/' + name_type + '.xml'
 
         # Download the XML from the coams API (Change Auth to whatever works in product)
         warnings.filterwarnings("ignore")
-        with open(output_file, 'wb') as handle:
-            url = base_url + str(type_id)
-            if user and password:
-                r = requests.get(url, auth=(user, password), verify=False, stream=True)
-            else:
-                r = requests.get(url, verify=False, stream=True)
-            if r.status_code == 200:
-                print "OK"
-            else:
-                print "No Data Retrived"
-            for block in r.iter_content(1024):
-                handle.write(block)
+        try:
+            with open(output_file, 'wb') as handle:
+                url = base_url + str(type_id)
+                if user and password:
+                    r = requests.get(url, auth=(user, password), verify=False, stream=True)
+                else:
+                    r = requests.get(url, verify=False, stream=True)
+                if r.status_code == 200:
+                    print "[OK]\n"
+                elif r.status_code == 401:
+                    print "[Unauthorized] Potentially Bad Login, Files will contain bad XML\n"
+                elif r.status_code == 403:
+                    print "[Forbidden] The permissions are bad\n"
+                elif r.status_code == 404:
+                    print "[NotFound] Potentially Bad URL\n"
+                elif r.status_code == 500:
+                    print "[Internal Server Error] Something is wrong on the COAMS server\n"
+                else:
+                    print "[Error] No Data Retrieved\n"
+                for block in r.iter_content(1024):
+                    handle.write(block)
+        except Exception as e:
+            print "\nSomething went wrong during file retrieval"
+            print e
+            print "\n"
+            sys.exit(0)
 
 if __name__ == "__main__":
 
