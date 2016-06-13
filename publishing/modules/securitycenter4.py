@@ -3,8 +3,7 @@ import httplib
 import urllib2
 import urllib
 import json
-import os
-import datetime
+import mist_logging
 
 
 class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
@@ -29,11 +28,11 @@ class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
 
 class SecurityCenter:
     
-    def __init__(self, server, log_file, cert=None, key=None):
+    def __init__(self, server, cert=None, key=None):
         self.server = server
         self.cert = cert
         self.key = key
-        self.log = log_file
+        self.log = mist_logging.Log()
         self.token = ''
         self.cookie = ''
 

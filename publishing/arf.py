@@ -21,13 +21,13 @@ from tzlocal import get_localzone
 
 class ARF:
 
-    def __init__(self, publishAll):
+    def __init__(self, publishAll, file_chunk_size):
 
         #Set wether to publish all or to just publish assets since last publish
         self.publishAll = publishAll        
 
         # Set max size of xml
-        self.max_size = 19922944
+        self.max_size = file_chunk_size
         self.doc_count = 1
 
         #Static Name Defs
