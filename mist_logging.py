@@ -3,6 +3,7 @@ import os
 import datetime
 import pwd
 import grp
+import tarfile
 
 
 class Log:
@@ -25,12 +26,29 @@ class Log:
         self.set_log_ownership()
 
         # Set the file names for the logs
-        log_prefix = datetime.datetime.now().strftime('%m%Y')
-        self.asset_error = self.path + "/assets/_" + log_prefix + "error.log"
-        self.asset_event = self.path + "/assets/_" + log_prefix + "events.log"
-        self.publishing_error = self.path + "/publishing/_" + log_prefix + "error.log"
-        self.publishing_event = self.path + "/publishing/_" + log_prefix + "event.log"
-        self.tag_event = self.path + "/tagging/_" + log_prefix + "tag_events.log"
+        self.log_prefix = datetime.datetime.now().strftime('%m%Y')
+        self.asset_error = self.path + "/assets/" + self.log_prefix + "_error.log"
+        self.asset_event = self.path + "/assets/" + self.log_prefix + "_events.log"
+        self.publishing_error = self.path + "/publishing/" + self.log_prefix + "_error.log"
+        self.publishing_event = self.path + "/publishing/" + self.log_prefix + "_event.log"
+        self.tag_event = self.path + "/tagging/" + self.log_prefix + "_tag_events.log"
+
+        #check for old logs and tar them up
+        self.tar_old_logs()
+
+    def tar_old_logs(self):
+        log_files = []
+        for (dirpath, dirnames, filenames) in os.walk(self.path):
+            for filename in filenames:
+                if filename.endswith('.log'):
+                    log_files.append(os.path.join(dirpath, filename))
+
+        for log_file in log_files:
+            local_log_prefix = os.path.basename(log_file).split('_')[0]
+            if local_log_prefix != self.log_prefix:
+                with tarfile.open(os.path.splitext(log_file)[0] + '.tar.gz', "w:gz") as tar:
+                    tar.add(os.path.abspath(log_file), arcname=os.path.basename(log_file))
+                    os.remove(log_file)
 
     def set_log_ownership(self):
         for root, dirs, files in os.walk(self.path):
