@@ -25,11 +25,12 @@ class Log:
         self.set_log_ownership()
 
         # Set the file names for the logs
-        self.asset_error = self.path + "/assets/error.log"
-        self.asset_event = self.path + "/assets/events.log"
-        self.publishing_error = self.path + "/publishing/error.log"
-        self.publishing_event = self.path + "/publishing/event.log"
-        self.tag_event = self.path + "/tagging/tag_events.log"
+        log_prefix = datetime.datetime.now().strftime('%m%Y')
+        self.asset_error = self.path + "/assets/_" + log_prefix + "error.log"
+        self.asset_event = self.path + "/assets/_" + log_prefix + "events.log"
+        self.publishing_error = self.path + "/publishing/_" + log_prefix + "error.log"
+        self.publishing_event = self.path + "/publishing/_" + log_prefix + "event.log"
+        self.tag_event = self.path + "/tagging/_" + log_prefix + "tag_events.log"
 
     def set_log_ownership(self):
         for root, dirs, files in os.walk(self.path):
