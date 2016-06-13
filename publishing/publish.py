@@ -163,7 +163,9 @@ def main():
     parser.add_option('--user', action='store', dest="userID", type="int",
                       help="sets which assets to put in XMLs by user access")
     parser.add_option('--assets', action='store_true', dest='arf', default=False,
-                      help="use this option to generate arf and opattr files")
+                      help="use this option to generate arf file")
+    parser.add_option('--opattr', action='store_true', dest='opattr', default=False,
+                      help="use this option to generate opattr file")
     parser.add_option('--cve', action='store_true', dest='cve', default=False,
                       help="use this option to generate CVE ASR")
     parser.add_option('--iavm', action='store_true', dest='iavm', default=False,
@@ -231,10 +233,11 @@ def main():
         asset_id_list = get_asset_list(asset_dict)
 
         # Build the ARF
-        arf = ARF(options.allAsset, file_chunk_size)
-        build_attr = arf.buildXML(asset_id_list, ref_number, temp_directory)
+        if options.arf:
+            arf = ARF(options.allAsset, file_chunk_size)
+            build_attr = arf.buildXML(asset_id_list, ref_number, temp_directory)
 
-        if build_attr:
+        if options.opattr:
             # Build the Operational Attributes
             attr = OpAttributes(file_chunk_size)
             attr.buildXML(asset_id_list, ref_number, temp_directory)
