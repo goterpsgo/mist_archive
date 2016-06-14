@@ -46,9 +46,9 @@ class Log:
         for log_file in log_files:
             local_log_prefix = os.path.basename(log_file).split('_')[0]
             if local_log_prefix != self.log_prefix:
-                with tarfile.open(os.path.splitext(log_file)[0] + '.tar.gz', "w:gz") as tar:
-                    tar.add(os.path.abspath(log_file), arcname=os.path.basename(log_file))
-                    os.remove(log_file)
+                tar = tarfile.open(os.path.splitext(log_file)[0] + '.tar.gz', "w:gz")
+                tar.add(os.path.abspath(log_file), arcname=os.path.basename(log_file))
+                os.remove(log_file)
 
     def set_log_ownership(self):
         for root, dirs, files in os.walk(self.path):
