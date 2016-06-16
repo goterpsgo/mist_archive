@@ -141,8 +141,8 @@ def main():
 
     # Edit the host file to point to mist DB
     #get local ip addr
-    f = os.popen("ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/")
-    ip = f.read()
+    f = os.popen("ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'")
+    ip = f.read().rstrip()
     with open("/etc/hosts", "a") as myfile:
         myfile.write(ip + "       mistDB backendHost")
 
