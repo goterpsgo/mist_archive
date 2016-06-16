@@ -140,8 +140,11 @@ def main():
     process_call("service mysqld restart")
 
     # Edit the host file to point to mist DB
+    #get local ip addr
+    f = os.popen("ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/")
+    ip = f.read()
     with open("/etc/hosts", "a") as myfile:
-        myfile.write("127.0.0.1       mistDB backendHost")
+        myfile.write(ip + "       mistDB backendHost")
 
     # create inital admin account for mist
     create_mist_admin()
