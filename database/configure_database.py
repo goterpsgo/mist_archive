@@ -7,6 +7,7 @@ import os
 import hashlib
 import ConfigParser
 import re
+import commands
 
 #database stuff
 import sys
@@ -118,6 +119,22 @@ def create_mist_admin():
     conn.close()
 
 
+def dump_crontab():
+    directory = "/opt/mist/frontend/app/MIST/SchedPubJobs"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    command_output = commands.getstatusoutput('crontab -l')
+    command_status, command_data = command_output[0], command_output[1]
+
+    if command_status == 0:
+        cron_file = open(os.path.join(directory, 'existingCron.txt'), 'w')
+        cron_file.write(command_data)
+        cron_file.close()
+    else:
+        print "Dumping current crontab failed!!!!!"
+
+
 def main():
 
     # create directory for mysql logs
@@ -151,6 +168,9 @@ def main():
 
     # Remove the sql file
     os.remove('/opt/mist/database/mist_db.sql')
+
+    # dump the crontab
+    dump_crontab()
 
 
 if __name__ == "__main__":
