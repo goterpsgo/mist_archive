@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>AngularJS JWT Authentication Example & Tutorial</title>
+
+    <!-- bootstrap css -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- application css -->
+    <link href="static/css/app_content/app.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- main app container -->
+    <div class="jumbotron">
+        <div class="container">
+            <div class="col-sm-8 col-sm-offset-2">
+                <ui-view></ui-view>
+            </div>
+        </div>
+    </div>
+
+    <!-- credits -->
+    <div class="text-center">
+        <p>
+            MIST v2.0
+        </p>
+    </div>
+
+    <!-- angular scripts -->
+    <script src="static/js/lib/angular.min.js"></script>
+    <script src="static/js/lib/angular-messages.min.js"></script>
+    <script src="static/js/lib/angular-ui-router.min.js"></script>
+    <script src="static/js/lib/ngStorage.min.js"></script>
+
+    <!-- application scripts -->
+    <script src="static/js/app.js"></script>
+    <script src="static/js/app_services/authentication.service.js"></script>
+    <script src="static/js/home/index.controller.js"></script>
+    <script src="static/js/login/index.controller.js"></script>
+</body>
+</html>
