@@ -1,12 +1,13 @@
+
 from flask import Blueprint, jsonify, request, render_template, current_app, make_response
 from flask_restful import Resource, Api, reqparse, abort
 from flask_jwt import JWT, jwt_required, current_identity
 from werkzeug.security import safe_str_cmp
 from _app import return_app
-import unicodedata
+from sqlalchemy.orm import sessionmaker
+from common.models import main, base_model
+import hashlib
 # import jwt
-from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
-import pprint
 import config
 import json
 import requests
@@ -18,10 +19,10 @@ this_app = return_app()
 
 parser = reqparse.RequestParser()
 
-
-
-
-
+# DBSession = sessionmaker()
+# DBSession.bind = main.engine
+DBSession = sessionmaker(bind=main.engine)
+session = DBSession()
 
 class User(object):
   def __init__(self, id, username, password):
@@ -52,9 +53,17 @@ userid_table = {u.id: u for u in users}
 
 
 def authenticate(username, password):
-  user = username_table.get(username, None)
-  if user and safe_str_cmp(user.password.encode('utf-8'), password.encode('utf-8')):
-    return user
+  user = session.query(main.MistUsers)\
+      .filter(main.MistUsers.username==username, main.MistUsers.password==hashlib.sha256(password).hexdigest())\
+      .first()
+  if hasattr(user, 'username'):
+      return user
+
+
+
+  # user = username_table.get(username, None)
+  # if user and safe_str_cmp(user.password.encode('utf-8'), password.encode('utf-8')):
+  #   return user
 
 
 def identity(payload):
