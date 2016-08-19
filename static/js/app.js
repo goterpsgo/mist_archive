@@ -6,7 +6,8 @@
         .config(config)
         .run(run);
 
-    function config($stateProvider, $urlRouterProvider) {
+    // all providers need to be defined in config()
+    function config($stateProvider, $httpProvider, $urlRouterProvider) {
         // default route
         $urlRouterProvider.otherwise("/");
 
@@ -29,7 +30,37 @@
                 templateUrl: 'static/html/signup.view.html',
                 controller: 'Home.IndexController',
                 controllerAs: 'vm'
+            })
+            .state('admin', {
+                url: '/admin',
+                templateUrl: 'static/html/admin/index.view.html',
+                controller: 'Admin.IndexController',
+                controllerAs: 'vm'
             });
+
+        // $http is a service; $httpProvider is a provider to customize the global behavior of $http
+        // via the $httpProvider.defaults.headers configuration object
+        // https://docs.angularjs.org/api/ng/service/$http
+        // https://docs.angularjs.org/api/ng/provider/$httpProvider
+        $httpProvider.interceptors.push(['$q', '$location', '$localStorage', '$sessionStorage',
+            function ($q, $location, $localStorage, $sessionStorage) {
+                return {
+                   'request': function (config) {
+                       config.headers = config.headers || {};
+                       if ($localStorage.currentUser && $sessionStorage.currentUser) {
+                           config.headers.Authorization = 'Bearer ' + $localStorage.currentUser.token;
+                       }
+                       return config;
+                   },
+                   'responseError': function (response) {
+                       if (response.status === 401 || response.status === 403) {
+                           $location.path('/login');
+                       }
+                       return $q.reject(response);
+                   }
+                };
+            }
+        ]);
     }
 
     function run($rootScope, $http, $location, $localStorage, $sessionStorage) {
