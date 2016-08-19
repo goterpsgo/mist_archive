@@ -92,6 +92,11 @@ class TodoItem(Resource):
     def get(self, id):
         return {'task': 'Say "Hello, World!!!"'}
 
+class SecureMe(Resource):
+    @jwt_required()
+    def get(self, id):
+        return {'message': 'You are looking at /secureme: ' + str(id)}
+
 class Login(Resource):
     jwt = JWT(this_app, authenticate, identity)
     def post(self):
@@ -204,6 +209,7 @@ class User(Resource):
         return {'result': 'User details endpoint.'}
 
 api.add_resource(TodoItem, '/todos/<int:id>')
+api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Login, '/login')
 api.add_resource(Signup, '/signup')
 api.add_resource(Logout, '/logout')
