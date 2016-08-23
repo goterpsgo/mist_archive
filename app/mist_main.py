@@ -1,6 +1,6 @@
 from _app import return_app
+from endpoints_v1 import api_auth
 from index import index_routes
-from auth import api_auth
 
 app = return_app()
 
