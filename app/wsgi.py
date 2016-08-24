@@ -1,4 +1,4 @@
-from main import app as application
+from mist_main import app as application
 
 if __name__ == "__main__":
     try:
