@@ -87,6 +87,7 @@ class Users(Resource):
         return jsonify(users)
 
 class User(Resource):
+    @jwt_required()
     def get(self, id):
         r_user = rs_users().filter(main.MistUser.id == id).first()
         if hasattr(r_user, 'username'):
@@ -105,60 +106,55 @@ class User(Resource):
         else:
             return {"message": "No such user."}
 
-class Stuff(Resource):
-    # @jwt_required()
-    def get(self):
-        return {"message": "Got stuff from endpoint."}
 
-
-class Login(Resource):
-    jwt = JWT(this_app, authenticate, identity)
-    def post(self):
-        # print current_identity
-        # print("======================================================================")
-
-        if request.data:
-            # print("[jwt] %", dir(jwt))
-            # print("======================================================================")
-            # print("[jwt] %", vars(jwt))
-
-            # print(request.data)
-            # form_data = json.loads(request.data)
-            # print("[92] data: " + request.data)
-            # url = "http://10.11.1.239:8080/auth"
-            # print("[94] url: " + url)
-            # print ("[95] data: " + request.data)
-            # # resp = requests.post("http://10.11.1.239:8080/auth", data={'username':'user1', 'password': 'abcxyz'})
-            # # resp = requests.post(url, data=request.data, headers={"Content-Type": "application/json"})
-            # # print("[97] Got here")
-            # # print(dir(resp))
-            # # print("[96] content: " + resp.content)
-            # # POST data is saved as dict key value, can't figure out why - JWT 28 Jul 2016
-            # # (k, v), = request.get_json().to_dict().items()
-            # # d = json.loads(k)
-            # # print("d: %s" % d["username"])
-            # # foo = authenticate(d["username"], d["password"])
-            # # print("foo: %s" % foo)
-            # #
-            # # # jwt = JWT(this_app, authenticate, identity)
-            # # print ("jwt: %s" % jwt.identity_callback)
-            # #
-            # #
-            # #
-            # # resp = make_response()
-            # # # token = jwt.encode
-            # # # print token
-            # # # resp.headers["foo"] = "bar"
-            # # # print resp.headers
-            # # # print current_app.config["JWT_VERIFY_CLAIMS"]
-            # # # return resp
-            # # print current_app
-            return {'token': 'Got here'}
-        else:
-            return {'token': 'no form data'}
-
-    def get(self):
-        return {'message': 'No GET method for this endpoint.'}
+# class Login(Resource):
+#     jwt = JWT(this_app, authenticate, identity)
+#     def post(self):
+#         # print current_identity
+#         # print("======================================================================")
+#
+#         if request.data:
+#             # print("[jwt] %", dir(jwt))
+#             # print("======================================================================")
+#             # print("[jwt] %", vars(jwt))
+#
+#             # print(request.data)
+#             # form_data = json.loads(request.data)
+#             # print("[92] data: " + request.data)
+#             # url = "http://10.11.1.239:8080/auth"
+#             # print("[94] url: " + url)
+#             # print ("[95] data: " + request.data)
+#             # # resp = requests.post("http://10.11.1.239:8080/auth", data={'username':'user1', 'password': 'abcxyz'})
+#             # # resp = requests.post(url, data=request.data, headers={"Content-Type": "application/json"})
+#             # # print("[97] Got here")
+#             # # print(dir(resp))
+#             # # print("[96] content: " + resp.content)
+#             # # POST data is saved as dict key value, can't figure out why - JWT 28 Jul 2016
+#             # # (k, v), = request.get_json().to_dict().items()
+#             # # d = json.loads(k)
+#             # # print("d: %s" % d["username"])
+#             # # foo = authenticate(d["username"], d["password"])
+#             # # print("foo: %s" % foo)
+#             # #
+#             # # # jwt = JWT(this_app, authenticate, identity)
+#             # # print ("jwt: %s" % jwt.identity_callback)
+#             # #
+#             # #
+#             # #
+#             # # resp = make_response()
+#             # # # token = jwt.encode
+#             # # # print token
+#             # # # resp.headers["foo"] = "bar"
+#             # # # print resp.headers
+#             # # # print current_app.config["JWT_VERIFY_CLAIMS"]
+#             # # # return resp
+#             # # print current_app
+#             return {'token': 'Got here'}
+#         else:
+#             return {'token': 'no form data'}
+#
+#     def get(self):
+#         return {'message': 'No GET method for this endpoint.'}
 
 class Signup(Resource):
     def post(self):
@@ -216,8 +212,6 @@ class DeleteUser(Resource):
 
 api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
-api.add_resource(Stuff, '/stuff')
-api.add_resource(Login, '/login')
 api.add_resource(Signup, '/signup')
 api.add_resource(Logout, '/logout')
 api.add_resource(Validate, '/validate')
