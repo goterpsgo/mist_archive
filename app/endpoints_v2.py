@@ -67,6 +67,7 @@ class SecureMe(Resource):
         return {'message': 'You are looking at /secureme: ' + str(id)}
 
 class Users(Resource):
+    @jwt_required()
     def get(self):
         # rs_users = session.query(main.MistUser).join(main.UserPermission, main.MistUser.permission_id == main.UserPermission.id)
         users = []
@@ -105,6 +106,7 @@ class User(Resource):
             return {"message": "No such user."}
 
 class Stuff(Resource):
+    # @jwt_required()
     def get(self):
         return {"message": "Got stuff from endpoint."}
 
