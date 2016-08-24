@@ -1,21 +1,27 @@
 import base64
-from sqlalchemy import Column, DateTime, String, Integer, func, ForeignKey, create_engine
+from sqlalchemy import Column, DateTime, String, Integer, func, ForeignKey, create_engine, join
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import select
 from base_model import Base
 
-class MistUsers(Base.Model):
+class UserPermission(Base.Model):
+    __tablename__ = "userPermissions"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(20))
+
+class MistUser(Base.Model):
     __tablename__ = "mistUsers"
     id = Column(Integer, primary_key=True)
     username = Column(String(200))
     password = Column(String(65))
-    permission = Column(Integer)
     subjectDN = Column(String(400))
     firstName = Column(String(200))
     lastName = Column(String(200))
     organization= Column(String(200))
     lockout = Column(String(5), default="No")
 
-# engine = create_engine('mysql+mysqldb://mistUser:' + base64.b64decode('m1$TD@t@B@$3!@#') + '@mistDB/MIST')
+    permission_id = Column(Integer, ForeignKey('userPermissions.id'))
+    permission = relationship("UserPermission")
 
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
