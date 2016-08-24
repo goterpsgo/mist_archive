@@ -48,11 +48,13 @@
                    'request': function (config) {
                        config.headers = config.headers || {};
                        if ($localStorage.currentUser && $sessionStorage.currentUser) {
-                           config.headers.Authorization = 'Bearer ' + $localStorage.currentUser.token;
+                           config.headers.Authorization = 'JWT ' + $localStorage.currentUser.token;
+                           console.log('[52] currentUser: ' + $localStorage.currentUser);
                        }
                        return config;
                    },
                    'responseError': function (response) {
+                       console.log('[status] ' + response.status);
                        if (response.status === 401 || response.status === 403) {
                            $location.path('/login');
                        }
@@ -66,7 +68,7 @@
     function run($rootScope, $http, $location, $localStorage, $sessionStorage) {
         // keep user logged in after page refresh
         if ($localStorage.currentUser && $sessionStorage.currentUser) {
-            $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token;
+            $http.defaults.headers.common.Authorization = 'JWT ' + $localStorage.currentUser.token;
         }
 
         // redirect to login page if not logged in and trying to access a restricted page

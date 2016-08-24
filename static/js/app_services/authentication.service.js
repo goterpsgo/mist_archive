@@ -28,7 +28,7 @@
                         $localStorage.currentUser = { username: username, token: response.access_token };
 
                         // add jwt token to auth header for all requests made by the $http service
-                        $http.defaults.headers.common.Authorization = 'Bearer ' + response.access_token;
+                        $http.defaults.headers.common.Authorization = 'JWT ' + response.access_token;
 
                         // add token to session
                         // for handling XSS
