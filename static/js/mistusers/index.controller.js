@@ -3,30 +3,41 @@
  
     angular
         .module('app')
-        .controller('Login.IndexController', Controller);
+        .controller('UserController', Controller);
 
-    function Controller($location, AuthenticationService) {
-        var vm = this;
+    function Controller($scope, MistUsersService) {
+        // $scope.my_stuff = this.get_stuff();
+        // $scope.stuff = get_stuff();
+        $scope.users = get_users();
 
-        vm.login = login;
+        // function initController() {
+        // };
 
-        initController();
+        function get_stuff() {
+            // return 'Here\'s more stuff';
+            console.log(['[17] Got here']);
+            MistUsersService._get_stuff()
+                .then(
+                    function(stuff) {
+                        $scope.stuff = stuff;
+                    }
+                );
+        }
 
-        function initController() {
-            // reset login status
-            AuthenticationService.Logout();
-        };
+        function get_users() {
+            MistUsersService._get_users()
+                .then(
+                      function(users) {
+                        $scope.users = users;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
 
-        function login() {
-            vm.loading = true;
-            AuthenticationService.Login(vm.username, vm.password, function (result) {
-                if (result === true) {
-                    $location.path('/');
-                } else {
-                    vm.error = 'Username or password is incorrect';
-                    vm.loading = false;
-                }
-            });
+        $scope.add_user = function() {
+            console.log('Add user');
         };
     }
 })();
