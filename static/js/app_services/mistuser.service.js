@@ -1,58 +1,60 @@
-// code based on http://jasonwatmore.com/post/2016/04/05/AngularJS-JWT-Authentication-Example-Tutorial.aspx
 (function () {
     'use strict';
 
     angular
         .module('app')
-        .factory('AuthenticationService', Service);
+        .factory('MistUsersService', Service);
 
-    function Service($http, $localStorage, $sessionStorage) {
-        var service = {};
+    function Service($http, $q) {
+        var factory = {
+              _get_users: get_users
+            , _get_user: get_user
+            , _create_user: create_user
+            , _update_user: update_user
+            , _delete_user: delete_user
+            , _get_stuff: get_stuff
+        };
 
-        service.Login = Login;
-        service.Logout = Logout;
+        return factory;
 
-        return service;
-
-        function Login(username, password, callback) {
-            $http.post('/auth', { username: username, password: password })
-            // var data_as_json = angular.toJson({"username": username, "password": password});
-            // var headers =
-            // $http.post('/auth', data_as_json)
-                .success(function (response) {
-                    // login successful if there's a token in the response
-                    // code below based on http://www.redotheweb.com/2015/11/09/api-security.html
-                    if (response.access_token) {
-                        // store username and token in local storage to keep user logged in between page refreshes
-                        // for handling CSRF
-                        $localStorage.currentUser = { username: username, token: response.access_token };
-
-                        // add jwt token to auth header for all requests made by the $http service
-                        $http.defaults.headers.common.Authorization = 'Bearer ' + response.access_token;
-
-                        // add token to session
-                        // for handling XSS
-                        $sessionStorage.currentUser = { username: username, token: response.access_token };
-
-                        // execute callback with true to indicate successful login
-                        callback(true);
-                    } else {
-                        // execute callback with false to indicate failed login
-                        callback(false);
-                    }
+        function get_stuff() {
+            console.log('[21] Got here');
+            return $http.get('http://10.11.1.239:8080/api/v2/stuff')
+                .then(function(response) {
+                    console.log('[24] Got here');
+                    return response.data;
                 })
-                .error(function(data, status) {
-                        // execute callback with false to indicate failed login
-                        callback(false);
-                });
         }
 
-        function Logout() {
-            // remove user from local storage and clear http auth header
-            delete $localStorage.currentUser;
-            // remove user from session
-            delete $sessionStorage.currentUser;
-            $http.defaults.headers.common.Authorization = '';
+        function get_users() {
+            var deferred = $q.defer();
+            $http.get('http://10.11.1.239:8080/api/v2/users')
+                .then(
+                    function(response) {
+                        deferred.resolve(response.data);
+                    }
+                );
+            return deferred.promise;
+        }
+
+        function get_user() {
+            var deferred = $q.defer();
+            return deferred.promise;
+        }
+
+        function create_user() {
+            var deferred = $q.defer();
+            return deferred.promise;
+        }
+
+        function update_user() {
+            var deferred = $q.defer();
+            return deferred.promise;
+        }
+
+        function delete_user() {
+            var deferred = $q.defer();
+            return deferred.promise;
         }
     }
 })();
