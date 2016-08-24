@@ -12,7 +12,7 @@ import json
 import requests
 import socket
 
-api_endpoints = Blueprint('mist_auth', __name__, url_prefix="/api/v1")
+api_endpoints = Blueprint('mist_auth', __name__, url_prefix="/api/v2")
 api = Api(api_endpoints)
 this_app = return_app()
 
@@ -103,6 +103,10 @@ class User(Resource):
             return jsonify(user)
         else:
             return {"message": "No such user."}
+
+class Stuff(Resource):
+    def get(self):
+        return {"message": "Got stuff from endpoint."}
 
 
 class Login(Resource):
@@ -210,6 +214,7 @@ class DeleteUser(Resource):
 
 api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
+api.add_resource(Stuff, '/stuff')
 api.add_resource(Login, '/login')
 api.add_resource(Signup, '/signup')
 api.add_resource(Logout, '/logout')
