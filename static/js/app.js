@@ -15,13 +15,13 @@
         $stateProvider
             .state('home', {
                 url: '/',
-                templateUrl: 'static/html/home/index.view.html',
+                templateUrl: 'static/html/home.view.html',
                 controller: 'Home.IndexController',
                 controllerAs: 'vm'
             })
             .state('login', {
                 url: '/login',
-                templateUrl: 'static/html/login/index.view.html',
+                templateUrl: 'static/html/login.view.html',
                 controller: 'Login.IndexController',
                 controllerAs: 'vm'
             })
@@ -31,10 +31,46 @@
                 controller: 'Home.IndexController',
                 controllerAs: 'vm'
             })
+            .state('repostag', {
+                url: '/repostag',
+                templateUrl: 'static/html/repostag.view.html',
+                controller: 'Repostag.IndexController',
+                controllerAs: 'vm'
+            })
+            .state('assetstag', {
+                url: '/assetstag',
+                templateUrl: 'static/html/assetstag.view.html',
+                controller: 'Assetstag.IndexController',
+                controllerAs: 'vm'
+            })
+            .state('publish', {
+                url: '/publish',
+                templateUrl: 'static/html/publish.view.html',
+                controller: 'Publish.IndexController',
+                controllerAs: 'vm'
+            })
             .state('admin', {
                 url: '/admin',
-                templateUrl: 'static/html/admin/index.view.html',
+                templateUrl: 'static/html/admin.view.html',
                 controller: 'Admin.IndexController',
+                controllerAs: 'vm'
+            })
+            .state('config', {
+                url: '/config',
+                templateUrl: 'static/html/config.view.html',
+                controller: 'Config.IndexController',
+                controllerAs: 'vm'
+            })
+            .state('tagactivities', {
+                url: '/tagactivities',
+                templateUrl: 'static/html/tagactivities.view.html',
+                controller: 'Tagactivities.IndexController',
+                controllerAs: 'vm'
+            })
+            .state('locallogs', {
+                url: '/locallogs',
+                templateUrl: 'static/html/locallogs.view.html',
+                controller: 'Locallogs.IndexController',
                 controllerAs: 'vm'
             });
 
