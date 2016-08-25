@@ -3,20 +3,21 @@
     <p>MIST::Home</p>
     <div ng-controller="UserController">
     <ul>
-            <ul ng-repeat="u in users">
-                <li>{{u.id}} {{u.username}} {{u.permission_id}} {{u.permission}}</li>
-            </ul>
         <li><a ui-sref="home">Home</a></li>
         <li><a ui-sref="signup">Signup</a></li>
-        <li><a ui-sref="admin">Admin</a></li>
         <li><a ui-sref="config">Config</a></li>
         <li><a ui-sref="repo_tagging">Repo Auto-Tagging</a></li>
         <li><a ui-sref="assets_tagging">Assets Manual Tagging</a></li>
         <li><a ui-sref="publish">Publish</a></li>
-        <li><a ui-sref="activities">Activities</a></li>
-        <li><a ui-sref="local_logs">Local Logs</a></li>
-        <li><a ui-sref="login">Logout</a></li>
+        <div ng-repeat="u in users">
+            <!--<li>{{u.id}} {{u.username}} {{u.permission_id}} {{u.permission}}</li>-->
+            <div ng-if="u.username === username && (u.permission === 'Admin User' || u.permission === 'Super User')">
+                <li><a ui-sref="admin">Admin</a></li>
+                <li><a ui-sref="activities">Activities</a></li>
+                <li><a ui-sref="local_logs">Local Logs</a></li>
+            </div>
+        </div>
     </ul>
     </div>
-    <p><a href="#/login">Logout</a></p>
+    <p><a ui-sref="login">Logout</a></p>
 </div>
