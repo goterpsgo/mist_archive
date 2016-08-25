@@ -18,7 +18,7 @@ Installation
    - env: the custom Python runtime/environment
    - static: HTML content, JS libraries, AngularJS SPA app
  
-Start up:
+Start up
  (for development)
  $ cd /opt/mist_base/app
  $ uwsgi --py-autoreload 1 -s 0.0.0.0:8080 --protocol=http -w wsgi --static-map /static=/opt/mist_base/static
