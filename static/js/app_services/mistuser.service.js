@@ -8,23 +8,24 @@
     function Service($http, $q) {
         var factory = {
               _get_users: get_users
-            , _get_user: get_user
+            , _get_user_by_id: get_user_by_id
+            , _get_user_by_username: get_user_by_username
             , _create_user: create_user
             , _update_user: update_user
             , _delete_user: delete_user
-            , _get_stuff: get_stuff
+            // , _get_stuff: get_stuff
         };
 
         return factory;
 
-        function get_stuff() {
-            console.log('[21] Got here');
-            return $http.get('http://10.11.1.239:8080/api/v2/stuff')
-                .then(function(response) {
-                    console.log('[24] Got here');
-                    return response.data;
-                })
-        }
+        // function get_stuff() {
+        //     console.log('[21] Got here');
+        //     return $http.get('http://10.11.1.239:8080/api/v2/stuff')
+        //         .then(function(response) {
+        //             console.log('[24] Got here');
+        //             return response.data;
+        //         })
+        // }
 
         function get_users() {
             var deferred = $q.defer();
@@ -37,8 +38,25 @@
             return deferred.promise;
         }
 
-        function get_user() {
+        function get_user_by_id(id) {
             var deferred = $q.defer();
+            $http.get('http://10.11.1.239:8080/api/v2/userbyid/' + id)
+                .then(
+                    function(response) {
+                        deferred.resolve(response.data);
+                    }
+                );
+            return deferred.promise;
+        }
+
+        function get_user_by_username(username) {
+            var deferred = $q.defer();
+            $http.get('http://10.11.1.239:8080/api/v2/userbyusername/' + username)
+                .then(
+                    function(response) {
+                        deferred.resolve(response.data);
+                    }
+                );
             return deferred.promise;
         }
 
