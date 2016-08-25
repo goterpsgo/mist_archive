@@ -49,7 +49,7 @@
                        config.headers = config.headers || {};
                        if ($localStorage.currentUser && $sessionStorage.currentUser) {
                            config.headers.Authorization = 'JWT ' + $localStorage.currentUser.token;
-                           console.log('[52] currentUser: ' + $localStorage.currentUser);
+                           // console.log('[52] currentUser: ' + $sessionStorage.currentUser.username);
                        }
                        return config;
                    },

@@ -86,10 +86,30 @@ class Users(Resource):
             users.append(user)
         return jsonify(users)
 
-class User(Resource):
+class UserById(Resource):
     @jwt_required()
     def get(self, id):
         r_user = rs_users().filter(main.MistUser.id == id).first()
+        if hasattr(r_user, 'username'):
+            user = {
+                  'id': r_user.id
+                , 'username': r_user.username
+                , 'permission_id': r_user.permission_id
+                , 'subject_dn': r_user.subjectDN
+                , 'first_name': r_user.firstName
+                , 'last_name': r_user.lastName
+                , 'organization': r_user.organization
+                , 'lockout': r_user.lockout
+                , 'permission': r_user.permission.name
+            }
+            return jsonify(user)
+        else:
+            return {"message": "No such user."}
+
+class UserByUsername(Resource):
+    @jwt_required()
+    def get(self, username):
+        r_user = rs_users().filter(main.MistUser.username == username).first()
         if hasattr(r_user, 'username'):
             user = {
                   'id': r_user.id
@@ -220,4 +240,5 @@ api.add_resource(UpdateUser, '/updateuser/<int:id>')
 api.add_resource(DisableUser, '/disableuser/<int:id>')
 api.add_resource(DeleteUser, '/deleteuser/<int:id>')
 api.add_resource(Users, '/users')
-api.add_resource(User, '/user/<int:id>')
+api.add_resource(UserById, '/userbyid/<int:id>')
+api.add_resource(UserByUsername, '/userbyusername/<string:username>')
