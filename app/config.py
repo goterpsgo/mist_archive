@@ -1,4 +1,3 @@
-# currently not used; retained as reference - JWT 16 Aug 2016
 from datetime import timedelta
 
 # Statement for enabling the development environment
@@ -29,6 +28,6 @@ CSRF_SESSION_KEY = "secret"
 # Secret key for signing cookies
 SECRET_KEY = "secret"
 
-JWT_EXPIRATION_DELTA = timedelta(seconds=60)
+JWT_EXPIRATION_DELTA = timedelta(seconds=600)
 JWT_VERIFY_CLAIMS = ['signature', 'exp', 'nbf', 'iat']
 JWT_REQUIRED_CLAIMS = ['exp', 'iat', 'nbf']
