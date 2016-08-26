@@ -7,6 +7,7 @@
 
     function Controller($location, AuthenticationService) {
         var vm = this;
+            console.log('Got here');
 
         vm.login = login;
 

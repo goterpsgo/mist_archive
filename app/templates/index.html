@@ -8,8 +8,49 @@
 
     <!-- application css -->
     <link href="static/css/app_content/app.css" rel="stylesheet" />
+
+    <!-- angular scripts -->
+    <script src="static/js/lib/angular.min.js"></script>
+    <script src="static/js/lib/angular-messages.min.js"></script>
+    <script src="static/js/lib/angular-ui-router.min.js"></script>
+    <script src="static/js/lib/ngStorage.min.js"></script>
+
+    <script src="static/js/lib/angular-animate.min.js"></script>
+    <script src="static/js/lib/angular-touch.min.js"></script>
+    <script src="static/js/lib/ui-bootstrap-tpls.min.js"></script>
+
+    <!-- application scripts -->
+    <script src="static/js/app.js"></script>
+    <script src="static/js/app_services/authentication.service.js"></script>
+    <script src="static/js/controllers/home.controller.js"></script>
+    <script src="static/js/controllers/login.controller.js"></script>
+    <script src="static/js/controllers/admin.controller.js"></script>
+    <script src="static/js/app_services/mistuser.service.js"></script>
+    <script src="static/js/controllers/mistusers.controller.js"></script>
+    <script src="static/js/controllers/publish.controller.js"></script>
+    <script src="static/js/controllers/repostag.controller.js"></script>
+    <script src="static/js/controllers/assetstag.controller.js"></script>
+    <script src="static/js/controllers/locallogs.controller.js"></script>
 </head>
-<body>
+<body ng-controller="UserController">
+
+    <nav class="navbar navbar-inverse navbar-fixed-top"">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">MIST</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li><a href="/#/repostag">Repos Auto Tags</a></li>
+          <li><a href="/#/assetstag">Assets Manual Tags</a></li>
+          <li><a href="/#/publish">Publish</a></li>
+          <li><a href="/#/tagactivities">Tag Activities</a></li>
+          <li><a href="/#/admin">Admin</a></li>
+          <li><a href="/#/config">Config</a></li>
+          <li><a href="/#/locallogs">Local Logs</a></li>
+        </ul>
+      </div>
+    </nav>
+
     <!-- main app container -->
     <div class="jumbotron">
         <div class="container">
@@ -26,19 +67,6 @@
         </p>
     </div>
 
-    <!-- angular scripts -->
-    <script src="static/js/lib/angular.min.js"></script>
-    <script src="static/js/lib/angular-messages.min.js"></script>
-    <script src="static/js/lib/angular-ui-router.min.js"></script>
-    <script src="static/js/lib/ngStorage.min.js"></script>
 
-    <!-- application scripts -->
-    <script src="static/js/app.js"></script>
-    <script src="static/js/app_services/authentication.service.js"></script>
-    <script src="static/js/controllers/home.controller.js"></script>
-    <script src="static/js/controllers/login.controller.js"></script>
-    <script src="static/js/controllers/admin.controller.js"></script>
-    <script src="static/js/app_services/mistuser.service.js"></script>
-    <script src="static/js/controllers/mistusers.controller.js"></script>
 </body>
 </html>

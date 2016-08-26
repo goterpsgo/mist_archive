@@ -6,11 +6,10 @@
         .controller('UserController', Controller);
 
     function Controller($scope, $sessionStorage, MistUsersService) {
-        // $scope.my_stuff = this.get_stuff();
-        // $scope.stuff = get_stuff();
-        $scope.users = get_users();
-        $scope.username = $sessionStorage.currentUser.username;
-        // $scope.user = get_user_by_id(1);
+        if ($sessionStorage.currentUser) {
+            $scope.username = $sessionStorage.currentUser.username;
+            $scope.users = get_users();
+        }
 
         // function initController() {
         // };
