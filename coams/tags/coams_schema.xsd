@@ -1,0 +1,91 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://metadata.dod.mil/mdr/ns/netops/ndl/0.1">
+    <xs:element name="NameDistro">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="Modification" maxOccurs="unbounded" minOccurs="1">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute type="xs:string" name="dName" use="required"/>
+                                <xs:attribute type="xs:string" name="hName" use="required"/>
+                                <xs:attribute type="xs:int" name="nameID" use="required"/>
+                                <xs:attribute type="xs:int" name="superiorNameID" use="optional"/>
+                                <xs:attribute type="xs:boolean" name="active" use="required"/>
+                                <xs:attribute type="xs:dateTime" name="lastUpdated" use="required"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="FunctionalMod" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute type="xs:string" name="dName" use="required"/>
+                                <xs:attribute type="xs:string" name="hName" use="required"/>
+                                <xs:attribute type="xs:int" name="nameID" use="required"/>
+                                <xs:attribute type="xs:int" name="superiorNameID" use="optional"/>
+                                <xs:attribute type="xs:string" name="rollupType" use="optional"/>
+                                <xs:attribute type="xs:string" name="active" use="required"/>
+                                <xs:attribute type="xs:dateTime" name="lastUpdated" use="required"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Migration" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute type="xs:int" name="nameID" use="required"/>
+                                <xs:attribute type="xs:int" name="newID" use="required"/>
+                                <xs:attribute type="xs:dateTime" name="lastUpdated" use="required"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="FunctionalMigration" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute type="xs:int" name="nameID" use="required"/>
+                                <xs:attribute type="xs:int" name="migrateTo" use="required"/>
+                                <xs:attribute type="xs:string" name="rollupType" use="optional"/>
+                                <xs:attribute type="xs:dateTime" name="lastUpdated" use="required"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+            <xs:attribute use="optional" type="xs:anyURI" name="defaultRollup" default="http://function.dod.mil/"/>
+            <xs:attribute use="optional" type="xs:string" name="resource" default="https://nameservice.dod.mil"/>
+            <xs:attribute use="required" type="xs:dateTime" name="timeStamp"/>
+            <xs:attribute use="required" type="xs:dateTime" name="includedActionStartTime"/>
+            <xs:attribute use="required" type="xs:string" name="partialUpdate"/>
+            <xs:attribute use="required" name="nameType">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="ccsd"/>
+                        <xs:enumeration value="classification"/>
+                        <xs:enumeration value="cnd service provider"/>
+                        <xs:enumeration value="confidentiality level"/>
+                        <xs:enumeration value="data publisher"/>
+                        <xs:enumeration value="dod network"/>
+                        <xs:enumeration value="enterprise application roles"/>
+                        <xs:enumeration value="fips availability level"/>
+                        <xs:enumeration value="fips confidentiality level"/>
+                        <xs:enumeration value="fips integrity level"/>
+                        <xs:enumeration value="function"/>
+                        <xs:enumeration value="location"/>
+                        <xs:enumeration value="mac"/>
+                        <xs:enumeration value="network zone"/>
+                        <xs:enumeration value="non-dod circuit id"/>
+                        <xs:enumeration value="non-dod network"/>
+                        <xs:enumeration value="organization"/>
+                        <xs:enumeration value="permission"/>
+                        <xs:enumeration value="role"/>
+                        <xs:enumeration value="system"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
