@@ -6,9 +6,18 @@ import getpass
 import optparse
 import sys
 import warnings
+from lxml import etree
 
+# http://stackoverflow.com/a/17819981/6554056
+def validate(xmlparser, xmlfilename):
+    try:
+        with open(xmlfilename, 'r') as f:
+            etree.fromstring(f.read(), xmlparser) 
+        return True
+    except etree.XMLSchemaError:
+        return False
 
-def save_output_xml(ids, base_url, user, password):
+def save_output_xml(ids, base_url, user, password, xmlparser):
     # Code run to save the XML's outputed by API
     base_folder = "COAMS_XML"
     if not os.path.exists(base_folder):
@@ -24,6 +33,7 @@ def save_output_xml(ids, base_url, user, password):
         # Download the XML from the coams API (Change Auth to whatever works in product)
         warnings.filterwarnings("ignore")
         try:
+
             with open(output_file, 'wb') as handle:
                 url = base_url + str(type_id)
                 if user and password:
@@ -44,6 +54,17 @@ def save_output_xml(ids, base_url, user, password):
                     print "[Error] No Data Retrieved\n"
                 for block in r.iter_content(1024):
                     handle.write(block)
+
+            # validate XML file against XSD
+            print "Validating %s" % output_file
+            if validate(xmlparser, output_file):
+                print "%s is validated" % output_file
+            else:
+                print "%s doesn't validate" % output_file
+
+            print "=================================================="
+
+
         except Exception as e:
             print "\nSomething went wrong during file retrieval"
             print e
@@ -79,5 +100,17 @@ if __name__ == "__main__":
            'Network Zone': 15, 'Function': 16, 'Permission': 17, 'Role': 18, 'Data Publisher': 19,
            'Enterprise Application Roles': 20}
 
+    # ingest XSD file
+    print "Read schema file coams_schema.xsd."
+    try:
+        with open("./coams_schema.xsd", "r") as f:
+            schema_root = etree.XML(f.read())
+    except IOError:
+        print "Did not find ./coams_schema.xsd; please check for file. Exiting."
+        sys.exit()
+
+    my_schema = etree.XMLSchema(schema_root)
+    xmlparser = etree.XMLParser(schema = my_schema)
+
     # Get and Save the ouput XML from API Call
-    save_output_xml(IDs, base_url, user, password)
+    save_output_xml(IDs, base_url, user, password, xmlparser)
