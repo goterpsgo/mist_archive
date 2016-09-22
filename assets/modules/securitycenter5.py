@@ -2,9 +2,10 @@
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import json
+import jsonschema
 import datetime
 import mist_logging
-
+import pdb
 
 class SecurityCenter:
 
@@ -56,7 +57,22 @@ class SecurityCenter:
         asset_list = []
         headers = {'Content-Type': 'application/json', 'X-SecurityCenter': self.token}
         resp = self.analysis(headers, 'vuln', 'sumip', 'cumulative', 0, 2147483647)
+	# pdb.set_trace()
         if resp:
+	    # convert results dict to JSON data set
+	    results_json = json.dumps(resp['response']['results'])
+	    schema = open("/opt/mist/assets/modules/schema_sc5.json").read().strip()
+
+	    # use lazy validation to check data set validity
+	    try:
+		v = jsonschema.Draft4Validator(json.loads(schema))
+		for error in sorted(v.iter_errors(json.loads(results_json)), key=str):
+		    error = ["Bad asset data from " + self.server + ": " + error.message]
+		    self.log.error_publishing(error)
+	    except jsonschema.ValidationError as e:
+		print "[ValidationError] %s" % e.message
+		print results_json
+
             for asset in resp['response']['results']:
                 asset_dict = {}
                 # Get the info asset info we want
@@ -113,7 +129,6 @@ class SecurityCenter:
 
             # Check For API errors:
             self.log_api_error(response)
-
             return response
 
         except Exception, e:
