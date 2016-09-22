@@ -1,11 +1,9 @@
-
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import json
 import jsonschema
 import datetime
 import mist_logging
-import pdb
 
 class SecurityCenter:
 
@@ -57,7 +55,7 @@ class SecurityCenter:
         asset_list = []
         headers = {'Content-Type': 'application/json', 'X-SecurityCenter': self.token}
         resp = self.analysis(headers, 'vuln', 'sumip', 'cumulative', 0, 2147483647)
-	# pdb.set_trace()
+        
         if resp:
 	    # convert results dict to JSON data set
 	    results_json = json.dumps(resp['response']['results'])
