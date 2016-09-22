@@ -1,4 +1,3 @@
-
 import httplib
 import urllib2
 import urllib
@@ -6,7 +5,6 @@ import json
 import jsonschema
 import datetime
 import mist_logging
-import pdb
 
 class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
     '''Class to handle SSL certificate authentication.'''
@@ -69,7 +67,7 @@ class SecurityCenter:
         asset_list = []
         filters = {'tool': 'sumip','sourceType': 'cumulative', 'startOffset': 0, 'endOffset': 2147483647}
         resp = self.connect('vuln', 'query', filters)
-	# pdb.set_trace()
+        
         if resp:
 	    # convert results dict to JSON data set
 	    results_json = json.dumps(resp['results'])
