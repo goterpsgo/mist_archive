@@ -3,8 +3,10 @@ import httplib
 import urllib2
 import urllib
 import json
+import jsonschema
 import datetime
 import mist_logging
+import pdb
 
 class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
     '''Class to handle SSL certificate authentication.'''
@@ -67,7 +69,23 @@ class SecurityCenter:
         asset_list = []
         filters = {'tool': 'sumip','sourceType': 'cumulative', 'startOffset': 0, 'endOffset': 2147483647}
         resp = self.connect('vuln', 'query', filters)
+	# pdb.set_trace()
         if resp:
+	    # convert results dict to JSON data set
+	    results_json = json.dumps(resp['results'])
+            schema = open("/opt/mist/assets/modules/schema_sc4.json").read().strip()
+
+	    # use lazy validation to check data set validity
+            try:
+		v = jsonschema.Draft4Validator(json.loads(schema))
+                for error in sorted(v.iter_errors(json.loads(results_json)), key=str):
+			error = ["Bad asset data from " + self.server + ": " + error.message]
+			self.log.error_publishing(error)
+
+            except jsonschema.ValidationError as e:
+		print "[ValidationError] %s" % e.message
+		print results_json
+
             for asset in resp['results']:
                 asset_dict = {}
                 # Get the info asset info we want
