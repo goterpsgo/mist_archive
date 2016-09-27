@@ -20,7 +20,6 @@
                 .then(
                       function(users) {
                         $scope.users = users;
-                        return users;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;

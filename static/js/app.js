@@ -16,21 +16,31 @@
             .state('home', {
               url: '/',
               views : {
-                '_main' : {
+                  '_main' : {
                   templateUrl: 'static/html/home.view.html',
                     controller: 'Home.IndexController',
                     controllerAs: 'vm'
-                }
+                  }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Home.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('login', {
               url: '/login',
               views : {
-                '_main' : {
+                  '_main' : {
                   templateUrl: 'static/html/login.view.html',
                     controller: 'Login.IndexController',
                     controllerAs: 'vm'
-                }
+                  }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav_auth_none.view.html',
+                    controller: 'Home.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('signup', {
@@ -41,6 +51,11 @@
                     controller: 'Home.IndexController',
                     controllerAs: 'vm'
                 }
+                , '_nav' : {
+                    templateUrl: 'static/html/nav_auth_none.view.html',
+                    controller: 'Home.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('repostag', {
@@ -51,6 +66,11 @@
                     controller: 'Repostag.IndexController',
                     controllerAs: 'vm'
                 }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Home.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('assetstag', {
@@ -61,6 +81,11 @@
                     controller: 'Assetstag.IndexController',
                     controllerAs: 'vm'
                 }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Home.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('publish', {
@@ -71,6 +96,11 @@
                   controller: 'Publish.IndexController',
                   controllerAs: 'vm'
                 }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Home.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('admin', {
@@ -81,6 +111,11 @@
                   controller: 'Admin.IndexController',
                   controllerAs: 'vm'
                 }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Home.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('config', {
@@ -91,6 +126,11 @@
                   controller: 'Config.IndexController',
                   controllerAs: 'vm'
                 }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Home.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('tagactivities', {
@@ -101,6 +141,11 @@
                   controller: 'Tagactivities.IndexController',
                   controllerAs: 'vm'
                 }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Home.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('locallogs', {
@@ -111,6 +156,11 @@
                   controller: 'Locallogs.IndexController',
                   controllerAs: 'vm'
                 }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Home.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             });
 
