@@ -1,14 +1,14 @@
-<ul ng-if="users !== undefined" class="nav nav-tabs" style="padding-top: 32px;">
-  <li><a ui-sref="repostag">Repos Auto Tags</a></li>
-  <li><a ui-sref="assetstag">Assets Manual Tags</a></li>
-  <li><a ui-sref="publish">Publish</a></li>
+<ul ng-if="users !== undefined" class="nav nav-tabs" style="padding-top: 24px;">
   <span ng-repeat="u in users">
-    <span ng-if="u.username === username && (u.permission === 'Admin User' || u.permission === 'Super User')" class="nav nav-tabs">
+    <span ng-if="u.username === username && (u.permission === 'Admin User' || u.permission === 'Super User')" class="nav nav-tabs" style="display:inline-block;">
       <li><a ui-sref="admin">Admin</a></li>
       <li><a ui-sref="config">Config</a></li>
       <li><a ui-sref="tagactivities">Tag Activities</a></li>
       <li><a ui-sref="locallogs">Local Logs</a></li>
     </span>
   </span>
+  <li><a ui-sref="repostag">Repos Auto Tags</a></li>
+  <li><a ui-sref="assetstag">Assets Manual Tags</a></li>
+  <li><a ui-sref="publish">Publish</a></li>
   <li style="font-weight: bold;"><a ui-sref="login">Logout</a></li>
 </ul>
