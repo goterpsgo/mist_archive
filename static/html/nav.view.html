@@ -1,5 +1,5 @@
 <span ng-repeat="u in users">
-  <span ng-if="u.username === username" class="nav nav-pills" style="display:inline-block;">
+  <span ng-if="u.username === username">
       <span ng-if="u.permission === 'Admin User' || u.permission === 'Super User'">
         <ul class="nav nav-pills" style="display:inline-block; padding-top: 34px;">
           <li ng-class="{active: selectedTab == 1}"><a ui-sref="repostag" ng-click="selectedTab = 1;">Repos Auto Tags</a></li>
@@ -20,5 +20,5 @@
           <li style="font-weight: bold;"><a ui-sref="login">Logout</a></li>
         </ul>
       </span>
-    </span>
+  </span>
 </span>
