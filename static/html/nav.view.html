@@ -1,3 +1,24 @@
-<ul ng-repeat="m in menu_items" class="nav nav-tabs" style="display:inline-block; padding-top: 30px;">
-    <li><a ui-sref="{{m.state}}">{{m.text}}</a></li>
-</ul>
+<span ng-repeat="u in users">
+  <span ng-if="u.username === username" class="nav nav-pills" style="display:inline-block;">
+      <span ng-if="u.permission === 'Admin User' || u.permission === 'Super User'">
+        <ul class="nav nav-pills" style="display:inline-block; padding-top: 34px;">
+          <li ng-class="{active: selectedTab == 1}"><a ui-sref="repostag" ng-click="selectedTab = 1;">Repos Auto Tags</a></li>
+          <li ng-class="{active: selectedTab == 2}"><a ui-sref="assetstag" ng-click="selectedTab = 2;">Assets Manual Tags</a></li>
+          <li ng-class="{active: selectedTab == 3}"><a ui-sref="publish" ng-click="selectedTab = 3;">Publish</a></li>
+          <li ng-class="{active: selectedTab == 4}"><a ui-sref="admin" ng-click="selectedTab = 4;">Admin</a></li>
+          <li ng-class="{active: selectedTab == 5}"><a ui-sref="config" ng-click="selectedTab = 5;">Config</a></li>
+          <li ng-class="{active: selectedTab == 6}"><a ui-sref="tagactivities" ng-click="selectedTab = 6;">Tag Activities</a></li>
+          <li ng-class="{active: selectedTab == 7}"><a ui-sref="locallogs" ng-click="selectedTab = 7;">Local Logs</a></li>
+          <li style="font-weight: bold;"><a ui-sref="login">Logout</a></li>
+        </ul>
+      </span>
+      <span ng-if="u.permission !== 'Admin User' && u.permission !== 'Super User'">
+        <ul class="nav nav-pills" style="display:inline-block; padding-top: 34px;">
+          <li ng-class="{active: selectedTab == 1}"><a ui-sref="repostag" ng-click="selectedTab = 1;">Repos Auto Tags</a></li>
+          <li ng-class="{active: selectedTab == 2}"><a ui-sref="assetstag" ng-click="selectedTab = 2;">Assets Manual Tags</a></li>
+          <li ng-class="{active: selectedTab == 3}"><a ui-sref="publish" ng-click="selectedTab = 3;">Publish</a></li>
+          <li style="font-weight: bold;"><a ui-sref="login">Logout</a></li>
+        </ul>
+      </span>
+    </span>
+</span>

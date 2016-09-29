@@ -23,8 +23,11 @@
                   }
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
-                    controller: 'Home.IndexController',
-                    controllerAs: 'vm'
+                    controllerAs: 'vm',
+                    controller: function($scope, $state) {
+                        // may need this one day...
+                        $scope.selected = $state.current.name;
+                    }
                   }
               }
             })
