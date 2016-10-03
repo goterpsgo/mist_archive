@@ -2,7 +2,7 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import json
 import mist_logging
-
+import base64
 
 class SecurityCenter:
 
@@ -84,6 +84,8 @@ class SecurityCenter:
 
     def post(self, resource, headers, values={}):
         url = self.base_url + "/" + resource
+	    if 'password' in values:
+		    values['password'] = base64.b64decode(values['password'])
         try:
             if self.cert_group:
                 response = requests.post(url, json.dumps(values), headers=headers, cookies=self.cookies,
