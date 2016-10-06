@@ -6,17 +6,17 @@
         .controller('UserController', Controller);
 
     function Controller($scope, $sessionStorage, MistUsersService) {
-        if ($sessionStorage.currentUser) {
-            $scope.username = $sessionStorage.currentUser.username;
-            $scope.users = get_users();
-        }
 
-        // function initController() {
-        // };
+        initController();
+
+        function initController() {
+            if ($sessionStorage.currentUser) {
+                get_user_by_username($sessionStorage.currentUser.username);
+            }
+        };
 
         function get_stuff() {
             // return 'Here\'s more stuff';
-            console.log(['[17] Got here']);
             MistUsersService._get_stuff()
                 .then(
                     function(stuff) {
@@ -38,11 +38,10 @@
         }
 
         function get_user_by_id(id) {
-            MistUsersService._get_user_by_id(1)
+            MistUsersService._get_user_by_id(id)
                 .then(
-                      function(users) {
+                      function(user) {
                           $scope.user = user;
-                          return user;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
@@ -50,11 +49,11 @@
                 );
         }
 
-        function get_user_by_username() {
-            MistUsersService._get_user_by_username()
+        function get_user_by_username(username) {
+            MistUsersService._get_user_by_username(username)
                 .then(
-                      function(users) {
-                        $scope.users = users;
+                      function(user) {
+                            $scope.user = user;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
