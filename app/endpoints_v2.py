@@ -23,39 +23,53 @@ parser = reqparse.RequestParser()
 DBSession = scoped_session(sessionmaker(bind=main.engine))
 session = DBSession()
 
+def rs_users():
+    return session.query(main.MistUser).join(main.UserPermission, main.MistUser.permission_id == main.UserPermission.id)
+
+# TODO: refactor authenticate() into User class if possible
 class User(object):
-  def __init__(self, id, username, password):
-    self.id = id
-    self.username = username
-    self.password = password
+    # def __init__(self, id, username, password):
+    def __init__(self, **kwargs):
+        self.id = kwargs['id']
+        # self.username = kwargs['username']
+        # self.password = kwargs['password']
+        # self.username = username
+        # self.password = password
 
-  def __str__(self):
-    return "User(id='%s')" % self.id
+    def get(self):
+        r_user = rs_users().filter(main.MistUser.id == self.id).first()
+        if hasattr(r_user, 'username'):
+            user = {
+                  'id': r_user.id
+                , 'username': r_user.username
+                , 'permission_id': r_user.permission_id
+                , 'subject_dn': r_user.subjectDN
+                , 'first_name': r_user.firstName
+                , 'last_name': r_user.lastName
+                , 'organization': r_user.organization
+                , 'lockout': r_user.lockout
+                , 'permission': r_user.permission.name
+            }
+            return jsonify(user)
+        else:
+            return {"message": "No such user."}
 
-
-users = [
-  User(1, 'user1', 'abcxyz'),
-  User(2, 'user2', 'abcxyz'),
-]
-
-userid_table = {u.id: u for u in users}
+    # def __str__(self):
+    #     return "User(id='%s')" % self.id
 
 def authenticate(username, password):
-  user = session.query(main.MistUser)\
+    user = session.query(main.MistUser)\
       .filter(main.MistUser.username==username, main.MistUser.password==hashlib.sha256(password).hexdigest())\
       .first()
-  users = session.query()
-  if hasattr(user, 'username'):
+    users = session.query()
+    if hasattr(user, 'username'):
       return user
 
 def identity(payload):
-  user_id = payload['identity']
-  return userid_table.get(user_id, None)
+    user_id = payload['identity']
+    return User(id=user_id).get()
 
 jwt = JWT(this_app, authenticate, identity)
-
-def rs_users():
-    return session.query(main.MistUser).join(main.UserPermission, main.MistUser.permission_id == main.UserPermission.id)
 
 class TodoItem(Resource):
     def get(self, id):
