@@ -4,6 +4,7 @@ import json
 import jsonschema
 import datetime
 import mist_logging
+import base64
 
 class SecurityCenter:
 
