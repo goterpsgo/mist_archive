@@ -22,7 +22,7 @@ Start up
 
  (for development)
  ```
- $ cd /opt/mist_base/app
- $ uwsgi --py-autoreload 1 -s 0.0.0.0:8080 --protocol=http -w wsgi --static-map /static=/opt/mist_base/static
+ $ uwsgi --wsgi-file /opt/mist_base/app/wsgi.py --py-autoreload 1 -s 0.0.0.0:8080 --protocol=http -w wsgi --static-map /static=/opt/mist_base/static --honour-stdin
+ - --honour-stdin can be omitted if you don't need to see results sent to stdout.
  ```
  
