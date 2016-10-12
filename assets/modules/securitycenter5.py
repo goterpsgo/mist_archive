@@ -58,19 +58,19 @@ class SecurityCenter:
         resp = self.analysis(headers, 'vuln', 'sumip', 'cumulative', 0, 2147483647)
         
         if resp:
-	    # convert results dict to JSON data set
-	    results_json = json.dumps(resp['response']['results'])
-	    schema = open("/opt/mist/assets/modules/schema_sc5.json").read().strip()
+            # convert results dict to JSON data set
+            results_json = json.dumps(resp['response']['results'])
+            schema = open("/opt/mist/assets/modules/schema_sc5.json").read().strip()
 
-	    # use lazy validation to check data set validity
-	    try:
-		v = jsonschema.Draft4Validator(json.loads(schema))
-		for error in sorted(v.iter_errors(json.loads(results_json)), key=str):
-		    error = ["Bad asset data from " + self.server + ": " + error.message]
-		    self.log.error_publishing(error)
-	    except jsonschema.ValidationError as e:
-		print "[ValidationError] %s" % e.message
-		print results_json
+            # use lazy validation to check data set validity
+            try:
+                v = jsonschema.Draft4Validator(json.loads(schema))
+                for error in sorted(v.iter_errors(json.loads(results_json)), key=str):
+                    error = ["Bad asset data from " + self.server + ": " + error.message]
+                    self.log.error_publishing(error)
+            except jsonschema.ValidationError as e:
+                print "[ValidationError] %s" % e.message
+                print results_json
 
             for asset in resp['response']['results']:
                 asset_dict = {}
@@ -136,8 +136,6 @@ class SecurityCenter:
 
     def post(self, resource, headers, values={}):
         url = self.base_url + "/" + resource
-        if 'password' in values:
-            values['password'] = base64.b64decode(values['password'])
         try:
             if self.cert_group:
                 response = requests.post(url, json.dumps(values), headers=headers, cookies=self.cookies,
@@ -153,4 +151,3 @@ class SecurityCenter:
         except Exception, e:
             self.log_exception_error(e)
             return None
-
