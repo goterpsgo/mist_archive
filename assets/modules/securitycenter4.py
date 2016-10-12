@@ -69,20 +69,19 @@ class SecurityCenter:
         resp = self.connect('vuln', 'query', filters)
         
         if resp:
-	    # convert results dict to JSON data set
-	    results_json = json.dumps(resp['results'])
+            # convert results dict to JSON data set
+            results_json = json.dumps(resp['results'])
             schema = open("/opt/mist/assets/modules/schema_sc4.json").read().strip()
 
-	    # use lazy validation to check data set validity
+            # use lazy validation to check data set validity
             try:
-		v = jsonschema.Draft4Validator(json.loads(schema))
+                v = jsonschema.Draft4Validator(json.loads(schema))
                 for error in sorted(v.iter_errors(json.loads(results_json)), key=str):
-			error = ["Bad asset data from " + self.server + ": " + error.message]
-			self.log.error_publishing(error)
-
+                    error = ["Bad asset data from " + self.server + ": " + error.message]
+                    self.log.error_publishing(error)
             except jsonschema.ValidationError as e:
-		print "[ValidationError] %s" % e.message
-		print results_json
+                print "[ValidationError] %s" % e.message
+                print results_json
 
             for asset in resp['results']:
                 asset_dict = {}
