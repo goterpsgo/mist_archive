@@ -12,6 +12,7 @@ Summary:
 
 Installation
  - Clone into /opt/mist_base
+   - If needed, install dependencies using pip: pip install -r /opt/mist_base/requirements.txt
  - Directories are as follows:
    - app: the Python/Flask-based scripts/API endpoints
    - certificates: used for database connectivity
