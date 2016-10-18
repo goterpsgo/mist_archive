@@ -5,7 +5,6 @@ import urllib
 import json
 import mist_logging
 
-
 class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
     '''Class to handle SSL certificate authentication.'''
     def __init__(self, key=None, cert=None):
@@ -42,7 +41,6 @@ class SecurityCenter:
         else:
             data = {'username': username, 'password': password}
             resp = self.connect('auth', 'login', sc_input=data)
-
         self.token, self.cookie = resp['token'], resp['sessionID']
 
     def get_ip_info(self, data):
@@ -91,4 +89,3 @@ class SecurityCenter:
                 error = ["Error connecting to ", self.server, " with credentials provided: ", repr(e)]
                 self.log.error_publishing(error)
             return None
-

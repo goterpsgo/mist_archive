@@ -23,6 +23,7 @@ class SecurityCenter:
     def login(self, username=None, password=None):
         headers = {'Content-Type': 'application/json'}
         if username and password:
+            #password = base64.b64decode(password)
             values = {'username': username, 'password': password}
             resp = self.post("token", headers, values=values)
         else:
@@ -84,8 +85,6 @@ class SecurityCenter:
 
     def post(self, resource, headers, values={}):
         url = self.base_url + "/" + resource
-        if 'password' in values:
-            values['password'] = base64.b64decode(values['password'])
         try:
             if self.cert_group:
                 response = requests.post(url, json.dumps(values), headers=headers, cookies=self.cookies,

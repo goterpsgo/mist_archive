@@ -25,7 +25,6 @@ import config
 from sqlalchemy import *
 import pull_assets
 
-
 def get_asset_list(asset_dict):
     asset_id_list = []
     for sc, repoDict in asset_dict.iteritems():

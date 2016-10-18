@@ -3,6 +3,7 @@ import os
 import securitycenter4
 import securitycenter5
 import base64
+import pdb
 
 # databse stuff
 import sys
@@ -38,7 +39,7 @@ class GatherSCData:
         results = connection.execute(sql)
         sc_details = {}
         for result in results:
-            sc_details = {'server': server, 'version': result[0], 'username': result[1], 'password': result[2],
+            sc_details = {'server': server, 'version': result[0], 'username': result[1], 'password': base64.b64decode(result[2]),
                           'cert': result[3], 'key': result[4]}
         return sc_details
 
@@ -55,6 +56,7 @@ class GatherSCData:
             if sc_details['cert']:
                 self.sc.login()
             else:
+                # pdb.set_trace()
                 self.sc.login(sc_details['username'], sc_details['password'])
 
     def get_ip_info(self, data):
@@ -64,4 +66,3 @@ class GatherSCData:
     def query(self, module, action, data):
         results = self.sc.query(module, action, data)
         return results
-
