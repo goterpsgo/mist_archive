@@ -144,66 +144,67 @@ class ARF:
         scanDate = self.getScanDate(assetID)
         #print type(get_localzone())
         #tz = pytz.timezone(get_localzone())
-        formatedScanDate = datetime.datetime.fromtimestamp(scanDate, get_localzone()).strftime("%Y-%m-%dT%H:%M:%S%z")
-        scan_date = formatedScanDate[:-2] + ":" + formatedScanDate[-2:]
-        device = ET.SubElement(reportObject, self.nsAR + "device", timestamp=scan_date)
-        #get hostname of MIST machine
-        hostname = socket.gethostname()
-        #build ID reference
-        deviceID = ET.SubElement(device, self.nsDevice + "device_ID")
-        ET.SubElement(deviceID, self.nsCNDC + "resource").text = hostname
-        ET.SubElement(deviceID, self.nsCNDC + "record_identifier").text = str(assetID)
-        #Device Identifiers FQDN only if it exists
-        dnsExists, fqdn = self.getFQDN(assetID)
-        if dnsExists and not (fqdn == ""):
-            deviceIdentifier = ET.SubElement(device, self.nsDevice + "identifiers")
-            deviceFQDN = ET.SubElement(deviceIdentifier, self.nsDevice + "FQDN", source="DNS")
-            ET.SubElement(deviceFQDN, self.nsDevice + "realm")
-            ET.SubElement(deviceFQDN, self.nsDevice + "host_name").text = fqdn
-        #operational Attributes
-        #deviceOpAttr = ET.SubElement(device, self.nsDevice + "operational_attributes")
-        #ET.SubElement(deviceOpAttr, self.nsCNDC + "resource").text = hostname
-        #ET.SubElement(deviceOpAttr, self.nsCNDC + "record_identifier").text = str(attributeSet)
-        #Configuration
-        deviceConfig = ET.SubElement(device, self.nsDevice + "configuration")
-        #Network config
-        mac, ip = self.getIPMAC(assetID)
-        if ip and mac:
-            deviceNetConfig = ET.SubElement(deviceConfig, self.nsDevice + "network_configuration")
-            ET.SubElement(deviceNetConfig, self.nsDevice + "network_interface_ID").text = ip
-            deviceHostNet = ET.SubElement(deviceNetConfig, self.nsDevice + "host_network_data")
-            ET.SubElement(deviceHostNet, self.nsDevice + "connection_mac_address").text = mac
-            deviceConnectionIP = ET.SubElement(deviceHostNet, self.nsDevice + "connection_ip")
-            ET.SubElement(deviceConnectionIP, self.nsCNDC + "IPv4").text = ip
-        #CPE Config
-        osCPE = self.getOS(assetID)
-        if osCPE:
-            deviceCPEInventory = ET.SubElement(deviceConfig, self.nsDevice + "cpe_inventory")
-            deviceCPERecord = ET.SubElement(deviceCPEInventory, self.nsDevice + "cpe_record")
-            cpePlatformName = ET.SubElement(deviceCPERecord, self.nsCPE + "platformName")
-            ET.SubElement(cpePlatformName, self.nsCPE + "assessedName", name=osCPE)
+        if (scanDate != None):
+            formatedScanDate = datetime.datetime.fromtimestamp(scanDate, get_localzone()).strftime("%Y-%m-%dT%H:%M:%S%z")
+            scan_date = formatedScanDate[:-2] + ":" + formatedScanDate[-2:]
+            device = ET.SubElement(reportObject, self.nsAR + "device", timestamp=scan_date)
+            #get hostname of MIST machine
+            hostname = socket.gethostname()
+            #build ID reference
+            deviceID = ET.SubElement(device, self.nsDevice + "device_ID")
+            ET.SubElement(deviceID, self.nsCNDC + "resource").text = hostname
+            ET.SubElement(deviceID, self.nsCNDC + "record_identifier").text = str(assetID)
+            #Device Identifiers FQDN only if it exists
+            dnsExists, fqdn = self.getFQDN(assetID)
+            if dnsExists and not (fqdn == ""):
+                deviceIdentifier = ET.SubElement(device, self.nsDevice + "identifiers")
+                deviceFQDN = ET.SubElement(deviceIdentifier, self.nsDevice + "FQDN", source="DNS")
+                ET.SubElement(deviceFQDN, self.nsDevice + "realm")
+                ET.SubElement(deviceFQDN, self.nsDevice + "host_name").text = fqdn
+            #operational Attributes
+            #deviceOpAttr = ET.SubElement(device, self.nsDevice + "operational_attributes")
+            #ET.SubElement(deviceOpAttr, self.nsCNDC + "resource").text = hostname
+            #ET.SubElement(deviceOpAttr, self.nsCNDC + "record_identifier").text = str(attributeSet)
+            #Configuration
+            deviceConfig = ET.SubElement(device, self.nsDevice + "configuration")
+            #Network config
+            mac, ip = self.getIPMAC(assetID)
+            if ip and mac:
+                deviceNetConfig = ET.SubElement(deviceConfig, self.nsDevice + "network_configuration")
+                ET.SubElement(deviceNetConfig, self.nsDevice + "network_interface_ID").text = ip
+                deviceHostNet = ET.SubElement(deviceNetConfig, self.nsDevice + "host_network_data")
+                ET.SubElement(deviceHostNet, self.nsDevice + "connection_mac_address").text = mac
+                deviceConnectionIP = ET.SubElement(deviceHostNet, self.nsDevice + "connection_ip")
+                ET.SubElement(deviceConnectionIP, self.nsCNDC + "IPv4").text = ip
+            #CPE Config
+            osCPE = self.getOS(assetID)
+            if osCPE:
+                deviceCPEInventory = ET.SubElement(deviceConfig, self.nsDevice + "cpe_inventory")
+                deviceCPERecord = ET.SubElement(deviceCPEInventory, self.nsDevice + "cpe_record")
+                cpePlatformName = ET.SubElement(deviceCPERecord, self.nsCPE + "platformName")
+                ET.SubElement(cpePlatformName, self.nsCPE + "assessedName", name=osCPE)
 
-        #Get values on Security Center
-        ip, server, repo = self.getSCInfo(assetID)
-        sc = GatherSCData()
-        #Login to the SC for the asset
-        sc.login(server)
-        #query the SC on the asset
-        data = {'ip':ip, 'repositories':[{'id':repo}]}
-        results = sc.get_ip_info(data)
-        #Set the values from Security Center
-        if results:
-            scValues = results
-            #retrieve the fields needed
-            tagValues = {'LastCredScanPluginVers':scValues['pluginSet'], 'ScanPolicy':scValues['policyName'],
-                         'LastCredScan':scValues['lastAuthRun'], 'BIOSGUID':scValues['biosGUID'],
-                         'McAfeeAgentGUID':scValues['mcafeeGUID']}
-            #Make the Tags if they exists
-            for tag, value in tagValues.iteritems():
-                if value != "":
-                    if tag == 'LastCredScan':
-                        value = datetime.datetime.fromtimestamp(float(value)).strftime('%Y-%m-%dT%H:%M:%S%z')
-                    ET.SubElement(device, self.nsTaggedValue + "taggedString", name=tag, value=value)
+            #Get values on Security Center
+            ip, server, repo = self.getSCInfo(assetID)
+            sc = GatherSCData()
+            #Login to the SC for the asset
+            sc.login(server)
+            #query the SC on the asset
+            data = {'ip':ip, 'repositories':[{'id':repo}]}
+            results = sc.get_ip_info(data)
+            #Set the values from Security Center
+            if results:
+                scValues = results
+                #retrieve the fields needed
+                tagValues = {'LastCredScanPluginVers':scValues['pluginSet'], 'ScanPolicy':scValues['policyName'],
+                             'LastCredScan':scValues['lastAuthRun'], 'BIOSGUID':scValues['biosGUID'],
+                             'McAfeeAgentGUID':scValues['mcafeeGUID']}
+                #Make the Tags if they exists
+                for tag, value in tagValues.iteritems():
+                    if value != "":
+                        if tag == 'LastCredScan':
+                            value = datetime.datetime.fromtimestamp(float(value)).strftime('%Y-%m-%dT%H:%M:%S%z')
+                        ET.SubElement(device, self.nsTaggedValue + "taggedString", name=tag, value=value)
     
     def checkAsset(self, assetID, timeFormat):
         #Get the last time the asset was published
