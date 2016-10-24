@@ -49,6 +49,10 @@ class SecurityCenter:
         else:
             return False
 
+    # method stub to maintain compatibilty with SC5 module
+    def logout(self):
+        return None
+
     def get_sc_id(self):
         resp = self.connect('system', 'init')
         if resp:

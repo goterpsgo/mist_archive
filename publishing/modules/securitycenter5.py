@@ -23,14 +23,17 @@ class SecurityCenter:
     def login(self, username=None, password=None):
         headers = {'Content-Type': 'application/json'}
         if username and password:
-            #password = base64.b64decode(password)
-            values = {'username': username, 'password': password}
+            values = {'username': username, 'password': password, 'releaseSession': "true"}
             resp = self.post("token", headers, values=values)
         else:
             resp = self.get("system", headers)
         if resp:
             self.token = resp.json()['response']['token']
             self.cookies = {'TNS_SESSIONID': resp.cookies['TNS_SESSIONID']}
+
+    def logout(self):
+        self.http_delete("token")
+        return None
 
     def get_ip_info(self, data):
         headers = {'Content-Type': 'application/json', 'X-SecurityCenter': self.token}
@@ -92,6 +95,20 @@ class SecurityCenter:
             else:
                 response = requests.post(url, json.dumps(values), headers=headers, cookies=self.cookies,
                                          verify=self.ssl_verify)
+
+            # Check For API errors:
+            self.log_api_error(response)
+
+            return response
+
+        except Exception, e:
+            self.log_exception_error(e)
+            return None
+
+    def http_delete(self, resource):
+        url = self.base_url + "/" + resource
+        try:
+            response = requests.delete(url)
 
             # Check For API errors:
             self.log_api_error(response)

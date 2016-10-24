@@ -25,7 +25,7 @@ class SecurityCenter:
     def login(self, username=None, password=None):
         headers = {'Content-Type': 'application/json'}
         if username and password:
-            values = {'username': username, 'password': password}
+            values = {'username': username, 'password': password, 'releaseSession': "true"}
             resp = self.post("token", headers, values=values)
         else:
             resp = self.get("system", headers)
@@ -35,6 +35,9 @@ class SecurityCenter:
             return True
         else:
             return False
+
+    def logout(self):
+        self.http_delete("token")
 
     def get_sc_id(self):
         headers = {'Content-Type': 'application/json'}
@@ -144,6 +147,20 @@ class SecurityCenter:
                 response = requests.post(url, json.dumps(values), headers=headers, cookies=self.cookies,
                                          verify=self.ssl_verify)
             # Check for API errors:
+            self.log_api_error(response)
+
+            return response
+
+        except Exception, e:
+            self.log_exception_error(e)
+            return None
+
+    def http_delete(self, resource):
+        url = self.base_url + "/" + resource
+        try:
+            response = requests.delete(url)
+
+            # Check For API errors:
             self.log_api_error(response)
 
             return response
