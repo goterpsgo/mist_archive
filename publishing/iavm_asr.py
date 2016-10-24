@@ -178,6 +178,7 @@ class IAVM_ASR:
                 #Gather All the mitigated cve's
                 data = {'tool':'vulndetails', 'sourceType':'patched', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
                 iavmMitigatedDict = self.querySC(sc, assetList, data, iavmMitigatedDict)
+            sc.logout
         
         #Write summRes for each CVE fail
         iavmCount = 0

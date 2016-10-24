@@ -175,6 +175,7 @@ class CVE_ASR:
                 #Gather All the mitigated cve's
                 data = {'tool':'vulndetails', 'sourceType':'patched', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
                 cveMitigatedDict = self.querySC(sc, assetList, data, cveMitigatedDict)
+            sc.logout
 
         # Write summRes for each CVE fail
         cveCount = 0

@@ -200,6 +200,7 @@ class Plugin_ASR:
                     infoFilters = [{'filterName': 'repositoryIDs', 'operator': '=', 'value': repo}, {'filterName':'severity', 'operator':'=', 'value': 0}, {'filterName':'lastSeen', 'operator': '=', 'value':'0:' + str(interval)}]
                 data = {'tool':'vulndetails', 'sourceType':'cumulative', 'startOffset':0, 'endOffset': 2147483647, 'filters': infoFilters}
                 pluginInfoDict = self.querySC(sc, assetList, data, pluginInfoDict)
+            sc.logout()
         
         pluginCount = 0
         pluginCount = pluginCount + self.buildSummResult(benchmark, pluginFailDict, pluginCount, "fail",

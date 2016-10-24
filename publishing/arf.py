@@ -192,6 +192,7 @@ class ARF:
             #query the SC on the asset
             data = {'ip':ip, 'repositories':[{'id':repo}]}
             results = sc.get_ip_info(data)
+            sc.logout
             #Set the values from Security Center
             if results:
                 scValues = results

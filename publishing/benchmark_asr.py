@@ -197,6 +197,7 @@ class Benchmark_ASR:
                 #Gather All the mitigated cve's
                 data = {'tool':'vulndetails', 'sourceType':'patched', 'startOffset':0, 'endOffset': 2147483647, 'filters': filters}
                 cceBenchmarkDict = self.querySC(sc, assetList, data, cceBenchmarkDict)
+            sc.logout
         
         benchmarkCount = 0
         for benchmark_sc, cceDict in cceBenchmarkDict.iteritems():
