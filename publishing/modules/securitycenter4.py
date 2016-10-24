@@ -4,7 +4,6 @@ import urllib2
 import urllib
 import json
 import mist_logging
-import pdb
 
 class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
     '''Class to handle SSL certificate authentication.'''
@@ -37,7 +36,6 @@ class SecurityCenter:
         self.cookie = ''
 
     def login(self, username=None, password=None):
-        # pdb.set_trace()
         if self.cert:
             resp = self.connect('system', 'init')
         else:
