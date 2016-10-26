@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template, current_app, make_response
 from flask_restful import Resource, Api, reqparse, abort
 from flask_jwt import JWT, jwt_required, current_identity
-from werkzeug.security import safe_str_cmp
 from mist_main import return_app
 from sqlalchemy.orm import sessionmaker, scoped_session
 from common.models import main, base_model
@@ -85,11 +84,12 @@ def create_new_token(request):
     incoming_token = request.headers.get('authorization').split()[1]
 
     # value of this_app.config['SECRET_KEY'] is implicitly provided to flask_jwt.jwt_decode_callback()
+    # 'SECRET_KEY' is used to decode and validate token
     decoded_token = jwt.jwt_decode_callback(incoming_token)
 
     # create _Identity instance for use with flask_jwt.jwt_encode_callback()
     obj_identity = _Identity(decoded_token["identity"])
-    return "JWT %s" % jwt.jwt_encode_callback(obj_identity)
+    return jwt.jwt_encode_callback(obj_identity)
 
 
 class TodoItem(Resource):
@@ -106,6 +106,7 @@ class SecureMe(Resource):
 class Users(Resource):
     @jwt_required()
     def get(self):
+        _new_token = create_new_token(request)
         # rs_users = session.query(main.MistUser).join(main.UserPermission, main.MistUser.permission_id == main.UserPermission.id)
         users = []
         for r_user in rs_users():
@@ -120,13 +121,14 @@ class Users(Resource):
                 , 'lockout': r_user.lockout
                 , 'permission': r_user.permission.name
             }
-            users.append(user)
+            users.append(user)  # TODO: will need to add _new_token to response data set
         return jsonify(users), 201, {'Authorization': create_new_token(request)}    # TODO: will need to test this mechanism - JWT 14 Oct 2016
 
 
 class UserById(Resource):
     @jwt_required()
     def get(self, id):
+        _new_token = create_new_token(request)
         r_user = rs_users().filter(main.MistUser.id == id).first()
         if hasattr(r_user, 'username'):
             user = {
@@ -139,15 +141,17 @@ class UserById(Resource):
                 , 'organization': r_user.organization
                 , 'lockout': r_user.lockout
                 , 'permission': r_user.permission.name
+                , 'Authorization': _new_token
             }
-            return user, 201, {'Authorization': create_new_token(request)}
+            return user, 201, {'Authorization': _new_token}
         else:
-            return {"message": "No such user."}
+            return {"message": "No such user."}, 201, {'Authorization': _new_token}
 
 
 class UserByUsername(Resource):
     @jwt_required()
     def get(self, username):
+        _new_token = create_new_token(request)
         r_user = rs_users().filter(main.MistUser.username == username).first()
         if hasattr(r_user, 'username'):
             user = {
@@ -160,10 +164,11 @@ class UserByUsername(Resource):
                 , 'organization': r_user.organization
                 , 'lockout': r_user.lockout
                 , 'permission': r_user.permission.name
+                , 'Authorization': _new_token
             }
-            return user, 201, {'Authorization': create_new_token(request)}
+            return user, 201, {'Authorization': _new_token, 'foobar': 'blah blah'}
         else:
-            return {"message": "No such user."}
+            return {"message": "No such user."}, 201, {'Authorization': _new_token, 'foobar': 'blah blah'}
 
 
 class Signup(Resource):

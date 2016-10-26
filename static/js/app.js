@@ -2,12 +2,12 @@
     'use strict';
 
     angular
-        .module('app', ['ui.router', 'ngMessages', 'ngStorage', 'ngAnimate', 'ngTouch', 'ui.bootstrap'])
+        .module('app', ['ui.router', 'ngMessages', 'ngStorage', 'ngAnimate', 'ngTouch', 'ui.bootstrap', 'satellizer'])
         .config(config)
         .run(run);
 
     // all providers need to be defined in config()
-    function config($stateProvider, $httpProvider, $urlRouterProvider, $locationProvider) {
+    function config($stateProvider, $httpProvider, $urlRouterProvider, $authProvider, $locationProvider) {
         // default route
         $urlRouterProvider.otherwise("/");
 
@@ -171,16 +171,24 @@
         // via the $httpProvider.defaults.headers configuration object
         // https://docs.angularjs.org/api/ng/service/$http
         // https://docs.angularjs.org/api/ng/provider/$httpProvider
+        // https://www.toptal.com/web/cookie-free-authentication-with-json-web-tokens-an-example-in-laravel-and-angularjs
         $httpProvider.interceptors.push(['$q', '$location', '$localStorage', '$sessionStorage',
             function ($q, $location, $localStorage, $sessionStorage) {
                 return {
                    'request': function (config) {
                        config.headers = config.headers || {};
                        if ($localStorage.currentUser && $sessionStorage.currentUser) {
-                           config.headers.Authorization = 'JWT ' + $localStorage.currentUser.token;
+                           config.headers.Authorization = 'JWT ' + $localStorage.currentUser.token.split(' ').pop();
                            // console.log('[52] currentUser: ' + $sessionStorage.currentUser.username);
                        }
                        return config;
+                   },
+                   'response': function (response) {
+                       // best practice should be using response.config.headers.Authorization, not response.data.Authorization
+                       if ((typeof(response.data.Authorization) !== 'undefined') && (typeof($localStorage.currentUser) !== 'undefined')) {
+                            $localStorage.currentUser.token = 'JWT ' + response.data.Authorization.split(' ').pop();
+                       }
+                       return response;
                    },
                    'responseError': function (response) {
                        console.log('[status] ' + response.status);
