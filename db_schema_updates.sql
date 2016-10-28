@@ -15,7 +15,7 @@ values
 
 # Update mistUsers
 alter table mistUsers
-  ADD permission_id INT UNSIGNED,
+  ADD permission_id INT UNSIGNED NOT NULL DEFAULT 1,
   ADD CONSTRAINT FOREIGN KEY (permission_id) REFERENCES userPermissions(id)
 ;
 
@@ -26,3 +26,23 @@ SET permission_id = (
   where name = 'Super User'
 )
 WHERE username = 'admin';
+
+# # NAME: sp_get_user
+# # INPUT: mistUser id (INT) or username value (VARCHAR) or null
+# # OUTPUT: 1st record that matches input else null set or all records
+# NOTE: not used since sqlalchemy wasn't really designed to be used with stored procedures, but kept as reference - JWT Oct 2016
+# DELIMITER $$
+# DROP PROCEDURE IF EXISTS sp_get_user;
+# CREATE PROCEDURE sp_get_user(
+#     IN _user VARCHAR(200)
+# )
+#   BEGIN
+#     SELECT mu.id as mistUser_id, mu.username, mu.permission, mu.subjectDN, mu.firstName, mu.lastName, mu.organization, mu.lockout, mu.permission_id
+#       , up.name as permission_name
+#     FROM mistUsers mu
+#       LEFT JOIN userPermissions up on mu.permission = up.id
+#     WHERE
+#     IF (_user IS NOT NULL, IF (_user REGEXP '^[0-9]$', mu.id = CAST(_user AS UNSIGNED INT), mu.username = _user), 1=1)
+#     ;
+#   END $$
+# DELIMITER ;
