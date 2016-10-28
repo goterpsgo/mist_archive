@@ -11,7 +11,7 @@
 
         function initController() {
             if ($sessionStorage.currentUser) {
-                get_user_by_username($sessionStorage.currentUser.username);
+                get_user($sessionStorage.currentUser.username);
             }
         };
 
@@ -29,7 +29,7 @@
             MistUsersService._get_users()
                 .then(
                       function(users) {
-                          $scope.users = users;
+                          $scope.users = users.users_list;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
@@ -37,23 +37,11 @@
                 );
         }
 
-        function get_user_by_id(id) {
-            MistUsersService._get_user_by_id(id)
+        function get_user(id) {
+            MistUsersService._get_user(id)
                 .then(
                       function(user) {
-                          $scope.user = user;
-                      }
-                    , function(err) {
-                        $scope.status = 'Error loading data: ' + err.message;
-                      }
-                );
-        }
-
-        function get_user_by_username(username) {
-            MistUsersService._get_user_by_username(username)
-                .then(
-                      function(user) {
-                            $scope.user = user;
+                          $scope.user = user.users_list[0];
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;

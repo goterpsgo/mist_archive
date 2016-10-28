@@ -5,6 +5,7 @@ from mist_main import return_app
 from sqlalchemy.orm import sessionmaker, scoped_session
 from common.models import main, base_model
 import hashlib
+import re
 import config
 import json
 import requests
@@ -92,6 +93,21 @@ def create_new_token(request):
     return jwt.jwt_encode_callback(obj_identity)
 
 
+def create_user_dict(obj_user):
+    user = {
+          'id': obj_user.id
+        , 'username': obj_user.username
+        , 'permission_id': obj_user.permission_id
+        , 'subject_dn': obj_user.subjectDN
+        , 'first_name': obj_user.firstName
+        , 'last_name': obj_user.lastName
+        , 'organization': obj_user.organization
+        , 'lockout': obj_user.lockout
+        , 'permission': obj_user.permission.name
+    }
+    return user
+
+
 class TodoItem(Resource):
     def get(self, id):
         return {'task': 'Say "Hello, World!!!"'}
@@ -105,71 +121,29 @@ class SecureMe(Resource):
 
 class Users(Resource):
     @jwt_required()
-    def get(self):
-        _new_token = create_new_token(request)
-        # rs_users = session.query(main.MistUser).join(main.UserPermission, main.MistUser.permission_id == main.UserPermission.id)
-        users = []
-        for r_user in rs_users():
-            user = {
-                  'id': r_user.id
-                , 'username': r_user.username
-                , 'permission_id': r_user.permission_id
-                , 'subject_dn': r_user.subjectDN
-                , 'first_name': r_user.firstName
-                , 'last_name': r_user.lastName
-                , 'organization': r_user.organization
-                , 'lockout': r_user.lockout
-                , 'permission': r_user.permission.name
-            }
-            users.append(user)  # TODO: will need to add _new_token to response data set
-        return jsonify(users), 201, {'Authorization': create_new_token(request)}    # TODO: will need to test this mechanism - JWT 14 Oct 2016
+    def get(self, _user=None):
+        rs_dict = dict()    # used to hold and eventually return users_list[] recordset and associated metadata
+        rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
+        # query for user/users
+        rs_users_handle = rs_users()
+        r_single_user = None
+        if _user is not None:
+            if re.match('^[0-9]+$', _user):
+                r_single_user = rs_users_handle.filter(main.MistUser.id == int(_user)).first()
+            else:
+                r_single_user = rs_users_handle.filter(main.MistUser.username == _user).first()
 
-class UserById(Resource):
-    @jwt_required()
-    def get(self, id):
-        _new_token = create_new_token(request)
-        r_user = rs_users().filter(main.MistUser.id == id).first()
-        if hasattr(r_user, 'username'):
-            user = {
-                  'id': r_user.id
-                , 'username': r_user.username
-                , 'permission_id': r_user.permission_id
-                , 'subject_dn': r_user.subjectDN
-                , 'first_name': r_user.firstName
-                , 'last_name': r_user.lastName
-                , 'organization': r_user.organization
-                , 'lockout': r_user.lockout
-                , 'permission': r_user.permission.name
-                , 'Authorization': _new_token
-            }
-            return user, 201, {'Authorization': _new_token}
+        # add results to users_list[]
+        users_list = []
+        if _user is None:
+            for r_user in rs_users():
+                users_list.append(create_user_dict(r_user))
         else:
-            return {"message": "No such user."}, 201, {'Authorization': _new_token}
+            users_list.append(create_user_dict(r_single_user))
+        rs_dict['users_list'] = users_list  # add users_list[] to rs_dict
 
-
-class UserByUsername(Resource):
-    @jwt_required()
-    def get(self, username):
-        _new_token = create_new_token(request)
-        r_user = rs_users().filter(main.MistUser.username == username).first()
-        if hasattr(r_user, 'username'):
-            user = {
-                  'id': r_user.id
-                , 'username': r_user.username
-                , 'permission_id': r_user.permission_id
-                , 'subject_dn': r_user.subjectDN
-                , 'first_name': r_user.firstName
-                , 'last_name': r_user.lastName
-                , 'organization': r_user.organization
-                , 'lockout': r_user.lockout
-                , 'permission': r_user.permission.name
-                , 'Authorization': _new_token
-            }
-            return user, 201, {'Authorization': _new_token, 'foobar': 'blah blah'}
-        else:
-            return {"message": "No such user."}, 201, {'Authorization': _new_token, 'foobar': 'blah blah'}
-
+        return jsonify(rs_dict) # return rs_dict
 
 class Signup(Resource):
     def post(self):
@@ -217,12 +191,9 @@ class DeleteUser(Resource):
 
 api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
-api.add_resource(Signup, '/signup')
 api.add_resource(Logout, '/logout')
+api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(AddUser, '/adduser')
 api.add_resource(UpdateUser, '/updateuser/<int:id>')
 api.add_resource(DisableUser, '/disableuser/<int:id>')
 api.add_resource(DeleteUser, '/deleteuser/<int:id>')
-api.add_resource(Users, '/users')
-api.add_resource(UserById, '/userbyid/<int:id>')
-api.add_resource(UserByUsername, '/userbyusername/<string:username>')

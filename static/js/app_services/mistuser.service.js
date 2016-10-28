@@ -8,8 +8,7 @@
     function Service($http, $q) {
         var factory = {
               _get_users: get_users
-            , _get_user_by_id: get_user_by_id
-            , _get_user_by_username: get_user_by_username
+            , _get_user: get_user
             , _create_user: create_user
             , _update_user: update_user
             , _delete_user: delete_user
@@ -38,20 +37,9 @@
             return deferred.promise;
         }
 
-        function get_user_by_id(id) {
+        function get_user(id) {
             var deferred = $q.defer();
-            $http.get('http://10.11.1.239:8080/api/v2/userbyid/' + id)
-                .then(
-                    function(response) {
-                        deferred.resolve(response.data);
-                    }
-                );
-            return deferred.promise;
-        }
-
-        function get_user_by_username(username) {
-            var deferred = $q.defer();
-            $http.get('http://10.11.1.239:8080/api/v2/userbyusername/' + username)
+            $http.get('http://10.11.1.239:8080/api/v2/user/' + id)
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
