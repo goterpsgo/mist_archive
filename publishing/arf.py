@@ -4,6 +4,7 @@ import base64
 import datetime
 import pytz
 import os
+import re
 
 #from xml.etree import ElementTree as ET
 from lxml import etree as ET
@@ -175,7 +176,10 @@ class ARF:
                 deviceHostNet = ET.SubElement(deviceNetConfig, self.nsDevice + "host_network_data")
                 ET.SubElement(deviceHostNet, self.nsDevice + "connection_mac_address").text = mac
                 deviceConnectionIP = ET.SubElement(deviceHostNet, self.nsDevice + "connection_ip")
-                ET.SubElement(deviceConnectionIP, self.nsCNDC + "IPv4").text = ip
+                ipType = "IPv6"
+                if re.match('^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9]{1,2})){3}$', ip):
+                    ipType = "IPv4"
+                ET.SubElement(deviceConnectionIP, self.nsCNDC + ipType).text = ip
             #CPE Config
             osCPE = self.getOS(assetID)
             if osCPE:
@@ -310,4 +314,3 @@ class ARF:
             return True
         else:
             return False
-
