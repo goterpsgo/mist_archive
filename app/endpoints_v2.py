@@ -165,7 +165,6 @@ class Users(Resource):
         main.session.add(new_user)
         main.session.commit()
         main.session.flush()
-        new_user_id = new_user.id
 
         for user_repo in form_fields['repos']:
             new_user_access = main.UserAccess(
@@ -184,6 +183,18 @@ class Users(Resource):
 
         print form_fields
         return {'response': 'got here: %s' % _user}
+
+    def delete(selfself, _user=None):
+        if re.match('^[0-9]+$', _user):
+            # use int value for .id
+            main.session.query(main.UserAccess).filter(main.UserAccess.userID == int(_user)).delete()
+            main.session.query(main.MistUser).filter(main.MistUser.id == int(_user)).delete()
+        else:
+            # use str value for .username
+            main.session.query(main.UserAccess).filter(main.UserAccess.userName == int(_user)).delete()
+            main.session.query(main.MistUser).filter(main.MistUser.username == _user).delete()
+        main.session.commit()
+        return {'response': {'user deleted': _user}}
 
 
 class Signup(Resource):
