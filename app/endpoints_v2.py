@@ -113,6 +113,7 @@ class SecureMe(Resource):
         return {'message': 'You are looking at /secureme: ' + str(id)}
 
 
+# Base class for handling MIST users
 class Users(Resource):
     @jwt_required()
     # If get() gets a valid _user value (user ID or username), then the method will return a single user entry
@@ -184,14 +185,15 @@ class Users(Resource):
         print form_fields
         return {'response': 'got here: %s' % _user}
 
-    def delete(selfself, _user=None):
+    # removes user and their affiliated repos
+    def delete(self, _user=None):
         if re.match('^[0-9]+$', _user):
             # use int value for .id
             main.session.query(main.UserAccess).filter(main.UserAccess.userID == int(_user)).delete()
             main.session.query(main.MistUser).filter(main.MistUser.id == int(_user)).delete()
         else:
             # use str value for .username
-            main.session.query(main.UserAccess).filter(main.UserAccess.userName == int(_user)).delete()
+            main.session.query(main.UserAccess).filter(main.UserAccess.userName == _user).delete()
             main.session.query(main.MistUser).filter(main.MistUser.username == _user).delete()
         main.session.commit()
         return {'response': {'user deleted': _user}}
