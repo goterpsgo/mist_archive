@@ -1,3 +1,6 @@
+# update Assets.ip to handle IPv6 values
+alter table Assets modify ip VARCHAR(39);
+
 # Create new table userPermissions
 create table userPermissions (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY

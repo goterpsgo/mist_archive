@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, render_template, current_app, mak
 from flask_restful import Resource, Api, reqparse, abort
 from flask_jwt import JWT, jwt_required, current_identity
 from mist_main import return_app
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import scoped_session
 from common.models import main, base_model
 import hashlib
 import re
@@ -15,16 +15,9 @@ api_endpoints = Blueprint('mist_auth', __name__, url_prefix="/api/v2")
 api = Api(api_endpoints)
 this_app = return_app()
 
-parser = reqparse.RequestParser()
-
-# DBSession = sessionmaker()
-# DBSession.bind = main.engine
-DBSession = scoped_session(sessionmaker(bind=main.engine))
-session = DBSession()
-
 
 def rs_users():
-    return session.query(main.MistUser).join(main.UserPermission, main.MistUser.permission_id == main.UserPermission.id)
+    return main.session.query(main.MistUser).join(main.UserPermission, main.MistUser.permission_id == main.UserPermission.id)
 
 
 # TODO: refactor authenticate() into User class if possible
@@ -57,10 +50,10 @@ class User(object):
 
 
 def authenticate(username, password):
-    user = session.query(main.MistUser)\
+    user = main.session.query(main.MistUser)\
       .filter(main.MistUser.username==username, main.MistUser.password==hashlib.sha256(password).hexdigest())\
       .first()
-    users = session.query()
+    users = main.session.query()
     if hasattr(user, 'username'):
       return user
 
@@ -130,9 +123,9 @@ class Users(Resource):
         r_single_user = None
         if _user is not None:
             if re.match('^[0-9]+$', _user):
-                r_single_user = rs_users_handle.filter(main.MistUser.id == int(_user)).first()
+                r_single_user = rs_users_handle.filter(main.MistUser.id == int(_user)).first()  # use int value for .id
             else:
-                r_single_user = rs_users_handle.filter(main.MistUser.username == _user).first()
+                r_single_user = rs_users_handle.filter(main.MistUser.username == _user).first() # use str value for .username
 
         # add results to users_list[]
         users_list = []
@@ -144,6 +137,27 @@ class Users(Resource):
         rs_dict['users_list'] = users_list  # add users_list[] to rs_dict
 
         return jsonify(rs_dict) # return rs_dict
+
+    def post(self):
+        form_fields = request.get_json(force=True)
+
+        new_user = main.MistUser(
+              username = form_fields['username']
+            , password = form_fields['password']
+            # , permission = main.UserPermission(id=2)  # adds new value to userPermissions table
+            , permission = main.session.query(main.UserPermission).filter(main.UserPermission.name == 'Normal User').first()
+            , subjectDN = form_fields['subject_dn']
+            , firstName = form_fields['first_name']
+            , lastName = form_fields['last_name']
+            , organization = form_fields['organization']
+            , lockout = "No"
+            , permission_id = 2
+        )
+        main.session.add(new_user)
+        main.session.commit()
+        main.session.flush()
+
+        return {'response': {'id': new_user.id}}
 
 class Signup(Resource):
     def post(self):
