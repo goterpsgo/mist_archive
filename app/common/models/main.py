@@ -33,14 +33,13 @@ class MistUser(Base.Model):
 #     repoName = Column(String(500))
 #     serverName = Column(String(300))
 
-# NOTE: may be needed at a future date - JWT Nov 2016
-# class UserAccess(Base.Model):
-#     __tablename__ = "userAccess"
-#     id = Column(Integer, primary_key=True)
-#     repoID = Column(Integer)
-#     userID = Column(Integer)
-#     scID = Column(String(150))
-#     userName = Column(String(45), ForeignKey('mistUsers.username'))
+class UserAccess(Base.Model):
+    __tablename__ = "userAccess"
+    id = Column(Integer, primary_key=True)
+    repoID = Column(Integer)
+    userID = Column(Integer)
+    scID = Column(String(150))
+    userName = Column(String(45), ForeignKey('mistUsers.username'))
 
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',

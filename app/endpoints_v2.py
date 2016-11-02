@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, render_template, current_app, mak
 from flask_restful import Resource, Api, reqparse, abort
 from flask_jwt import JWT, jwt_required, current_identity
 from mist_main import return_app
+import sqlalchemy
 from sqlalchemy.orm import scoped_session
 from common.models import main, base_model
 import hashlib
@@ -114,54 +115,79 @@ class SecureMe(Resource):
 
 class Users(Resource):
     @jwt_required()
+    # If get() gets a valid _user value (user ID or username), then the method will return a single user entry
+    # If get() is not given a _user value, then the method will return a list of users
     def get(self, _user=None):
-        rs_dict = dict()    # used to hold and eventually return users_list[] recordset and associated metadata
-        rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        try:
+            rs_dict = dict()    # used to hold and eventually return users_list[] recordset and associated metadata
+            rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
-        # query for user/users
-        rs_users_handle = rs_users()
-        r_single_user = None
-        if _user is not None:
-            if re.match('^[0-9]+$', _user):
-                r_single_user = rs_users_handle.filter(main.MistUser.id == int(_user)).first()  # use int value for .id
+            # query for user/users
+            rs_users_handle = rs_users()
+            r_single_user = None
+            if _user is not None:
+                if re.match('^[0-9]+$', _user):
+                    r_single_user = rs_users_handle.filter(main.MistUser.id == int(_user)).first()  # use int value for .id
+                else:
+                    r_single_user = rs_users_handle.filter(main.MistUser.username == _user).first() # use str value for .username
+
+            # add results to users_list[]
+            users_list = []
+            if _user is None:
+                for r_user in rs_users():
+                    users_list.append(create_user_dict(r_user))
             else:
-                r_single_user = rs_users_handle.filter(main.MistUser.username == _user).first() # use str value for .username
+                users_list.append(create_user_dict(r_single_user))
+            rs_dict['users_list'] = users_list  # add users_list[] to rs_dict
 
-        # add results to users_list[]
-        users_list = []
-        if _user is None:
-            for r_user in rs_users():
-                users_list.append(create_user_dict(r_user))
-        else:
-            users_list.append(create_user_dict(r_single_user))
-        rs_dict['users_list'] = users_list  # add users_list[] to rs_dict
+            return jsonify(rs_dict) # return rs_dict
 
-        return jsonify(rs_dict) # return rs_dict
+        except (main.Base.exc.NoResultFound) as e:
+            {'response': {'message': e}}
 
     def post(self):
+        # TODO: add error handler for handling inserting existing username values
         form_fields = request.get_json(force=True)
 
         new_user = main.MistUser(
-              username = form_fields['username']
-            , password = form_fields['password']
+            username=form_fields['username']
+            , password=form_fields['password']
             # , permission = main.UserPermission(id=2)  # adds new value to userPermissions table
-            , permission = main.session.query(main.UserPermission).filter(main.UserPermission.name == 'Normal User').first()
-            , subjectDN = form_fields['subject_dn']
-            , firstName = form_fields['first_name']
-            , lastName = form_fields['last_name']
-            , organization = form_fields['organization']
-            , lockout = "No"
-            , permission_id = 2
+            ,
+            permission=main.session.query(main.UserPermission).filter(main.UserPermission.name == 'Normal User').first()
+            , subjectDN=form_fields['subject_dn']
+            , firstName=form_fields['first_name']
+            , lastName=form_fields['last_name']
+            , organization=form_fields['organization']
+            , lockout="No"
+            , permission_id=2
         )
         main.session.add(new_user)
         main.session.commit()
         main.session.flush()
+        new_user_id = new_user.id
 
-        return {'response': {'id': new_user.id}}
+        for user_repo in form_fields['repos']:
+            new_user_access = main.UserAccess(
+                  repoID = user_repo['repo_id']
+                , scID = user_repo['sc_id']
+                , userID = new_user.id
+                , userName = form_fields['username']
+            )
+            main.session.add(new_user_access)
+            main.session.commit()
+            main.session.flush()
+            return {'response': {'id': new_user.id}}
+
+    def put(self, _user=None):
+        form_fields = request.get_json(force=True)
+
+        print form_fields
+        return {'response': 'got here: %s' % _user}
+
 
 class Signup(Resource):
     def post(self):
-        args = parser.parse_args()
         return {'response': 'I signed up!!!'}
     def get(self):
         return {'message': 'No GET method for this endpoint.'}
@@ -169,36 +195,12 @@ class Signup(Resource):
 
 class Logout(Resource):
     def post(self):
-        args = parser.parse_args()
         return {'response': 'I''m logged out!!!'}
     def get(self):
         return {'message': 'No GET method for this endpoint.'}
 
-
-class AddUser(Resource):
-    def post(self):
-        args = parser.parse_args()
-        return {'response': 'Created new user!!!'}
-    def get(self):
-        return {'message': 'No GET method for this endpoint.'}
-
-class UpdateUser(Resource):
-    def post(self):
-        args = parser.parse_args()
-        return {'response': 'Created new user!!!'}
-    def get(self, id):
-        return {'message': 'No GET method for this endpoint.'}
-
 class DisableUser(Resource):
     def post(self):
-        args = parser.parse_args()
-        return {'response': 'Created new user!!!'}
-    def get(self, id):
-        return {'message': 'No GET method for this endpoint.'}
-
-class DeleteUser(Resource):
-    def post(self):
-        args = parser.parse_args()
         return {'response': 'Created new user!!!'}
     def get(self, id):
         return {'message': 'No GET method for this endpoint.'}
@@ -207,7 +209,4 @@ api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Logout, '/logout')
 api.add_resource(Users, '/users', '/user/<string:_user>')
-api.add_resource(AddUser, '/adduser')
-api.add_resource(UpdateUser, '/updateuser/<int:id>')
 api.add_resource(DisableUser, '/disableuser/<int:id>')
-api.add_resource(DeleteUser, '/deleteuser/<int:id>')
