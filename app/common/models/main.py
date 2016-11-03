@@ -19,9 +19,11 @@ class MistUser(Base.Model):
     lastName = Column(String(200))
     organization= Column(String(200))
     lockout = Column(String(5), default="No")
+    permission = Column(Integer, default=2)
 
     permission_id = Column(Integer, ForeignKey('userPermissions.id'))
-    permission = relationship("UserPermission")
+    permissions = relationship("UserPermission", backref="mistUser")
+    # permissions = relationship("UserPermission", backref="mistUser", cascade="all, delete-orphan", lazy='dynamic', single_parent=True)
 
 # NOTE: may be needed at a future date - JWT Nov 2016
 # class Repos(Base.Model):
