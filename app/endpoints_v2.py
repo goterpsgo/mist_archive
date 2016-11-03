@@ -43,7 +43,7 @@ class User(object):
                 , 'last_name': r_user.lastName
                 , 'organization': r_user.organization
                 , 'lockout': r_user.lockout
-                , 'permission': r_user.permission.name
+                , 'permission': r_user.permissions.name
             }
             return jsonify(user)
         else:
@@ -97,7 +97,7 @@ def create_user_dict(obj_user):
         , 'last_name': obj_user.lastName
         , 'organization': obj_user.organization
         , 'lockout': obj_user.lockout
-        , 'permission': obj_user.permission.name
+        , 'permission': obj_user.permissions.name
     }
     return user
 
@@ -146,16 +146,15 @@ class Users(Resource):
         except (main.Base.exc.NoResultFound) as e:
             {'response': {'message': e}}
 
+    # 1. Inserts new user into mistUsers table and returns user id
+    # 2. Inserts repo and user association into userAccess table
     def post(self):
         # TODO: add error handler for handling inserting existing username values
         form_fields = request.get_json(force=True)
 
         new_user = main.MistUser(
-            username=form_fields['username']
+              username=form_fields['username']
             , password=form_fields['password']
-            # , permission = main.UserPermission(id=2)  # adds new value to userPermissions table
-            ,
-            permission=main.session.query(main.UserPermission).filter(main.UserPermission.name == 'Normal User').first()
             , subjectDN=form_fields['subject_dn']
             , firstName=form_fields['first_name']
             , lastName=form_fields['last_name']
@@ -163,6 +162,7 @@ class Users(Resource):
             , lockout="No"
             , permission_id=2
         )
+        # main.session.rollback()
         main.session.add(new_user)
         main.session.commit()
         main.session.flush()
@@ -177,16 +177,48 @@ class Users(Resource):
             main.session.add(new_user_access)
             main.session.commit()
             main.session.flush()
-            return {'response': {'id': new_user.id}}
 
-    def put(self, _user=None):
+        return {'response': {'user inserted': int(new_user.id)}}
+
+    # for a given user ID:
+    # 1. Update simple fields directly into mistUsers table
+    # 2. Extract user ID, username, delete all userAccess rows with that user ID, and insert new rows with user ID, username, scID, and repoID
+    # 3. Update permission in mistUsers table
+    def put(self, _user):
         form_fields = request.get_json(force=True)
 
-        print form_fields
-        return {'response': 'got here: %s' % _user}
+        # Extract only simple fields (ie not permission, repos) and copy them into db_fields
+        db_fields = {}
+        for key, value in form_fields.iteritems():
+            if (key != "repos"):
+                db_fields[key] = value
+
+        # Pass _user value to get mistUser object and update with values in db_fields
+        main.session.query(main.MistUser).filter(main.MistUser.id == int(_user)).update(db_fields)
+        db_fields = None
+
+        # Delete entries in userAccess that have userID = _user
+        main.session.query(main.UserAccess).filter(main.UserAccess.userID == int(_user)).delete()
+
+        # Extract mistUser info and save into user
+        rs_user_access = rs_users().filter(main.MistUser.id == int(_user)).first()
+        user = create_user_dict(rs_user_access)
+
+        for user_repo in form_fields['repos']:
+            upd_user_access = main.UserAccess(
+                  repoID = user_repo['repo_id']
+                , scID = user_repo['sc_id']
+                , userID = int(_user)
+                , userName = user['username']
+            )
+            main.session.add(upd_user_access)
+            main.session.commit()
+            main.session.flush()
+
+        return {'response': {'user updated': int(_user)}}
 
     # removes user and their affiliated repos
-    def delete(self, _user=None):
+    def delete(self, _user):
         if re.match('^[0-9]+$', _user):
             # use int value for .id
             main.session.query(main.UserAccess).filter(main.UserAccess.userID == int(_user)).delete()
@@ -196,9 +228,10 @@ class Users(Resource):
             main.session.query(main.UserAccess).filter(main.UserAccess.userName == _user).delete()
             main.session.query(main.MistUser).filter(main.MistUser.username == _user).delete()
         main.session.commit()
-        return {'response': {'user deleted': _user}}
+        return {'response': {'user deleted': int(_user)}}
 
 
+# May be needed, same as Users.post() except it needs to be left unprotected - JWT Nov 2016
 class Signup(Resource):
     def post(self):
         return {'response': 'I signed up!!!'}
@@ -222,4 +255,4 @@ api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Logout, '/logout')
 api.add_resource(Users, '/users', '/user/<string:_user>')
-api.add_resource(DisableUser, '/disableuser/<int:id>')
+api.add_resource(DisableUser, '/user/<string:_user>/disable')
