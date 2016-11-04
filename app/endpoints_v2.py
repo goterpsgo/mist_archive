@@ -146,6 +146,7 @@ class Users(Resource):
         except (main.Base.exc.NoResultFound) as e:
             {'response': {'message': e}}
 
+    @jwt_required()
     # 1. Inserts new user into mistUsers table and returns user id
     # 2. Inserts repo and user association into userAccess table
     def post(self):
@@ -180,6 +181,7 @@ class Users(Resource):
 
         return {'response': {'user inserted': int(new_user.id)}}
 
+    @jwt_required()
     # for a given user ID:
     # 1. Update simple fields directly into mistUsers table
     # 2. Extract user ID, username, delete all userAccess rows with that user ID, and insert new rows with user ID, username, scID, and repoID
@@ -217,6 +219,7 @@ class Users(Resource):
 
         return {'response': {'user updated': int(_user)}}
 
+    @jwt_required()
     # removes user and their affiliated repos
     def delete(self, _user):
         if re.match('^[0-9]+$', _user):
