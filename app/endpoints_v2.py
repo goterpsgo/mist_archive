@@ -7,6 +7,7 @@ from sqlalchemy.orm import scoped_session
 from common.models import main, base_model
 import hashlib
 import re
+import hashlib
 import config
 import json
 import requests
@@ -155,7 +156,7 @@ class Users(Resource):
 
         new_user = main.MistUser(
               username=form_fields['username']
-            , password=form_fields['password']
+            , password=hashlib.sha256(form_fields['password']).hexdigest()
             , subjectDN=form_fields['subject_dn']
             , firstName=form_fields['first_name']
             , lastName=form_fields['last_name']
@@ -194,6 +195,8 @@ class Users(Resource):
         for key, value in form_fields.iteritems():
             if (key != "repos"):
                 db_fields[key] = value
+            if (key == "password"):
+                db_fields[key] = hashlib.sha256(value).hexdigest()
 
         # Pass _user value to get mistUser object and update with values in db_fields
         main.session.query(main.MistUser).filter(main.MistUser.id == int(_user)).update(db_fields)
@@ -234,12 +237,45 @@ class Users(Resource):
         return {'response': {'user deleted': int(_user)}}
 
 
-# May be needed, same as Users.post() except it needs to be left unprotected - JWT Nov 2016
 class Signup(Resource):
     def post(self):
-        return {'response': 'I signed up!!!'}
+        # TODO: add error handler for handling inserting existing username values
+        form_fields = request.get_json(force=True)
+
+        new_user = main.MistUser(
+              username=form_fields['username']
+            , password=hashlib.sha256(form_fields['password']).hexdigest()
+            , subjectDN="No certs"
+            , firstName=form_fields['first_name']
+            , lastName=form_fields['last_name']
+            , organization=form_fields['organization']
+            , lockout="No"
+            , permission=0
+            , permission_id=1
+        )
+        # main.session.rollback()
+        main.session.add(new_user)
+        main.session.commit()
+        main.session.flush()
+
+        for user_repo in form_fields['repos']:
+            new_user_access = main.requestUserAccess(
+                  repoID = user_repo['repo_id']
+                , scID = user_repo['sc_id']
+                , userID = new_user.id
+                , userName = form_fields['username']
+            )
+            main.session.add(new_user_access)
+            main.session.commit()
+            main.session.flush()
+
+        return {'response': {'user inserted': int(new_user.id)}}
     def get(self):
         return {'message': 'No GET method for this endpoint.'}
+    def put(self, _user=None):
+        return {'message': 'No PUT method for this endpoint.'}
+    def delete(self, _user=None):
+        return {'message': 'No DELETE method for this endpoint.'}
 
 
 class Logout(Resource):
@@ -258,4 +294,5 @@ api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Logout, '/logout')
 api.add_resource(Users, '/users', '/user/<string:_user>')
+api.add_resource(Signup, '/user/signup')
 api.add_resource(DisableUser, '/user/<string:_user>/disable')
