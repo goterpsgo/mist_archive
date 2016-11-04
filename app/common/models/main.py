@@ -43,6 +43,14 @@ class UserAccess(Base.Model):
     scID = Column(String(150))
     userName = Column(String(45), ForeignKey('mistUsers.username'))
 
+class requestUserAccess(Base.Model):
+    __tablename__ = "requestUserAccess"
+    id = Column(Integer, primary_key=True)
+    repoID = Column(Integer)
+    userID = Column(Integer)
+    scID = Column(String(150))
+    userName = Column(String(45), ForeignKey('mistUsers.username'))
+
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
                     'key': '/opt/mist_base/certificates/mist-interface.key',
