@@ -21,6 +21,8 @@ this_app = return_app()
 def rs_users():
     return main.session.query(main.MistUser).join(main.UserPermission, main.MistUser.permission_id == main.UserPermission.id)
 
+def rs_repos():
+    return main.session.query(main.Repos)
 
 # TODO: refactor authenticate() into User class if possible
 class User(object):
@@ -101,6 +103,15 @@ def create_user_dict(obj_user):
         , 'permission': obj_user.permissions.name
     }
     return user
+
+def create_repo_dict(obj_repo):
+    repo = {
+          'repo_id': obj_repo.repoID
+        , 'sc_id': obj_repo.scID
+        , 'repo_name': obj_repo.repoName
+        , 'server_name': obj_repo.serverName
+    }
+    return repo
 
 
 class TodoItem(Resource):
@@ -238,6 +249,8 @@ class Users(Resource):
 
 
 class Signup(Resource):
+    def get(self):
+        return {'message': 'No GET method for this endpoint.'}
     def post(self):
         # TODO: add error handler for handling inserting existing username values
         form_fields = request.get_json(force=True)
@@ -270,11 +283,39 @@ class Signup(Resource):
             main.session.flush()
 
         return {'response': {'user inserted': int(new_user.id)}}
-    def get(self):
-        return {'message': 'No GET method for this endpoint.'}
     def put(self, _user=None):
         return {'message': 'No PUT method for this endpoint.'}
     def delete(self, _user=None):
+        return {'message': 'No DELETE method for this endpoint.'}
+
+
+class Repos(Resource):
+    # @jwt_required()
+    def get(self):
+        # returns list of repos from Repos table
+        # (NOTE: since there's no dedicated normalized table for just repos, all combinations of returned fields from Repos are distinct)
+        rs_dict = dict()    # used to hold and eventually return repos_list[] recordset and associated metadata
+        # rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+
+        rs_repos_handle = rs_repos().group_by(main.Repos.repoID, main.Repos.scID, main.Repos.repoName, main.Repos.serverName)\
+            .order_by(main.Repos.serverName, main.Repos.repoName)
+
+        # add results to users_list[]
+        repos_list = []
+        for r_repo in rs_repos_handle:
+            repos_list.append(create_repo_dict(r_repo))
+        rs_dict['repos_list'] = repos_list  # add users_list[] to rs_dict
+
+        return jsonify(rs_dict) # return rs_dict
+    def post(self):
+        # TODO: will use for inserting new repo entries
+        form_fields = request.get_json(force=True)
+        return {'response': {'foo': form_fields}}
+    def put(self, _user=None):
+        # TODO: will use for updating existing repo entries
+        return {'message': 'No PUT method for this endpoint.'}
+    def delete(self, _user=None):
+        # TODO: will use for deleting repo entries
         return {'message': 'No DELETE method for this endpoint.'}
 
 
@@ -295,4 +336,5 @@ api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Logout, '/logout')
 api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(Signup, '/user/signup')
+api.add_resource(Repos, '/user/repos')
 api.add_resource(DisableUser, '/user/<string:_user>/disable')
