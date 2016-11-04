@@ -25,15 +25,14 @@ class MistUser(Base.Model):
     permissions = relationship("UserPermission", backref="mistUser")
     # permissions = relationship("UserPermission", backref="mistUser", cascade="all, delete-orphan", lazy='dynamic', single_parent=True)
 
-# NOTE: may be needed at a future date - JWT Nov 2016
-# class Repos(Base.Model):
-#     __tablename__ = "Repos"
-#     id = Column(Integer, primary_key=True)
-#     assetID = Column(Integer)
-#     repoID = Column(Integer)
-#     scID = Column(String(150))
-#     repoName = Column(String(500))
-#     serverName = Column(String(300))
+class Repos(Base.Model):
+    __tablename__ = "Repos"
+    id = Column(Integer, primary_key=True)
+    assetID = Column(Integer)
+    repoID = Column(Integer)
+    scID = Column(String(150))
+    repoName = Column(String(500))
+    serverName = Column(String(300))
 
 class UserAccess(Base.Model):
     __tablename__ = "userAccess"
