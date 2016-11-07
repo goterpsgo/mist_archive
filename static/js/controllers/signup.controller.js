@@ -5,29 +5,32 @@
         .module('app')
         .controller('Signup.IndexController', Controller);
 
-    function Controller($location, AuthenticationService) {
+    function Controller($scope, $location, AuthenticationService, ReposService) {
+        $scope.repos;
         var vm = this;
-            console.log('Got here');
-
-        vm.login = login;
 
         initController();
 
         function initController() {
             // reset login status
             AuthenticationService.Logout();
+            get_repos();
         };
 
-        function signup() {
-            vm.loading = true;
-            // AuthenticationService.Login(vm.username, vm.password, function (result) {
-            //     if (result === true) {
-            //         $location.path('/');
-            //     } else {
-            //         vm.error = 'Username or password is incorrect';
-            //         vm.loading = false;
-            //     }
-            // });
+        function get_repos() {
+            ReposService._get_repos()
+                .then(
+                      function(repos) {
+                          $scope.repos = repos.repos_list;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
+
+        $scope.add_repo = function() {
+            console.log('Add repo');
         };
     }
 })();
