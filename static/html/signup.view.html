@@ -26,7 +26,12 @@
             </tr>
             <tr>
                 <td>Repos</td>
-                <td><div ui-view="_repos"></div></td>
+                <td>
+                    <select multiple name="repos" id="repos0">
+                        <option ng-repeat="repo in repos" sc_id="{{repo.sc_id}}" repo_id="{{repo.repo_id}}" server_name="{{repo.server_name}}" repo_name="{{repo.repo_name}}">{{repo.repo_name}} @ {{repo.server_name}}</option>
+                    </select>
+                    <!--<option ng-repeat="_index in [0,1,2,3,4,5,6,7,8,9]">{{_index}}</option>-->
+                </td>
             </tr>
             <tr>
                 <td><input type="submit" /></td><td><input type="reset" /></td>
