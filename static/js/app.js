@@ -51,7 +51,7 @@
               views : {
                 '_main' : {
                   templateUrl: 'static/html/signup.view.html',
-                    controller: 'Home.IndexController',
+                    controller: 'Signup.IndexController',
                     controllerAs: 'vm'
                 }
                 , '_nav' : {
