@@ -15,7 +15,7 @@
         // };
 
         function get_repos() {
-            MistUsersService._get_repos()
+            ReposService._get_repos()
                 .then(
                       function(repos) {
                           $scope.repos = repos.repos_list;
