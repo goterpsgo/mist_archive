@@ -297,6 +297,7 @@ class Repos(Resource):
         rs_dict = dict()    # used to hold and eventually return repos_list[] recordset and associated metadata
         # rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
+        # NOTE: main.Repos.id is not being returned since Repos table is not properly normalized and including id will result in returning duplicates - JWT 7 Nov 2016
         rs_repos_handle = rs_repos().group_by(main.Repos.repoID, main.Repos.scID, main.Repos.repoName, main.Repos.serverName)\
             .order_by(main.Repos.serverName, main.Repos.repoName)
 
