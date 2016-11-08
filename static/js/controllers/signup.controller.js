@@ -5,8 +5,12 @@
         .module('app')
         .controller('Signup.IndexController', Controller);
 
-    function Controller($scope, $location, AuthenticationService, ReposService) {
+    function Controller($scope, $location, AuthenticationService, ReposService, MistUsersService) {
         $scope.repos;
+
+        $scope.submit_signup = function() {
+            MistUsersService._signup_user($scope._user);
+        }
         var vm = this;
 
         initController();
