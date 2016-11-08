@@ -257,7 +257,7 @@ class Signup(Resource):
 
         new_user = main.MistUser(
               username=form_fields['username']
-            , password=hashlib.sha256(form_fields['password']).hexdigest()
+            , password=hashlib.sha256(form_fields['password0']).hexdigest()
             , subjectDN="No certs"
             , firstName=form_fields['first_name']
             , lastName=form_fields['last_name']
@@ -266,14 +266,14 @@ class Signup(Resource):
             , permission=0
             , permission_id=1
         )
-        # main.session.rollback()
+        main.session.rollback()
         main.session.add(new_user)
         main.session.commit()
         main.session.flush()
 
         for user_repo in form_fields['repos']:
             new_user_access = main.requestUserAccess(
-                  repoID = user_repo['repo_id']
+                  repoID = int(user_repo['repo_id'])
                 , scID = user_repo['sc_id']
                 , userID = new_user.id
                 , userName = form_fields['username']
@@ -298,6 +298,7 @@ class Repos(Resource):
         # rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         # NOTE: main.Repos.id is not being returned since Repos table is not properly normalized and including id will result in returning duplicates - JWT 7 Nov 2016
+        main.session.rollback()
         rs_repos_handle = rs_repos().group_by(main.Repos.repoID, main.Repos.scID, main.Repos.repoName, main.Repos.serverName)\
             .order_by(main.Repos.serverName, main.Repos.repoName)
 
