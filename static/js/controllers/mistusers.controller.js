@@ -3,7 +3,7 @@
  
     angular
         .module('app')
-        .controller('UserController', Controller);
+        .controller('MistController', Controller);
 
     function Controller($scope, $sessionStorage, MistUsersService) {
 
