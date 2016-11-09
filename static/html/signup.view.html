@@ -1,42 +1,58 @@
 <!-- based on http://jasonwatmore.com/post/2015/03/10/AngularJS-User-Registration-and-Login-Example.aspx -->
-<div class="col-md-6 col-md-offset-3">
+<div class="col-md-10 col-md-offset-3">
     <h2>Sign Up</h2>
-    <form id="form_signup" ng-submit="submit_signup()">
-        <table>
-            <tr>
-                <td>First Name</td><td><input type="text" name="firstname" id="firstname0" ng-model="_user.first_name" /></td>
-            </tr>
-            <tr>
-                <td>Last Name</td><td><input type="text" name="lastname" id="lastname0" ng-model="_user.last_name" /></td>
-            </tr>
-            <tr>
-                <td>SID</td><td><input type="text" name="username" id="sid0" ng-model="_user.username" /></td>
-            </tr>
-            <tr>
-                <td>Password</td><td><input type="password" name="password" id="password0" ng-model="_user.password0" /></td>
-            </tr>
-            <tr>
-                <td>Password Confirm</td><td><input type="password" name="password" id="password1" ng-model="_user.password1" /></td>
-            </tr>
-            <tr>
-                <td>Organization</td><td><input type="text" name="organization" id="organization0" ng-model="_user.organization" /></td>
-            </tr>
-            <!--<tr>-->
-                <!--<td>Email</td><td><input type="text" name="password" id="email0" ng-model="_user.email" /></td>-->
-            <!--</tr>-->
-            <tr>
-                <td>Repos</td>
-                <td>
-                    <!--<select multiple name="repos" id="repos0" ng-model="_user.repos" ng-options="(repo.repo_name + ' @ ' + repo.server_name) for repo in repos">-->
-                    <select multiple name="repos" id="repos0" ng-model="_user.repos">
-                        <option ng-repeat="repo in repos" value="sc_id:{{repo.sc_id}},repo_id:{{repo.repo_id}},server_name:{{repo.server_name}},repo_name:{{repo.repo_name}}" sc_id="{{repo.sc_id}}" repo_id="{{repo.repo_id}}" server_name="{{repo.server_name}}" repo_name="{{repo.repo_name}}">{{repo.repo_name}} @ {{repo.server_name}}</option>
-                    </select>
-                    <!--<option ng-repeat="_index in [0,1,2,3,4,5,6,7,8,9]">{{_index}}</option>-->
-                </td>
-            </tr>
-            <tr>
-                <td><input type="submit" /></td><td><input type="reset" /></td>
-            </tr>
-        </table>
+    <div>All Fields Are Required</div>
+    <form class="form-horizontal" id="form_signup" ng-submit="submit_signup()">
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="firstname0">First Name:</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="firstname0" ng-model="_user.first_name" required placeholder="Enter first name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="lastname0">Last Name:</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="lastname0" ng-model="_user.last_name" required placeholder="Enter last name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="username0">SID:</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="username0" ng-model="_user.username" required placeholder="Enter SID (username)">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="password0">Password:</label>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" id="password0" ng-model="_user.password0" required placeholder="Enter password">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="password1">Password Confirm:</label>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" id="password1" ng-model="_user.password1" required placeholder="Enter password again">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="organization0">Organization:</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="organization0" ng-model="_user.organization" required placeholder="Enter SID (username)">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="email">Repos:</label>
+            <div class="col-sm-9">
+                <!--<select multiple name="repos" id="repos0" ng-model="_user.repos" ng-options="(repo.repo_name + ' @ ' + repo.server_name) for repo in repos">-->
+                <select multiple class="select2-search" name="repos" id="repos0" ng-model="_user.repos" required>
+                    <option ng-repeat="repo in repos" value="sc_id:{{repo.sc_id}},repo_id:{{repo.repo_id}},server_name:{{repo.server_name}},repo_name:{{repo.repo_name}}" sc_id="{{repo.sc_id}}" repo_id="{{repo.repo_id}}" server_name="{{repo.server_name}}" repo_name="{{repo.repo_name}}">{{repo.repo_name}} @ {{repo.server_name}}</option>
+                </select>
+                <!--<option ng-repeat="_index in [0,1,2,3,4,5,6,7,8,9]">{{_index}}</option>-->
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </div>
     </form>
 </div>
