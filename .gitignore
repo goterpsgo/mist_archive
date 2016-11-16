@@ -119,6 +119,10 @@ RECORD
 # Mongo Explorer plugin:
 .idea/mongoSettings.xml
 
+# Ignore everything from Jetbrains
+.idea/*
+.project
+
 ## File-based project format:
 *.iws
 
