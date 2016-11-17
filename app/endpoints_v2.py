@@ -191,7 +191,7 @@ class Users(Resource):
             main.session.commit()
             main.session.flush()
 
-        return {'response': {'user inserted': int(new_user.id)}}
+        return {'response': {'method': 'POST', 'result': 'success', 'user_id': int(new_user.id)}}
 
     @jwt_required()
     # for a given user ID:
@@ -231,7 +231,7 @@ class Users(Resource):
             main.session.commit()
             main.session.flush()
 
-        return {'response': {'user updated': int(_user)}}
+        return {'response': {'method': 'PUT', 'result': 'success', 'user_id': int(_user.id)}}
 
     @jwt_required()
     # removes user and their affiliated repos
@@ -245,7 +245,7 @@ class Users(Resource):
             main.session.query(main.UserAccess).filter(main.UserAccess.userName == _user).delete()
             main.session.query(main.MistUser).filter(main.MistUser.username == _user).delete()
         main.session.commit()
-        return {'response': {'user deleted': int(_user)}}
+        return {'response': {'method': 'DELETE', 'result': 'success', 'user_id': int(_user)}}
 
 
 class Signup(Resource):
@@ -282,7 +282,7 @@ class Signup(Resource):
             main.session.commit()
             main.session.flush()
 
-        return {'response': {'user inserted': int(new_user.id)}}
+        return {'response': {'method': 'POST', 'result': 'success', 'user_id': int(new_user.id)}}
     def put(self, _user=None):
         return {'message': 'No PUT method for this endpoint.'}
     def delete(self, _user=None):
