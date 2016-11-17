@@ -9,7 +9,15 @@
         $scope.repos;
 
         $scope.submit_signup = function() {
-            MistUsersService._signup_user($scope._user);
+            return MistUsersService._signup_user($scope._user)
+                .then(function(result) {
+                if (result.response.result == 'success') {
+                    $scope.response_message = 'User information submitted.';
+                }
+                else {
+                    $scope.response_message = 'Submission error.';
+                }
+            });
         }
         var vm = this;
 
