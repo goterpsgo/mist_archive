@@ -151,3 +151,9 @@ fabric.properties
 # .idea/misc.xml 
 # *.ipr
 
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
