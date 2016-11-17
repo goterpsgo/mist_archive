@@ -20,7 +20,7 @@
 
         // function get_stuff() {
         //     console.log('[21] Got here');
-        //     return $http.get('http://10.11.1.239:8443/api/v2/stuff')
+        //     return $http.get('https://10.11.1.239:8443/api/v2/stuff')
         //         .then(function(response) {
         //             console.log('[24] Got here');
         //             return response.data;
@@ -48,7 +48,7 @@
 
         function get_users() {
             var deferred = $q.defer();
-            $http.get('http://10.11.1.239:8443/api/v2/users')
+            $http.get('https://10.11.1.239:8443/api/v2/users')
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
@@ -59,7 +59,7 @@
 
         function get_user(id) {
             var deferred = $q.defer();
-            $http.get('http://10.11.1.239:8443/api/v2/user/' + id)
+            $http.get('https://10.11.1.239:8443/api/v2/user/' + id)
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
@@ -81,7 +81,7 @@
             }
             var deferred = $q.defer();
             form_data.repos = serial_to_obj(form_data.repos);   // converting delimited strings into JSON objects
-            $http.post('http://10.11.1.239:8443/api/v2/user/signup', form_data, config)
+            $http.post('https://10.11.1.239:8443/api/v2/user/signup', form_data, config)
                 .success(function(form_data, status, headers, config) {
                     console.log('[68] My form_data: ' + form_data);
                 })
