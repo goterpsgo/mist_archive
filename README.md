@@ -23,6 +23,13 @@ Installation
 Start up
 
 (for development)
+```
+$ sudo /opt/mist_base/mist.sh start
+$ sudo /opt/mist_base/mist.sh restart
+$ sudo /opt/mist_base/mist.sh stop
+```
+
+(Deprecated but retained for reference) Running the application server by itself:
 Assuming you're running everything using a generic generic environment:
 1. Start the web server:
  ```
