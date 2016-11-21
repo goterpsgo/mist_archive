@@ -4,6 +4,7 @@ from flask_jwt import JWT, jwt_required, current_identity
 from mist_main import return_app
 import sqlalchemy
 from sqlalchemy.orm import scoped_session
+# from sqlalchemy.exc import IntegrityError
 from common.models import main, base_model
 import hashlib
 import re
@@ -191,7 +192,7 @@ class Users(Resource):
             main.session.commit()
             main.session.flush()
 
-        return {'response': {'method': 'POST', 'result': 'success', 'user_id': int(new_user.id)}}
+        return {'response': {'method': 'POST', 'result': 'success', 'message': 'New user added.', 'class': 'alert alert-success', 'user_id': int(new_user.id)}}
 
     @jwt_required()
     # for a given user ID:
@@ -231,7 +232,7 @@ class Users(Resource):
             main.session.commit()
             main.session.flush()
 
-        return {'response': {'method': 'PUT', 'result': 'success', 'user_id': int(_user.id)}}
+        return {'response': {'method': 'PUT', 'result': 'success', 'message': 'User successfully updated.', 'class': 'alert alert-success', 'user_id': int(_user.id)}}
 
     @jwt_required()
     # removes user and their affiliated repos
@@ -244,45 +245,52 @@ class Users(Resource):
             # use str value for .username
             main.session.query(main.UserAccess).filter(main.UserAccess.userName == _user).delete()
             main.session.query(main.MistUser).filter(main.MistUser.username == _user).delete()
+
         main.session.commit()
-        return {'response': {'method': 'DELETE', 'result': 'success', 'user_id': int(_user)}}
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'User successfully deleted.', 'class': 'alert alert-success', 'user_id': int(_user)}}
 
 
 class Signup(Resource):
     def get(self):
         return {'message': 'No GET method for this endpoint.'}
     def post(self):
-        # TODO: add error handler for handling inserting existing username values
-        form_fields = request.get_json(force=True)
+        try:
+            # TODO: add error handler for handling inserting existing username values
+            form_fields = request.get_json(force=True)
 
-        new_user = main.MistUser(
-              username=form_fields['username']
-            , password=hashlib.sha256(form_fields['password0']).hexdigest()
-            , subjectDN="No certs"
-            , firstName=form_fields['first_name']
-            , lastName=form_fields['last_name']
-            , organization=form_fields['organization']
-            , lockout="No"
-            , permission=0
-            , permission_id=1
-        )
-        main.session.rollback()
-        main.session.add(new_user)
-        main.session.commit()
-        main.session.flush()
-
-        for user_repo in form_fields['repos']:
-            new_user_access = main.requestUserAccess(
-                  repoID = int(user_repo['repo_id'])
-                , scID = user_repo['sc_id']
-                , userID = new_user.id
-                , userName = form_fields['username']
+            new_user = main.MistUser(
+                  username=form_fields['username']
+                , password=hashlib.sha256(form_fields['password0']).hexdigest()
+                , subjectDN="No certs"
+                , firstName=form_fields['first_name']
+                , lastName=form_fields['last_name']
+                , organization=form_fields['organization']
+                , lockout="No"
+                , permission=0
+                , permission_id=1
             )
-            main.session.add(new_user_access)
+            main.session.rollback()
+            main.session.add(new_user)
             main.session.commit()
             main.session.flush()
 
-        return {'response': {'method': 'POST', 'result': 'success', 'user_id': int(new_user.id)}}
+            for user_repo in form_fields['repos']:
+                new_user_access = main.requestUserAccess(
+                      repoID = int(user_repo['repo_id'])
+                    , scID = user_repo['sc_id']
+                    , userID = new_user.id
+                    , userName = form_fields['username']
+                )
+                main.session.add(new_user_access)
+                main.session.commit()
+                main.session.flush()
+
+            return {'response': {'method': 'POST', 'result': 'success', 'message': 'User information submitted. Information will be reviewed and admin will contact you when approved.', 'class': 'alert alert-success', 'user_id': int(new_user.id)}}
+
+        except (main.IntegrityError) as e:
+            print ("[ERROR] POST /api/v2/user/signupuser / ID: %s / %s" % (request.get_json(force=True)['username'],e))
+            return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-warning'}}
+
     def put(self, _user=None):
         return {'message': 'No PUT method for this endpoint.'}
     def delete(self, _user=None):
