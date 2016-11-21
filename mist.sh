@@ -38,9 +38,9 @@ start() {
 		if [ "$?" = 0 ] ; then
 			echo "$NGINX_NAME (pid `pidof $NGINX_NAME`) already running."
 			exit 1
+		else
+		    $NGINX_BIN -c $NGINX_CONFFILE
 		fi
-
-		$NGINX_BIN -c $NGINX_CONFFILE
 
 		if [ "$?" != 0 ] ; then
 			echo " failed"
@@ -55,10 +55,9 @@ start() {
 		pidof $UWSGI_NAME >/dev/null
 		if [ "$?" = 0 ] ; then
 			echo "$UWSGI_NAME (pid `pidof $UWSGI_NAME`) already running."
-			exit 1
+        else
+            $UWSGI_BIN --py-autoreload 1 --master --socket=/tmp/mist_app.sock --pidfile=/tmp/mist_app.pid --module=wsgi --honour-stdin --chdir=$APP_HOME --threads=5 --virtualenv=$ENV_HOME --die-on-term --logto=/opt/mist_base/log/mist_app.log --uid $USER --gid $USER > /dev/null 2>&1 &
 		fi
-
-		$UWSGI_BIN --py-autoreload 1 --master --socket=/tmp/mist_app.sock --pidfile=/tmp/mist_app.pid --module=wsgi --honour-stdin --chdir=$APP_HOME --threads=5 --virtualenv=$ENV_HOME --die-on-term --logto=/opt/mist_base/log/mist_app.log --uid $USER --gid $USER > /dev/null 2>&1 &
 
 		if [ "$?" != 0 ] ; then
 			echo " failed"
@@ -78,7 +77,6 @@ stop() {
 
 		if [ "$?" != 0 ] ; then
 			echo " failed"
-			exit 1
 		else
 			echo " done"
 		fi
@@ -90,7 +88,6 @@ stop() {
 
 		if [ "$?" != 0 ] ; then
 			echo " failed"
-			exit 1
 		else
 			echo " done"
 		fi
