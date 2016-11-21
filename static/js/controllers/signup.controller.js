@@ -7,16 +7,16 @@
 
     function Controller($scope, $location, AuthenticationService, ReposService, MistUsersService) {
         $scope.repos;
+        $scope.result;
+        $scope.alert_class = '';
+        $scope.response_message = '';
 
         $scope.submit_signup = function() {
             return MistUsersService._signup_user($scope._user)
                 .then(function(result) {
-                if (result.response.result == 'success') {
-                    $scope.response_message = 'User information submitted.';
-                }
-                else {
-                    $scope.response_message = 'Submission error.';
-                }
+                    $scope.response_message = result.response.message;
+                    $scope.result = result.response.result;
+                    $scope.class = result.response.class;
             });
         }
         var vm = this;
