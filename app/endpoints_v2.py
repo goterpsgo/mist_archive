@@ -4,7 +4,6 @@ from flask_jwt import JWT, jwt_required, current_identity
 from mist_main import return_app
 import sqlalchemy
 from sqlalchemy.orm import scoped_session
-# from sqlalchemy.exc import IntegrityError
 from common.models import main, base_model
 import hashlib
 import re
@@ -163,36 +162,40 @@ class Users(Resource):
     # 1. Inserts new user into mistUsers table and returns user id
     # 2. Inserts repo and user association into userAccess table
     def post(self):
-        # TODO: add error handler for handling inserting existing username values
-        form_fields = request.get_json(force=True)
+        try:
+            form_fields = request.get_json(force=True)
 
-        new_user = main.MistUser(
-              username=form_fields['username']
-            , password=hashlib.sha256(form_fields['password']).hexdigest()
-            , subjectDN=form_fields['subject_dn']
-            , firstName=form_fields['first_name']
-            , lastName=form_fields['last_name']
-            , organization=form_fields['organization']
-            , lockout="No"
-            , permission_id=2
-        )
-        # main.session.rollback()
-        main.session.add(new_user)
-        main.session.commit()
-        main.session.flush()
-
-        for user_repo in form_fields['repos']:
-            new_user_access = main.UserAccess(
-                  repoID = user_repo['repo_id']
-                , scID = user_repo['sc_id']
-                , userID = new_user.id
-                , userName = form_fields['username']
+            new_user = main.MistUser(
+                  username=form_fields['username']
+                , password=hashlib.sha256(form_fields['password']).hexdigest()
+                , subjectDN=form_fields['subject_dn']
+                , firstName=form_fields['first_name']
+                , lastName=form_fields['last_name']
+                , organization=form_fields['organization']
+                , lockout="No"
+                , permission_id=2
             )
-            main.session.add(new_user_access)
+            main.session.rollback()
+            main.session.add(new_user)
             main.session.commit()
             main.session.flush()
 
-        return {'response': {'method': 'POST', 'result': 'success', 'message': 'New user added.', 'class': 'alert alert-success', 'user_id': int(new_user.id)}}
+            for user_repo in form_fields['repos']:
+                new_user_access = main.UserAccess(
+                      repoID = user_repo['repo_id']
+                    , scID = user_repo['sc_id']
+                    , userID = new_user.id
+                    , userName = form_fields['username']
+                )
+                main.session.add(new_user_access)
+                main.session.commit()
+                main.session.flush()
+
+            return {'response': {'method': 'POST', 'result': 'success', 'message': 'New user added.', 'class': 'alert alert-success', 'user_id': int(new_user.id)}}
+
+        except (main.IntegrityError) as e:
+            print ("[ERROR] POST /api/v2/users / ID: %s / %s" % (request.get_json(force=True)['username'],e))
+            return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-warning'}}
 
     @jwt_required()
     # for a given user ID:
@@ -200,49 +203,59 @@ class Users(Resource):
     # 2. Extract user ID, username, delete all userAccess rows with that user ID, and insert new rows with user ID, username, scID, and repoID
     # 3. Update permission in mistUsers table
     def put(self, _user):
-        form_fields = request.get_json(force=True)
+        try:
+            form_fields = request.get_json(force=True)
 
-        # Extract only simple fields (ie not permission, repos) and copy them into db_fields
-        db_fields = {}
-        for key, value in form_fields.iteritems():
-            if (key != "repos"):
-                db_fields[key] = value
-            if (key == "password"):
-                db_fields[key] = hashlib.sha256(value).hexdigest()
+            # Extract only simple fields (ie not permission, repos) and copy them into db_fields
+            db_fields = {}
+            for key, value in form_fields.iteritems():
+                if (key != "repos"):
+                    db_fields[key] = value
+                if (key == "password"):
+                    db_fields[key] = hashlib.sha256(value).hexdigest()
 
-        # Pass _user value to get mistUser object and update with values in db_fields
-        main.session.query(main.MistUser).filter(main.MistUser.id == int(_user)).update(db_fields)
-        db_fields = None
+            # Flush any exceptions currently in session
+            main.session.rollback()
 
-        # Delete entries in userAccess that have userID = _user
-        main.session.query(main.UserAccess).filter(main.UserAccess.userID == int(_user)).delete()
+            # Pass _user value to get mistUser object and update with values in db_fields
+            main.session.query(main.MistUser).filter(main.MistUser.id == int(_user)).update(db_fields)
+            db_fields = None
 
-        # Extract mistUser info and save into user
-        rs_user_access = rs_users().filter(main.MistUser.id == int(_user)).first()
-        user = create_user_dict(rs_user_access)
+            # Delete entries in userAccess that have userID = _user
+            main.session.query(main.UserAccess).filter(main.UserAccess.userID == int(_user)).delete()
 
-        for user_repo in form_fields['repos']:
-            upd_user_access = main.UserAccess(
-                  repoID = user_repo['repo_id']
-                , scID = user_repo['sc_id']
-                , userID = int(_user)
-                , userName = user['username']
-            )
-            main.session.add(upd_user_access)
-            main.session.commit()
-            main.session.flush()
+            # Extract mistUser info and save into user
+            rs_user_access = rs_users().filter(main.MistUser.id == int(_user)).first()
+            user = create_user_dict(rs_user_access)
 
-        return {'response': {'method': 'PUT', 'result': 'success', 'message': 'User successfully updated.', 'class': 'alert alert-success', 'user_id': int(_user.id)}}
+            for user_repo in form_fields['repos']:
+                upd_user_access = main.UserAccess(
+                      repoID = user_repo['repo_id']
+                    , scID = user_repo['sc_id']
+                    , userID = int(_user)
+                    , userName = user['username']
+                )
+                main.session.add(upd_user_access)
+                main.session.commit()
+                main.session.flush()
+
+            return {'response': {'method': 'PUT', 'result': 'success', 'message': 'User successfully updated.', 'class': 'alert alert-success', 'user_id': int(_user)}}
+
+        except (AttributeError) as e:
+            print ("[ERROR] PUT /api/v2/user/signupuser/%s / %s" % (_user,e))
+            return {'response': {'method': 'PUT', 'result': 'error', 'message': 'User doesn\'t exist.', 'class': 'alert alert-danger'}}
 
     @jwt_required()
     # removes user and their affiliated repos
     def delete(self, _user):
         if re.match('^[0-9]+$', _user):
             # use int value for .id
+            main.session.query(main.requestUserAccess).filter(main.requestUserAccess.userID == int(_user)).delete()
             main.session.query(main.UserAccess).filter(main.UserAccess.userID == int(_user)).delete()
             main.session.query(main.MistUser).filter(main.MistUser.id == int(_user)).delete()
         else:
             # use str value for .username
+            main.session.query(main.requestUserAccess).filter(main.requestUserAccess.userName == _user).delete()
             main.session.query(main.UserAccess).filter(main.UserAccess.userName == _user).delete()
             main.session.query(main.MistUser).filter(main.MistUser.username == _user).delete()
 
