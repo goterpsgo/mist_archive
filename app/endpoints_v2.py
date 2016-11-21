@@ -54,6 +54,7 @@ class User(object):
 
 
 def authenticate(username, password):
+    main.session.rollback()
     user = main.session.query(main.MistUser)\
       .filter(main.MistUser.username==username, main.MistUser.password==hashlib.sha256(password).hexdigest())\
       .first()
