@@ -58,7 +58,6 @@ start() {
 			exit 1
 		fi
 
-#		$UWSGI_BIN --py-autoreload 1 --master --socket=/tmp/mist_app.sock --pidfile=/tmp/mist_app.pid --module=wsgi --honour-stdin --chdir=$APP_HOME --threads=5 --virtualenv=$ENV_HOME --die-on-term --logto=/opt/mist_base/log/mist_app.log --uid $USER --gid $USER
 		$UWSGI_BIN --py-autoreload 1 --master --socket=/tmp/mist_app.sock --pidfile=/tmp/mist_app.pid --module=wsgi --honour-stdin --chdir=$APP_HOME --threads=5 --virtualenv=$ENV_HOME --die-on-term --logto=/opt/mist_base/log/mist_app.log --uid $USER --gid $USER > /dev/null 2>&1 &
 
 		if [ "$?" != 0 ] ; then
