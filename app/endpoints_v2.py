@@ -255,7 +255,6 @@ class Signup(Resource):
         return {'message': 'No GET method for this endpoint.'}
     def post(self):
         try:
-            # TODO: add error handler for handling inserting existing username values
             form_fields = request.get_json(force=True)
 
             new_user = main.MistUser(
