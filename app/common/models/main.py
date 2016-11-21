@@ -2,6 +2,7 @@ import base64
 from sqlalchemy import Column, DateTime, String, Integer, func, ForeignKey, create_engine, join
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.sql import select
+from sqlalchemy.exc import IntegrityError
 from base_model import Base
 
 class UserPermission(Base.Model):
