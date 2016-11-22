@@ -5,7 +5,7 @@ from mist_main import return_app
 import sqlalchemy
 from sqlalchemy.orm import scoped_session
 from common.models import main, base_model
-import hashlib
+from common.db_helpers import PasswordCheck
 import re
 import hashlib
 import config
@@ -168,7 +168,7 @@ class Users(Resource):
 
             new_user = main.MistUser(
                   username=form_fields['username']
-                , password=hashlib.sha256(form_fields['password']).hexdigest()
+                , password=hashlib.sha256(form_fields['password0']).hexdigest()
                 , subjectDN=form_fields['subject_dn']
                 , firstName=form_fields['first_name']
                 , lastName=form_fields['last_name']
@@ -271,6 +271,16 @@ class Signup(Resource):
         try:
             form_fields = request.get_json(force=True)
 
+            # If passwords do not match...
+            if (form_fields['password0'] != form_fields['password1']):
+                raise ValueError("Password error: passwords do not match.")
+
+            # If password does not fulfill complexity criteria...
+            pw_complexity = PasswordCheck(form_fields['password0'])
+            error = pw_complexity.check_password()
+            if error:
+                raise ValueError("Password error: " + error)
+
             new_user = main.MistUser(
                   username=form_fields['username']
                 , password=hashlib.sha256(form_fields['password0']).hexdigest()
@@ -300,9 +310,13 @@ class Signup(Resource):
 
             return {'response': {'method': 'POST', 'result': 'success', 'message': 'User information submitted. Information will be reviewed and admin will contact you when approved.', 'class': 'alert alert-success', 'user_id': int(new_user.id)}}
 
+        except (ValueError) as e:
+            print ("[ERROR] POST /api/v2/user/signupuser / ID: %s / %s" % (request.get_json(force=True)['username'], e))
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+
         except (main.IntegrityError) as e:
             print ("[ERROR] POST /api/v2/user/signupuser / ID: %s / %s" % (request.get_json(force=True)['username'],e))
-            return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-warning'}}
+            return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-danger'}}
 
     def put(self, _user=None):
         return {'message': 'No PUT method for this endpoint.'}
