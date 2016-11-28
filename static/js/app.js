@@ -23,11 +23,8 @@
                   }
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
-                    controllerAs: 'vm',
-                    controller: function($scope, $state) {
-                        // may need this one day...
-                        $scope.selected = $state.current.name;
-                    }
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
                   }
               }
             })
@@ -41,7 +38,7 @@
                   }
                 , '_nav' : {
                   templateUrl: 'static/html/nav_auth_none.view.html',
-                    controller: 'Home.IndexController',
+                    controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -56,7 +53,7 @@
                 }
                 , '_nav' : {
                     templateUrl: 'static/html/nav_auth_none.view.html',
-                    controller: 'Home.IndexController',
+                    controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -71,7 +68,7 @@
                 }
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
-                    controller: 'Home.IndexController',
+                    controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -86,7 +83,7 @@
                 }
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
-                    controller: 'Home.IndexController',
+                    controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -101,7 +98,7 @@
                 }
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
-                    controller: 'Home.IndexController',
+                    controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -116,7 +113,7 @@
                 }
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
-                    controller: 'Home.IndexController',
+                    controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -131,7 +128,7 @@
                 }
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
-                    controller: 'Home.IndexController',
+                    controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -146,7 +143,7 @@
                 }
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
-                    controller: 'Home.IndexController',
+                    controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -161,7 +158,7 @@
                 }
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
-                    controller: 'Home.IndexController',
+                    controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
               }
