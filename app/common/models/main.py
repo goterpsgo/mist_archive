@@ -3,7 +3,7 @@ from sqlalchemy import Column, DateTime, String, Integer, func, ForeignKey, crea
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import select
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, ProgrammingError, StatementError, OperationalError, InvalidRequestError, ResourceClosedError
 from base_model import Base
 
 class UserPermission(Base.Model):

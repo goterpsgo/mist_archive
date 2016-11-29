@@ -1,4 +1,15 @@
-<div class="col-md-6 col-md-offset-3">
-    <h1>Home</h1>
-    <p>Admins activies page</p>
+<div><br /></div>
+<div><br /></div>
+<div class="col-md-12 col-md-offset-0">
+    <div ng-repeat="user in users">
+        {{user.first_name}} {{user.last_name}} ({{user.username}} / {{user.permission}})<br /><br />
+
+        <span ng-repeat="repo in user.repos.assigned">
+            {{repo.server_name}} {{repo.repo_name}}<br /><br />
+        </span>
+
+        <span ng-repeat="repo in user.repos.requested">
+            {{repo.server_name}} {{repo.repo_name}}<br /><br />
+        </span>
+    </div>
 </div>

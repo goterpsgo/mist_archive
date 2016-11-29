@@ -42,22 +42,32 @@ class User(object):
         # self.password = password
 
     def get(self):
-        r_user = rs_users().filter(main.MistUser.id == self.id).first()
-        if hasattr(r_user, 'username'):
-            user = {
-                  'id': r_user.id
-                , 'username': r_user.username
-                , 'permission_id': r_user.permission_id
-                , 'subject_dn': r_user.subjectDN
-                , 'first_name': r_user.firstName
-                , 'last_name': r_user.lastName
-                , 'organization': r_user.organization
-                , 'lockout': r_user.lockout
-                , 'permission': r_user.permissions.name
-            }
-            return jsonify(user)
-        else:
-            return {"message": "No such user."}
+        try:
+            main.session.rollback()
+            r_user = rs_users().filter(main.MistUser.id == self.id).first()
+            if hasattr(r_user, 'username'):
+                user = {
+                      'id': r_user.id
+                    , 'username': r_user.username
+                    , 'permission_id': r_user.permission_id
+                    , 'subject_dn': r_user.subjectDN
+                    , 'first_name': r_user.firstName
+                    , 'last_name': r_user.lastName
+                    , 'organization': r_user.organization
+                    , 'lockout': r_user.lockout
+                    , 'permission': r_user.permissions.name
+                }
+                return jsonify(user)
+            else:
+                return {"message": "No such user."}
+        except (main.ResourceClosedError) as e:
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (IOError) as e:
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (AttributeError) as e:
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (main.StatementError) as e:
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
 
 
 def authenticate(username, password):
@@ -202,6 +212,7 @@ class Users(Resource):
             rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
             # query for user/users
+            main.session.rollback()
             rs_users_handle = rs_users()
             r_single_user = None
             if _user is not None:
@@ -222,7 +233,19 @@ class Users(Resource):
             return jsonify(rs_dict) # return rs_dict
 
         except (main.NoResultFound) as e:
-            {'response': {'message': e}}
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (main.ProgrammingError) as e:
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (main.StatementError) as e:
+            main.session.rollback()
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (main.OperationalError) as e:
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (main.InvalidRequestError) as e:
+            main.session.rollback()
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (main.ResourceClosedError) as e:
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
 
     @jwt_required()
     # 1. Inserts new user into mistUsers table and returns user id

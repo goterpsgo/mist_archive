@@ -25,7 +25,10 @@
                     if (response.access_token) {
                         // store username and token in local storage to keep user logged in between page refreshes
                         // for handling CSRF
-                        $localStorage.currentUser = { username: username, token: response.access_token };
+                        $localStorage.currentUser = {
+                              username: username
+                            , token: response.access_token
+                        };
 
                         // add jwt token to auth header for all requests made by the $http service
                         $http.defaults.headers.common.Authorization = 'JWT ' + response.access_token;
@@ -50,6 +53,7 @@
         function Logout() {
             // remove user from local storage and clear http auth header
             delete $localStorage.currentUser;
+            delete $localStorage.user;
             // remove user from session
             delete $sessionStorage.currentUser;
             $http.defaults.headers.common.Authorization = '';
