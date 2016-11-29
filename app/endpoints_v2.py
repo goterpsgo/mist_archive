@@ -21,8 +21,15 @@ this_app = return_app()
 def rs_users():
     return main.session.query(main.MistUser).join(main.UserPermission, main.MistUser.permission_id == main.UserPermission.id)
 
+def rs_user_access():
+    return main.session.query(main.UserAccess)
+
+def rs_request_user_access():
+    return main.session.query(main.requestUserAccess)
+
 def rs_repos():
     return main.session.query(main.Repos)
+
 
 # TODO: refactor authenticate() into User class if possible
 class User(object):
@@ -92,6 +99,7 @@ def create_new_token(request):
 
 
 def create_user_dict(obj_user):
+    # 1. Generate user dict
     user = {
           'id': obj_user.id
         , 'username': obj_user.username
@@ -103,6 +111,63 @@ def create_user_dict(obj_user):
         , 'lockout': obj_user.lockout
         , 'permission': obj_user.permissions.name
     }
+
+    # 2. Generate collection of repo dicts, selecting only repoID, scID, serverName, and repoName
+    # NOTE: single distinct() may still result in multiples of identical rows in large recordsets - JWT 28 Nov 2016
+    rs_repos_handle = rs_repos().with_entities(main.Repos.repoID.distinct(), main.Repos.scID, main.Repos.serverName, main.Repos.repoName)
+
+    # 3. Generate collection of assigned repos and save it to users dict
+    assigned = []
+    rs_repos_access_handle = rs_user_access()
+    # Get all the SCs and repo data affiliated with a given obj_user.id
+    obj_repos_access = rs_repos_access_handle.filter(main.UserAccess.userID == int(obj_user.id))
+
+    # Get the rest of the repo data using the information collected in obj_repos_access
+    for obj_repo_access in obj_repos_access:
+        obj_repos = rs_repos_handle.filter(main.and_(main.Repos.scID == obj_repo_access.scID, main.Repos.repoID == obj_repo_access.repoID))
+
+        # Run if there's one or more rows returned from obj_repos
+        if int(obj_repos.count()) != 0:
+            # Create user['repos'] if needed
+            if (user.has_key('repos') == False):
+                user['repos'] = {}
+            for obj_repo in obj_repos:
+                repo = {
+                      'server_name': obj_repo.serverName
+                    , 'repo_name': obj_repo.repoName
+                    , 'repoID': obj_repo_access.repoID
+                    , 'scID': obj_repo_access.scID
+                }
+                assigned.append(repo)
+            user['repos']['assigned'] = assigned
+    assigned = None
+
+    # 4. Generate collection of requested repos and save it to users dict
+    requested = []
+    rs_requested_repos_access_handle = rs_request_user_access()
+    # Get all the SCs and repo data affiliated with a given obj_user.id
+    obj_requested_repos_access = rs_requested_repos_access_handle.filter(main.requestUserAccess.userID == int(obj_user.id))
+
+    # Get the rest of the repo data using the information collected in obj_requested_repos_access
+    for obj_requested_repo_access in obj_requested_repos_access:
+        obj_repos = rs_repos_handle.filter(main.and_(main.Repos.scID == obj_requested_repo_access.scID, main.Repos.repoID == obj_requested_repo_access.repoID))
+
+        # Run if there's one or more rows returned from obj_repos
+        if int(obj_repos.count()) != 0:
+            # Create user['repos'] if needed
+            if (user.has_key('repos') == False):
+                user['repos'] = {}
+            for obj_repo in obj_repos:
+                repo = {
+                      'server_name': obj_repo.serverName
+                    , 'repo_name': obj_repo.repoName
+                    , 'repoID': obj_repo_access.repoID
+                    , 'scID': obj_repo_access.scID
+                }
+                requested.append(repo)
+            user['repos']['requested'] = requested
+    requested = None
+
     return user
 
 def create_repo_dict(obj_repo):
@@ -156,7 +221,7 @@ class Users(Resource):
 
             return jsonify(rs_dict) # return rs_dict
 
-        except (main.Base.exc.NoResultFound) as e:
+        except (main.NoResultFound) as e:
             {'response': {'message': e}}
 
     @jwt_required()
