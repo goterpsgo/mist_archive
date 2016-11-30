@@ -1,15 +1,18 @@
 <div><br /></div>
 <div><br /></div>
 <div class="col-md-12 col-md-offset-0">
-    <div ng-repeat="user in users">
-        {{user.first_name}} {{user.last_name}} ({{user.username}} / {{user.permission}})<br /><br />
-
-        <span ng-repeat="repo in user.repos.assigned">
-            {{repo.server_name}} {{repo.repo_name}}<br /><br />
-        </span>
-
-        <span ng-repeat="repo in user.repos.requested">
-            {{repo.server_name}} {{repo.repo_name}}<br /><br />
-        </span>
-    </div>
+    <table class="table table-hover table-bordered">
+        <thead>
+            <th>User</th>
+            <th>Repos</th>
+        </thead>
+        <tr ng-repeat="user in users">
+            <td>{{user.first_name}} {{user.last_name}} ({{user.username}} / {{user.permission}})</td>
+            <td>
+                <span ng-repeat="repo in user.repos">
+                    <span class="{{repo.class}}" ng-click="hello_world()">{{repo.server_name}} {{repo.repo_name}}<br/></span>
+                </span>
+            </td>
+        </tr>
+    </table>
 </div>

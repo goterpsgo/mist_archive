@@ -16,6 +16,10 @@
             get_users();
         }
 
+        $scope.hello_world = function() {
+            console.log('[admin.controller:20] Got here');
+        };
+
         function get_users() {
             MistUsersService._get_users()
                 .then(

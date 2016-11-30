@@ -120,6 +120,7 @@ def create_user_dict(obj_user):
         , 'organization': obj_user.organization
         , 'lockout': obj_user.lockout
         , 'permission': obj_user.permissions.name
+        , 'repos': {}
     }
 
     # 2. Generate collection of repo dicts, selecting only repoID, scID, serverName, and repoName
@@ -127,7 +128,6 @@ def create_user_dict(obj_user):
     rs_repos_handle = rs_repos().with_entities(main.Repos.repoID.distinct(), main.Repos.scID, main.Repos.serverName, main.Repos.repoName)
 
     # 3. Generate collection of assigned repos and save it to users dict
-    assigned = []
     rs_repos_access_handle = rs_user_access()
     # Get all the SCs and repo data affiliated with a given obj_user.id
     obj_repos_access = rs_repos_access_handle.filter(main.UserAccess.userID == int(obj_user.id))
@@ -138,22 +138,21 @@ def create_user_dict(obj_user):
 
         # Run if there's one or more rows returned from obj_repos
         if int(obj_repos.count()) != 0:
-            # Create user['repos'] if needed
-            if (user.has_key('repos') == False):
-                user['repos'] = {}
             for obj_repo in obj_repos:
+                identifier = obj_repo.serverName + "," + obj_repo.repoName + "," + str(obj_repo_access.repoID) + "," + str(obj_repo_access.scID)
+                # NOTE: Bootstrap default CSS checkbox-inline used for "cursor: pointer" to indicate clickable resource
                 repo = {
                       'server_name': obj_repo.serverName
                     , 'repo_name': obj_repo.repoName
                     , 'repoID': obj_repo_access.repoID
                     , 'scID': obj_repo_access.scID
+                    , 'is_assigned': 1
+                    , 'identifier': identifier
+                    , 'class': 'checkbox-inline'
                 }
-                assigned.append(repo)
-            user['repos']['assigned'] = assigned
-    assigned = None
+                user['repos'][identifier] = repo
 
     # 4. Generate collection of requested repos and save it to users dict
-    requested = []
     rs_requested_repos_access_handle = rs_request_user_access()
     # Get all the SCs and repo data affiliated with a given obj_user.id
     obj_requested_repos_access = rs_requested_repos_access_handle.filter(main.requestUserAccess.userID == int(obj_user.id))
@@ -165,19 +164,21 @@ def create_user_dict(obj_user):
         # Run if there's one or more rows returned from obj_repos
         if int(obj_repos.count()) != 0:
             # Create user['repos'] if needed
-            if (user.has_key('repos') == False):
-                user['repos'] = {}
             for obj_repo in obj_repos:
+                identifier = obj_repo.serverName + "," + obj_repo.repoName + "," + str(obj_requested_repo_access.repoID) + "," + str(obj_requested_repo_access.scID)
+                # NOTE: Bootstrap default CSS checkbox-inline used for "cursor: pointer" to indicate clickable resource
                 repo = {
                       'server_name': obj_repo.serverName
                     , 'repo_name': obj_repo.repoName
-                    , 'repoID': obj_repo_access.repoID
-                    , 'scID': obj_repo_access.scID
+                    , 'repoID': obj_requested_repo_access.repoID
+                    , 'scID': obj_requested_repo_access.scID
+                    , 'is_assigned': 0
+                    , 'identifier': identifier
+                    , 'class': 'checkbox-inline text-primary'
                 }
-                requested.append(repo)
-            user['repos']['requested'] = requested
-    requested = None
-
+                # Add repo if key doesn't yet exist in users['repos'] dict
+                if (user['repos'].get(identifier) == None):
+                    user['repos'][identifier] = repo
     return user
 
 def create_repo_dict(obj_repo):
