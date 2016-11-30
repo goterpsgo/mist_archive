@@ -103,6 +103,21 @@
                   }
               }
             })
+            .state('profile', {
+              url: '/profile',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/profile.view.html',
+                  controller: 'Profile.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
             .state('admin', {
               url: '/admin',
               views : {
