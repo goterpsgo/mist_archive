@@ -3,7 +3,7 @@
  
     angular
         .module('app')
-        .controller('Publish.IndexController', Controller);
+        .controller('Profile.IndexController', Controller);
 
     function Controller() {
         var vm = this;
