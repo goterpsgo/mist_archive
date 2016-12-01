@@ -350,7 +350,13 @@ class Users(Resource):
             main.session.query(main.MistUser).filter(main.MistUser.username == _user).delete()
 
         main.session.commit()
-        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'User successfully deleted.', 'class': 'alert alert-success', 'user_id': int(_user)}}
+        if re.match('^[0-9]+$', _user):
+            # use int value for .id
+            return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'User successfully deleted.', 'class': 'alert alert-success', 'user_id': int(_user)}}
+        else:
+            print "match string"
+            # use str value for .username
+            return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'User successfully deleted.', 'class': 'alert alert-success', 'user_id': _user}}
 
 
 class Signup(Resource):
