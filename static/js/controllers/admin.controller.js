@@ -16,8 +16,21 @@
             get_users();
         }
 
-        $scope.hello_world = function() {
-            console.log('[admin.controller:20] Got here');
+        $scope.repo_assign = function(user, repo) {
+            get_users();
+        };
+
+        $scope.delete_user = function(user) {
+            MistUsersService._delete_user(user)
+                .then(
+                      function(users) {
+                          $scope.users = users.users_list;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                )
+            get_users();
         };
 
         function get_users() {
@@ -25,7 +38,6 @@
                 .then(
                       function(users) {
                           $scope.users = users.users_list;
-                          console.log('[23] admin.controller.get_users()')
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;

@@ -13,19 +13,9 @@
             , _update_user: update_user
             , _delete_user: delete_user
             , _signup_user: signup_user
-            // , _get_stuff: get_stuff
         };
 
         return factory;
-
-        // function get_stuff() {
-        //     console.log('[21] Got here');
-        //     return $http.get('https://10.11.1.239:8443/api/v2/stuff')
-        //         .then(function(response) {
-        //             console.log('[24] Got here');
-        //             return response.data;
-        //         })
-        // }
 
         function serial_to_obj(rows, delim) {
             if (delim === undefined) {
@@ -100,8 +90,26 @@
             return deferred.promise;
         }
 
-        function delete_user() {
+        function delete_user(id) {
+            console.log('[mistuser.service:94] delete: ' + id);
             var deferred = $q.defer();
+            var config = {
+                headers : {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+            }
+
+            console.log('[mistuser.service:102] before delete');
+            $http.delete('https://10.11.1.239:8443/api/v2/user/' + id)
+                .success(function(data, status, headers) {
+                    console.log('[mistuser.service:105] delete success');
+                    deferred.resolve(data);
+                })
+                .error(function(data, status, header, config) {
+                    console.log('[mistuser.service:109] delete error');
+                    deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
+                })
+            ;
             return deferred.promise;
         }
     }
