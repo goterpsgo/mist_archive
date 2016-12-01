@@ -354,7 +354,6 @@ class Users(Resource):
             # use int value for .id
             return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'User successfully deleted.', 'class': 'alert alert-success', 'user_id': int(_user)}}
         else:
-            print "match string"
             # use str value for .username
             return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'User successfully deleted.', 'class': 'alert alert-success', 'user_id': _user}}
 
