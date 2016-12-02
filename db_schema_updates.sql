@@ -30,6 +30,8 @@ SET permission_id = (
 )
 WHERE username = 'admin';
 
+alter table userAccess add is_assigned timestamp;
+
 # # NAME: sp_get_user
 # # INPUT: mistUser id (INT) or username value (VARCHAR) or null
 # # OUTPUT: 1st record that matches input else null set or all records

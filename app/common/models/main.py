@@ -3,7 +3,9 @@ from sqlalchemy import Column, DateTime, String, Integer, func, ForeignKey, crea
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import select
-from sqlalchemy.exc import IntegrityError, ProgrammingError, StatementError, OperationalError, InvalidRequestError, ResourceClosedError
+from sqlalchemy.sql.functions import current_timestamp
+from sqlalchemy.exc import IntegrityError, ProgrammingError, StatementError, OperationalError, InvalidRequestError, ResourceClosedError, NoSuchColumnError
+from sqlalchemy.dialects.mysql import TIMESTAMP
 from base_model import Base
 
 class UserPermission(Base.Model):
@@ -43,6 +45,7 @@ class UserAccess(Base.Model):
     userID = Column(Integer)
     scID = Column(String(150))
     userName = Column(String(45), ForeignKey('mistUsers.username'))
+    is_assigned = Column(TIMESTAMP)
 
 class requestUserAccess(Base.Model):
     __tablename__ = "requestUserAccess"
