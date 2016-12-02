@@ -8,11 +8,11 @@
         </thead>
         <tr ng-repeat="user in users">
             <td>
-                <span ng-click="delete_user(user.username)" class="checkbox-inline">[X]</span>
+                <span ng-click="delete_user(user.id)" class="checkbox-inline">[X]</span>
                 {{user.first_name}} {{user.last_name}} ({{user.username}} / {{user.permission}})</td>
             <td>
                 <div ng-repeat="repo in user.repos">
-                    <span ng-click="repo_assign(user.username,repo.identifier)" class="{{repo.class}}">{{repo.server_name}} {{repo.repo_name}}<br/></span>
+                    <span ng-click="repo_assign(user.id,repo.repo_data)" class="{{repo.class}}">{{repo.server_name}} {{repo.repo_name}}<br/></span>
                 </div>
             </td>
         </tr>

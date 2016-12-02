@@ -17,7 +17,22 @@
         }
 
         $scope.repo_assign = function(user, repo) {
-            get_users();
+            console.log('[admin.controller:20] Got here');
+            var form_data = {'repo': repo};
+            MistUsersService._update_user(user, form_data)
+                .then(
+                      function(users) {
+                          $scope.users = users.users_list;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                )
+                .then(
+                    function() {
+                        get_users();
+                    }
+                );
         };
 
         $scope.delete_user = function(user) {
@@ -30,7 +45,11 @@
                         $scope.status = 'Error loading data: ' + err.message;
                       }
                 )
-            get_users();
+                .then(
+                    function() {
+                        get_users();
+                    }
+                );
         };
 
         function get_users() {

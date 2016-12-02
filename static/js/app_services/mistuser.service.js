@@ -85,8 +85,25 @@
             return deferred.promise;
         }
 
-        function update_user() {
+        function update_user(id, form_data) {
             var deferred = $q.defer();
+            var config = {
+                headers : {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+            };
+            console.log('[mistuser.service:95] id: ' + id);
+            console.log(form_data);
+
+
+            $http.put('https://10.11.1.239:8443/api/v2/user/' + id, form_data, config)
+                .success(function(form_data, status, headers, config) {
+                    deferred.resolve(form_data);
+                })
+                .error(function(data, status, headers, config) {
+                    deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
+                })
+            ;
             return deferred.promise;
         }
 
@@ -97,7 +114,7 @@
                 headers : {
                     'Content-Type': 'application/json;charset=utf-8;'
                 }
-            }
+            };
 
             console.log('[mistuser.service:102] before delete');
             $http.delete('https://10.11.1.239:8443/api/v2/user/' + id)

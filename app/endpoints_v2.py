@@ -127,32 +127,7 @@ def create_user_dict(obj_user):
     # NOTE: single distinct() may still result in multiples of identical rows in large recordsets - JWT 28 Nov 2016
     rs_repos_handle = rs_repos().with_entities(main.Repos.repoID.distinct(), main.Repos.scID, main.Repos.serverName, main.Repos.repoName)
 
-    # 3. Generate collection of assigned repos and save it to users dict
-    rs_repos_access_handle = rs_user_access()
-    # Get all the SCs and repo data affiliated with a given obj_user.id
-    obj_repos_access = rs_repos_access_handle.filter(main.UserAccess.userID == int(obj_user.id))
-
-    # Get the rest of the repo data using the information collected in obj_repos_access
-    for obj_repo_access in obj_repos_access:
-        obj_repos = rs_repos_handle.filter(main.and_(main.Repos.scID == obj_repo_access.scID, main.Repos.repoID == obj_repo_access.repoID))
-
-        # Run if there's one or more rows returned from obj_repos
-        if int(obj_repos.count()) != 0:
-            for obj_repo in obj_repos:
-                identifier = obj_repo.serverName + "," + obj_repo.repoName + "," + str(obj_repo_access.repoID) + "," + str(obj_repo_access.scID)
-                # NOTE: Bootstrap default CSS checkbox-inline used for "cursor: pointer" to indicate clickable resource
-                repo = {
-                      'server_name': obj_repo.serverName
-                    , 'repo_name': obj_repo.repoName
-                    , 'repoID': obj_repo_access.repoID
-                    , 'scID': obj_repo_access.scID
-                    , 'is_assigned': 1
-                    , 'identifier': identifier
-                    , 'class': 'checkbox-inline'
-                }
-                user['repos'][identifier] = repo
-
-    # 4. Generate collection of requested repos and save it to users dict
+    # 3. Generate collection of requested repos and save it to users dict
     rs_requested_repos_access_handle = rs_request_user_access()
     # Get all the SCs and repo data affiliated with a given obj_user.id
     obj_requested_repos_access = rs_requested_repos_access_handle.filter(main.requestUserAccess.userID == int(obj_user.id))
@@ -166,6 +141,7 @@ def create_user_dict(obj_user):
             # Create user['repos'] if needed
             for obj_repo in obj_repos:
                 identifier = obj_repo.serverName + "," + obj_repo.repoName + "," + str(obj_requested_repo_access.repoID) + "," + str(obj_requested_repo_access.scID)
+                repo_data = str(obj_user.id) + "," + str(obj_requested_repo_access.scID) + "," + str(obj_requested_repo_access.repoID) + "," + obj_user.username # used to populate UserAccess and requestUserAccess tables
                 # NOTE: Bootstrap default CSS checkbox-inline used for "cursor: pointer" to indicate clickable resource
                 repo = {
                       'server_name': obj_repo.serverName
@@ -174,10 +150,38 @@ def create_user_dict(obj_user):
                     , 'scID': obj_requested_repo_access.scID
                     , 'is_assigned': 0
                     , 'identifier': identifier
+                    , 'repo_data': repo_data
                     , 'class': 'checkbox-inline text-primary'
                 }
+                user['repos'][identifier] = repo
+
+    # 4. Generate collection of assigned repos and save it to users dict
+    rs_repos_access_handle = rs_user_access()
+    # Get all the SCs and repo data affiliated with a given obj_user.id
+    obj_repos_access = rs_repos_access_handle.filter(main.UserAccess.userID == int(obj_user.id))
+
+    # Get the rest of the repo data using the information collected in obj_repos_access
+    for obj_repo_access in obj_repos_access:
+        obj_repos = rs_repos_handle.filter(main.and_(main.Repos.scID == obj_repo_access.scID, main.Repos.repoID == obj_repo_access.repoID))
+
+        # Run if there's one or more rows returned from obj_repos
+        if int(obj_repos.count()) != 0:
+            for obj_repo in obj_repos:
+                identifier = obj_repo.serverName + "," + obj_repo.repoName + "," + str(obj_repo_access.repoID) + "," + str(obj_repo_access.scID)
+                repo_data = str(obj_user.id) + "," + str(obj_repo_access.scID) + "," + str(obj_repo_access.repoID) + "," + obj_user.username # used to populate UserAccess and requestUserAccess tables
+                # NOTE: Bootstrap default CSS checkbox-inline used for "cursor: pointer" to indicate clickable resource
+                repo = {
+                      'server_name': obj_repo.serverName
+                    , 'repo_name': obj_repo.repoName
+                    , 'repoID': obj_repo_access.repoID
+                    , 'scID': obj_repo_access.scID
+                    , 'is_assigned': 1
+                    , 'identifier': identifier
+                    , 'repo_data': repo_data
+                    , 'class': 'checkbox-inline'
+                }
                 # Add repo if key doesn't yet exist in users['repos'] dict
-                if (user['repos'].get(identifier) == None):
+                if ("identifier" not in user['repos']):
                     user['repos'][identifier] = repo
     return user
 
@@ -295,45 +299,64 @@ class Users(Resource):
     def put(self, _user):
         try:
             form_fields = request.get_json(force=True)
+            repo = {}
 
             # Extract only simple fields (ie not permission, repos) and copy them into db_fields
-            db_fields = {}
-            for key, value in form_fields.iteritems():
-                if (key != "repos"):
-                    db_fields[key] = value
-                if (key == "password"):
-                    db_fields[key] = hashlib.sha256(value).hexdigest()
+            if ("repo" in form_fields):
+                repo['userID'], repo['scID'], repo['repoID'], repo['userName'] = form_fields.pop('repo').split(',')
+                repo['userID'] = int(repo['userID'])
+                repo['scID'] = str(repo['scID'])
+                repo['repoID'] = int(repo['repoID'])
+                repo['userName'] = str(repo['userName'])
+                # repo = {key:str(value) for key, value in repo.iteritems()}  # convert to string values
+            if ("password" in form_fields):
+                form_fields["password"] = hashlib.sha256(form_fields["password"]).hexdigest()
 
             # Flush any exceptions currently in session
-            main.session.rollback()
+            # main.session.rollback()
 
-            # Pass _user value to get mistUser object and update with values in db_fields
-            main.session.query(main.MistUser).filter(main.MistUser.id == int(_user)).update(db_fields)
-            db_fields = None
+            # Pass _user value to get mistUser object and update with values in form_fields
+            if (any(form_fields)):
+                main.session.query(main.MistUser).filter(main.MistUser.id == int(_user)).update(form_fields)
+                db_fields = {}
 
-            # Delete entries in userAccess that have userID = _user
-            main.session.query(main.UserAccess).filter(main.UserAccess.userID == int(_user)).delete()
+            # obj_repos = rs_repos_handle.filter(main.and_(main.Repos.scID == obj_repo_access.scID, main.Repos.repoID == obj_repo_access.repoID))
+            userAccessEntry = main.session.query(main.UserAccess)\
+                .filter(main.and_(main.UserAccess.userID == repo['userID'], main.UserAccess.scID == repo['scID'], main.UserAccess.repoID == repo['repoID']))
 
-            # Extract mistUser info and save into user
-            rs_user_access = rs_users().filter(main.MistUser.id == int(_user)).first()
-            user = create_user_dict(rs_user_access)
+            requestUserAccessEntry = main.session.query(main.requestUserAccess)\
+                .filter(main.and_(main.requestUserAccess.userID == repo['userID'], main.requestUserAccess.scID == repo['scID'], main.requestUserAccess.repoID == repo['repoID']))
 
-            for user_repo in form_fields['repos']:
-                upd_user_access = main.UserAccess(
-                      repoID = user_repo['repo_id']
-                    , scID = user_repo['sc_id']
-                    , userID = int(_user)
-                    , userName = user['username']
+            # Toggle repo entry between requested and assigned
+            if userAccessEntry.count() == 0:   # If user requested to use that repo...
+                new_repo = main.UserAccess(
+                      userID = repo['userID']
+                    , scID = repo['scID']
+                    , repoID = repo['repoID']
+                    , userName = repo['userName']
                 )
-                main.session.add(upd_user_access)
+                main.session.add(new_repo)  # maybe remove one day? - JWT 1 Dec 2016
                 main.session.commit()
                 main.session.flush()
+                # userAccessEntry.is_assigned = main.current_timestamp  # currently not needed - JWT 2 Dec 2016
+            else:                                # add to requested to set as requested
+                userAccessEntry.delete()  # maybe remove one day? - JWT 1 Dec 2016
+                # userAccessEntry.is_assigned = main.current_timestamp  # currently not needed - JWT 2 Dec 2016
 
             return {'response': {'method': 'PUT', 'result': 'success', 'message': 'User successfully updated.', 'class': 'alert alert-success', 'user_id': int(_user)}}
 
         except (AttributeError) as e:
-            print ("[ERROR] PUT /api/v2/user/signupuser/%s / %s" % (_user,e))
-            return {'response': {'method': 'PUT', 'result': 'error', 'message': 'User doesn\'t exist.', 'class': 'alert alert-danger'}}
+            print ("[AttributeError] PUT /api/v2/user/%s / %s" % (_user,e))
+            return {'response': {'method': 'PUT', 'result': 'AttributeError', 'message': e, 'class': 'alert alert-danger'}}
+        except (main.ProgrammingError) as e:
+            print ("[ProgrammingError] PUT /api/v2/user/%s / %s" % (_user,e))
+            return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
+        except (TypeError) as e:
+            print ("[TypeError] PUT /api/v2/user/%s / %s" % (_user,e))
+            return {'response': {'method': 'PUT', 'result': 'TypeError', 'message': 'TypeError', 'class': 'alert alert-danger'}}
+        except (main.NoSuchColumnError) as e:
+            print ("[NoSuchColumnError] PUT /api/v2/user/%s / %s" % (_user,e))
+            return {'response': {'method': 'PUT', 'result': 'NoSuchColumnError', 'message': e, 'class': 'alert alert-danger'}}
 
     @jwt_required()
     # removes user and their affiliated repos
