@@ -113,14 +113,16 @@ def create_user_dict(obj_user):
     user = {
           'id': obj_user.id
         , 'username': obj_user.username
-        , 'permission_id': obj_user.permission_id
+        , 'permission_id_new': obj_user.permission_id
         , 'subject_dn': obj_user.subjectDN
         , 'first_name': obj_user.firstName
         , 'last_name': obj_user.lastName
         , 'organization': obj_user.organization
         , 'lockout': obj_user.lockout
-        , 'permission': obj_user.permissions.name
+        , 'permission_name': obj_user.permissions.name
+        , 'permission': obj_user.permission
         , 'repos': {}
+        , 'has_repos': 0    # if a user has at least one repo assigned then value = 1
     }
 
     # 2. Generate collection of repo dicts, selecting only repoID, scID, serverName, and repoName
@@ -183,6 +185,7 @@ def create_user_dict(obj_user):
                 # Add repo if key doesn't yet exist in users['repos'] dict
                 if ("identifier" not in user['repos']):
                     user['repos'][identifier] = repo
+            user['has_repos'] += 1    # if a user has at least one repo assigned then value = 1
     return user
 
 def create_repo_dict(obj_repo):
@@ -299,49 +302,110 @@ class Users(Resource):
     def put(self, _user):
         try:
             form_fields = request.get_json(force=True)
-            repo = {}
+            permission = form_fields['permission']
+
+            # Set aside any non-MistUser-specific values
+            user_admin_toggle = None
+            if ("user_admin_toggle" in form_fields):
+                user_admin_toggle = form_fields.pop('user_admin_toggle')
+            current_user = main.session.query(main.MistUser).filter(main.MistUser.id == int(_user))
+
+            repo = None
+            if ("repo" in form_fields):
+                repo = {}
+                repo['userID'], repo['scID'], repo['repoID'], repo['userName'] = form_fields.pop('repo').split(',')
+
+            has_repos = None
+            if ("has_repos" in form_fields):
+                has_repos = form_fields.pop('has_repos')
+
+            print "Permission: %r" % permission
+
+            # ==================================================
+            # UPDATE GENERAL USER DATA
+
+            # Pass _user value to get mistUser object and update with values in form_fields
+            print "[325] Got here"
+            if ("password" in form_fields):
+                form_fields["password"] = hashlib.sha256(form_fields["password"]).hexdigest()
+            if (any(form_fields)):
+                current_user.update(form_fields)
+                db_fields = {}
+
+            # ==================================================
+            # TOGGLE USER REPO ASSIGNMENTS
 
             # Extract only simple fields (ie not permission, repos) and copy them into db_fields
-            if ("repo" in form_fields):
-                repo['userID'], repo['scID'], repo['repoID'], repo['userName'] = form_fields.pop('repo').split(',')
+            print "[334] Got here"
+            if (repo is not None):
                 repo['userID'] = int(repo['userID'])
                 repo['scID'] = str(repo['scID'])
                 repo['repoID'] = int(repo['repoID'])
                 repo['userName'] = str(repo['userName'])
                 # repo = {key:str(value) for key, value in repo.iteritems()}  # convert to string values
-            if ("password" in form_fields):
-                form_fields["password"] = hashlib.sha256(form_fields["password"]).hexdigest()
 
-            # Flush any exceptions currently in session
-            # main.session.rollback()
+                # Flush any exceptions currently in session
+                # main.session.rollback()
 
-            # Pass _user value to get mistUser object and update with values in form_fields
-            if (any(form_fields)):
-                main.session.query(main.MistUser).filter(main.MistUser.id == int(_user)).update(form_fields)
-                db_fields = {}
+                # obj_repos = rs_repos_handle.filter(main.and_(main.Repos.scID == obj_repo_access.scID, main.Repos.repoID == obj_repo_access.repoID))
+                userAccessEntry = main.session.query(main.UserAccess)\
+                    .filter(main.and_(main.UserAccess.userID == repo['userID'], main.UserAccess.scID == repo['scID'], main.UserAccess.repoID == repo['repoID']))
 
-            # obj_repos = rs_repos_handle.filter(main.and_(main.Repos.scID == obj_repo_access.scID, main.Repos.repoID == obj_repo_access.repoID))
-            userAccessEntry = main.session.query(main.UserAccess)\
-                .filter(main.and_(main.UserAccess.userID == repo['userID'], main.UserAccess.scID == repo['scID'], main.UserAccess.repoID == repo['repoID']))
+                requestUserAccessEntry = main.session.query(main.requestUserAccess)\
+                    .filter(main.and_(main.requestUserAccess.userID == repo['userID'], main.requestUserAccess.scID == repo['scID'], main.requestUserAccess.repoID == repo['repoID']))
 
-            requestUserAccessEntry = main.session.query(main.requestUserAccess)\
-                .filter(main.and_(main.requestUserAccess.userID == repo['userID'], main.requestUserAccess.scID == repo['scID'], main.requestUserAccess.repoID == repo['repoID']))
+                # Toggle repo entry between requested and assigned
+                print "[356] userAccessEntry.count(): %r" % userAccessEntry.count()
+                print "[357] int(userAccessEntry.count()) == 0: %r" % int(userAccessEntry.count()) == 0
+                print "[358] form_fields: %r" % form_fields
+                print "[359] has_repos: %r" % has_repos
+                if int(userAccessEntry.count()) == 0:   # If user requested to use that repo...
+                    new_repo = main.UserAccess(
+                          userID = repo['userID']
+                        , scID = repo['scID']
+                        , repoID = repo['repoID']
+                        , userName = repo['userName']
+                    )
+                    upd_form = {
+                        "permission": 1 if permission == 0 else 0
+                    }
+                    print "[373] upd_form: %r" % upd_form
+                    current_user.update(upd_form)
+                    main.session.add(new_repo)  # maybe remove one day? - JWT 1 Dec 2016
+                    main.session.commit()
+                    main.session.flush()
+                    # userAccessEntry.is_assigned = main.current_timestamp  # currently not needed - JWT 2 Dec 2016
+                else:                                # add to requested to set as requested
+                    userAccessEntry.delete()  # maybe remove one day? - JWT 1 Dec 2016
+                    print "[381] has_repos is None: %r" % has_repos is None
+                    upd_form = {
+                        "permission": 1 if has_repos is not None else 0
+                    }
+                    print "[385] upd_form: %r" % upd_form
+                    current_user.update(upd_form)
+                    # userAccessEntry.is_assigned = main.current_timestamp  # currently not needed - JWT 2 Dec 2016
 
-            # Toggle repo entry between requested and assigned
-            if userAccessEntry.count() == 0:   # If user requested to use that repo...
-                new_repo = main.UserAccess(
-                      userID = repo['userID']
-                    , scID = repo['scID']
-                    , repoID = repo['repoID']
-                    , userName = repo['userName']
-                )
-                main.session.add(new_repo)  # maybe remove one day? - JWT 1 Dec 2016
+            # ==================================================
+            # TOGGLE USER ADMIN ASSIGNMENTS
+            print "[391] user_admin_toggle: %r" % user_admin_toggle
+            print "[392] form_fields: %r" % form_fields
+            print "[393] has_repos: %r" % has_repos
+            if (user_admin_toggle is not None):
+                print "[395] after"
+
+                upd_form = {}
+                if (user_admin_toggle == 1):
+                    upd_form = {
+                        "permission": 2 if permission == 1 else 1   # regular user perms if user has at least one repos assigned
+                    }
+                else:
+                    upd_form = {
+                        "permission": 2 if permission == 0 else 0   # no perms if user has no repos assigned
+                    }
+                print upd_form
+                current_user.update(upd_form)
                 main.session.commit()
                 main.session.flush()
-                # userAccessEntry.is_assigned = main.current_timestamp  # currently not needed - JWT 2 Dec 2016
-            else:                                # add to requested to set as requested
-                userAccessEntry.delete()  # maybe remove one day? - JWT 1 Dec 2016
-                # userAccessEntry.is_assigned = main.current_timestamp  # currently not needed - JWT 2 Dec 2016
 
             return {'response': {'method': 'PUT', 'result': 'success', 'message': 'User successfully updated.', 'class': 'alert alert-success', 'user_id': int(_user)}}
 
