@@ -16,9 +16,27 @@
             get_users();
         }
 
-        $scope.repo_assign = function(user, repo) {
-            console.log('[admin.controller:20] Got here');
-            var form_data = {'repo': repo};
+        $scope.repo_assign = function(user, repo, permission, has_repos) {
+            var form_data = {'permission': permission, 'repo': repo, 'has_repos': has_repos};
+            MistUsersService._update_user(user, form_data)
+                .then(
+                      function(users) {
+                          $scope.users = users.users_list;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                )
+                .then(
+                    function() {
+                        get_users();
+                    }
+                );
+        };
+
+        $scope.user_admin_toggle = function(user, permission, has_repos) {
+            console.log('[admin.controller:39] user_admin_toggle()');
+            var form_data = {'user_admin_toggle': has_repos, 'permission': permission};
             MistUsersService._update_user(user, form_data)
                 .then(
                       function(users) {
