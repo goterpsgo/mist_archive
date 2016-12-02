@@ -8,11 +8,15 @@
         </thead>
         <tr ng-repeat="user in users">
             <td>
+                <span ng-init="has_repos = 0"></span>
                 <span ng-click="delete_user(user.id)" class="checkbox-inline">[X]</span>
-                {{user.first_name}} {{user.last_name}} ({{user.username}} / {{user.permission}})</td>
+                <span ng-click="user_admin_toggle(user.id,user.permission,user.has_repos)" class="checkbox-inline" ng-init="value = (user.permission >= 2 ? 'A' : 'U')" ng-switch="value">
+                    [{{value}} {{user.permission}}]
+                </span>
+                {{user.first_name}} {{user.last_name}} ({{user.username}})</td>
             <td>
                 <div ng-repeat="repo in user.repos">
-                    <span ng-click="repo_assign(user.id,repo.repo_data)" class="{{repo.class}}">{{repo.server_name}} {{repo.repo_name}}<br/></span>
+                    <span ng-click="repo_assign(user.id,repo.repo_data,user.permission,user.has_repos)" class="{{repo.class}}">{{repo.server_name}} {{repo.repo_name}}<br/></span>
                 </div>
             </td>
         </tr>

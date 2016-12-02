@@ -1,4 +1,4 @@
-<span ng-if="user.permission === 'Admin User' || user.permission === 'Super User'">
+<span ng-if="user.permission === 2 || user.permission === 3">
     <ul class="nav nav-pills" style="display:inline-block; padding-top: 34px;">
         <li ng-class="{active: selectedTab == 1}"><a ui-sref="profile" ng-click="selectedTab = 1;">Profile Update</a></li>
         <li ng-class="{active: selectedTab == 2}"><a ui-sref="repostag" ng-click="selectedTab = 2;">Repos Auto Tags</a></li>
@@ -11,7 +11,7 @@
         <li style="font-weight: bold;"><a ui-sref="login">Logout</a></li>
     </ul>
 </span>
-<span ng-if="user.permission !== 'Admin User' && user.permission !== 'Super User'">
+<span ng-if="user.permission !== 2 && user.permission !== 3">
     <ul class="nav nav-pills" style="display:inline-block; padding-top: 34px;">
         <li ng-class="{active: selectedTab == 1}"><a ui-sref="profile" ng-click="selectedTab = 1;">Profile Update</a></li>
         <li ng-class="{active: selectedTab == 2}"><a ui-sref="repostag" ng-click="selectedTab = 2;">Repos Auto Tags</a></li>
