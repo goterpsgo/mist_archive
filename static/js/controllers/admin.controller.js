@@ -16,8 +16,8 @@
             get_users();
         }
 
-        $scope.repo_assign = function(user, repo, permission, has_repos) {
-            var form_data = {'permission': permission, 'repo': repo, 'has_repos': has_repos};
+        $scope.repo_assign = function(user, repo, permission, cnt_repos) {
+            var form_data = {'permission': permission, 'repo': repo, 'cnt_repos': cnt_repos};
             MistUsersService._update_user(user, form_data)
                 .then(
                       function(users) {
@@ -34,9 +34,9 @@
                 );
         };
 
-        $scope.user_admin_toggle = function(user, permission, has_repos) {
+        $scope.user_admin_toggle = function(user, permission, cnt_repos) {
             console.log('[admin.controller:39] user_admin_toggle()');
-            var form_data = {'user_admin_toggle': has_repos, 'permission': permission};
+            var form_data = {'user_admin_toggle': cnt_repos, 'permission': permission};
             MistUsersService._update_user(user, form_data)
                 .then(
                       function(users) {

@@ -122,7 +122,7 @@ def create_user_dict(obj_user):
         , 'permission_name': obj_user.permissions.name
         , 'permission': obj_user.permission
         , 'repos': {}
-        , 'has_repos': 0    # if a user has at least one repo assigned then value = 1
+        , 'cnt_repos': 0    # if a user has at least one repo assigned then value > 0
     }
 
     # 2. Generate collection of repo dicts, selecting only repoID, scID, serverName, and repoName
@@ -185,7 +185,7 @@ def create_user_dict(obj_user):
                 # Add repo if key doesn't yet exist in users['repos'] dict
                 if ("identifier" not in user['repos']):
                     user['repos'][identifier] = repo
-            user['has_repos'] += 1    # if a user has at least one repo assigned then value = 1
+            user['cnt_repos'] += 1    # if a user has at least one repo assigned then value > 0
     return user
 
 def create_repo_dict(obj_repo):
@@ -258,6 +258,7 @@ class Users(Resource):
     @jwt_required()
     # 1. Inserts new user into mistUsers table and returns user id
     # 2. Inserts repo and user association into userAccess table
+    # Do I even needs this method?!?! Maybe for reference. - JWT 5 Dec 2016
     def post(self):
         try:
             form_fields = request.get_json(force=True)
@@ -272,10 +273,8 @@ class Users(Resource):
                 , lockout="No"
                 , permission_id=2
             )
-            main.session.rollback()
             main.session.add(new_user)
-            main.session.commit()
-            main.session.flush()
+            main.session.begin_nested()
 
             for user_repo in form_fields['repos']:
                 new_user_access = main.UserAccess(
@@ -285,13 +284,16 @@ class Users(Resource):
                     , userName = form_fields['username']
                 )
                 main.session.add(new_user_access)
-                main.session.commit()
-                main.session.flush()
+                main.session.begin_nested()
+
+            main.session.commit()
+            main.session.flush()
 
             return {'response': {'method': 'POST', 'result': 'success', 'message': 'New user added.', 'class': 'alert alert-success', 'user_id': int(new_user.id)}}
 
         except (main.IntegrityError) as e:
             print ("[ERROR] POST /api/v2/users / ID: %s / %s" % (request.get_json(force=True)['username'],e))
+            main.session.rollback()
             return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-warning'}}
 
     @jwt_required()
@@ -308,35 +310,49 @@ class Users(Resource):
             user_admin_toggle = None
             if ("user_admin_toggle" in form_fields):
                 user_admin_toggle = form_fields.pop('user_admin_toggle')
-            current_user = main.session.query(main.MistUser).filter(main.MistUser.id == int(_user))
+            this_user = main.session.query(main.MistUser).filter(main.MistUser.id == int(_user))
 
             repo = None
             if ("repo" in form_fields):
                 repo = {}
                 repo['userID'], repo['scID'], repo['repoID'], repo['userName'] = form_fields.pop('repo').split(',')
 
-            has_repos = None
-            if ("has_repos" in form_fields):
-                has_repos = form_fields.pop('has_repos')
-
-            print "Permission: %r" % permission
+            # currently provided by Users.get(), currently not needed - JWT 5 Dec 2016
+            cnt_repos = None
+            if ("cnt_repos" in form_fields):
+                cnt_repos = form_fields.pop('cnt_repos')
 
             # ==================================================
             # UPDATE GENERAL USER DATA
 
             # Pass _user value to get mistUser object and update with values in form_fields
-            print "[325] Got here"
             if ("password" in form_fields):
                 form_fields["password"] = hashlib.sha256(form_fields["password"]).hexdigest()
             if (any(form_fields)):
-                current_user.update(form_fields)
+                this_user.update(form_fields)
                 db_fields = {}
+            main.session.begin_nested()
+
+            # ==================================================
+            # TOGGLE USER ADMIN ASSIGNMENTS
+            if (user_admin_toggle is not None):
+
+                upd_form = {}
+                if (user_admin_toggle > 0):
+                    upd_form = {
+                        "permission": 2 if permission == 1 else 1   # regular user perms if user has at least one repos assigned
+                    }
+                else:
+                    upd_form = {
+                        "permission": 2 if permission == 0 else 0   # no perms if user has no repos assigned
+                    }
+                this_user.update(upd_form)
+                main.session.begin_nested()
 
             # ==================================================
             # TOGGLE USER REPO ASSIGNMENTS
 
             # Extract only simple fields (ie not permission, repos) and copy them into db_fields
-            print "[334] Got here"
             if (repo is not None):
                 repo['userID'] = int(repo['userID'])
                 repo['scID'] = str(repo['scID'])
@@ -347,6 +363,8 @@ class Users(Resource):
                 # Flush any exceptions currently in session
                 # main.session.rollback()
 
+                # All repo assignments are saved in requestUserAccess table
+                # Repo assignments are marked as approved if also saved in UserAccess table
                 # obj_repos = rs_repos_handle.filter(main.and_(main.Repos.scID == obj_repo_access.scID, main.Repos.repoID == obj_repo_access.repoID))
                 userAccessEntry = main.session.query(main.UserAccess)\
                     .filter(main.and_(main.UserAccess.userID == repo['userID'], main.UserAccess.scID == repo['scID'], main.UserAccess.repoID == repo['repoID']))
@@ -355,71 +373,67 @@ class Users(Resource):
                     .filter(main.and_(main.requestUserAccess.userID == repo['userID'], main.requestUserAccess.scID == repo['scID'], main.requestUserAccess.repoID == repo['repoID']))
 
                 # Toggle repo entry between requested and assigned
-                print "[356] userAccessEntry.count(): %r" % userAccessEntry.count()
-                print "[357] int(userAccessEntry.count()) == 0: %r" % int(userAccessEntry.count()) == 0
-                print "[358] form_fields: %r" % form_fields
-                print "[359] has_repos: %r" % has_repos
-                if int(userAccessEntry.count()) == 0:   # If user requested to use that repo...
+                if (userAccessEntry.first() is None):   # If user requested to use that repo, and the repo/user assignment is not in userAccessEntry...
                     new_repo = main.UserAccess(
                           userID = repo['userID']
                         , scID = repo['scID']
                         , repoID = repo['repoID']
                         , userName = repo['userName']
                     )
-                    upd_form = {
-                        "permission": 1 if permission == 0 else 0
-                    }
-                    print "[373] upd_form: %r" % upd_form
-                    current_user.update(upd_form)
                     main.session.add(new_repo)  # maybe remove one day? - JWT 1 Dec 2016
-                    main.session.commit()
-                    main.session.flush()
+
+                    # # Ignore permission toggle if user is admin
+                    # if (this_user_permission < 2):
+                    #     upd_form = {
+                    #         "permission": 1 if (cnt_repos is not None and permission != 0) else 0
+                    #     }
+                    #     print "[397] upd_form: %r" % upd_form
+                    #     this_user.update(upd_form)
+
+                    main.session.begin_nested()
+                    cnt_repos += 1
                     # userAccessEntry.is_assigned = main.current_timestamp  # currently not needed - JWT 2 Dec 2016
                 else:                                # add to requested to set as requested
                     userAccessEntry.delete()  # maybe remove one day? - JWT 1 Dec 2016
-                    print "[381] has_repos is None: %r" % has_repos is None
-                    upd_form = {
-                        "permission": 1 if has_repos is not None else 0
-                    }
-                    print "[385] upd_form: %r" % upd_form
-                    current_user.update(upd_form)
+                    main.session.begin_nested()
+                    cnt_repos -= 1
+                    # # Ignore permission toggle if user is admin
+                    # if (this_user_permission < 2):
+                    #     upd_form = {
+                    #         "permission": 1 if (cnt_repos is not None and permission != 0) else 0
+                    #     }
+                    #     print "[412] upd_form: %r" % upd_form
+                    #     this_user.update(upd_form)
                     # userAccessEntry.is_assigned = main.current_timestamp  # currently not needed - JWT 2 Dec 2016
 
-            # ==================================================
-            # TOGGLE USER ADMIN ASSIGNMENTS
-            print "[391] user_admin_toggle: %r" % user_admin_toggle
-            print "[392] form_fields: %r" % form_fields
-            print "[393] has_repos: %r" % has_repos
-            if (user_admin_toggle is not None):
-                print "[395] after"
+                # Mark any non-admin user with one or more assigned repos as having user permissions.
+                if (permission < 2):
+                    upd_form = {
+                        "permission": 1 if (cnt_repos > 0) else 0
+                    }
+                    this_user.update(upd_form)
+                    main.session.begin_nested()
 
-                upd_form = {}
-                if (user_admin_toggle == 1):
-                    upd_form = {
-                        "permission": 2 if permission == 1 else 1   # regular user perms if user has at least one repos assigned
-                    }
-                else:
-                    upd_form = {
-                        "permission": 2 if permission == 0 else 0   # no perms if user has no repos assigned
-                    }
-                print upd_form
-                current_user.update(upd_form)
-                main.session.commit()
-                main.session.flush()
+            main.session.commit()
+            main.session.flush()
 
             return {'response': {'method': 'PUT', 'result': 'success', 'message': 'User successfully updated.', 'class': 'alert alert-success', 'user_id': int(_user)}}
 
         except (AttributeError) as e:
             print ("[AttributeError] PUT /api/v2/user/%s / %s" % (_user,e))
+            main.session.rollback()
             return {'response': {'method': 'PUT', 'result': 'AttributeError', 'message': e, 'class': 'alert alert-danger'}}
         except (main.ProgrammingError) as e:
             print ("[ProgrammingError] PUT /api/v2/user/%s / %s" % (_user,e))
+            main.session.rollback()
             return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
         except (TypeError) as e:
             print ("[TypeError] PUT /api/v2/user/%s / %s" % (_user,e))
+            main.session.rollback()
             return {'response': {'method': 'PUT', 'result': 'TypeError', 'message': 'TypeError', 'class': 'alert alert-danger'}}
         except (main.NoSuchColumnError) as e:
             print ("[NoSuchColumnError] PUT /api/v2/user/%s / %s" % (_user,e))
+            main.session.rollback()
             return {'response': {'method': 'PUT', 'result': 'NoSuchColumnError', 'message': e, 'class': 'alert alert-danger'}}
 
     @jwt_required()
@@ -473,10 +487,8 @@ class Signup(Resource):
                 , permission=0
                 , permission_id=1
             )
-            main.session.rollback()
             main.session.add(new_user)
-            main.session.commit()
-            main.session.flush()
+            main.session.begin_nested()
 
             for user_repo in form_fields['repos']:
                 new_user_access = main.requestUserAccess(
@@ -485,18 +497,20 @@ class Signup(Resource):
                     , userID = new_user.id
                     , userName = form_fields['username']
                 )
-                main.session.add(new_user_access)
-                main.session.commit()
-                main.session.flush()
+                main.session.begin_nested()
+
+            main.session.commit()
+            main.session.flush()
 
             return {'response': {'method': 'POST', 'result': 'success', 'message': 'User information submitted. Information will be reviewed and admin will contact you when approved.', 'class': 'alert alert-success', 'user_id': int(new_user.id)}}
 
         except (ValueError) as e:
             print ("[ERROR] POST /api/v2/user/signupuser / ID: %s / %s" % (request.get_json(force=True)['username'], e))
+            main.session.rollback()
             return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
-
         except (main.IntegrityError) as e:
             print ("[ERROR] POST /api/v2/user/signupuser / ID: %s / %s" % (request.get_json(force=True)['username'],e))
+            main.session.rollback()
             return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-danger'}}
 
     def put(self, _user=None):
@@ -537,22 +551,8 @@ class Repos(Resource):
         return {'message': 'No DELETE method for this endpoint.'}
 
 
-class Logout(Resource):
-    def post(self):
-        return {'response': 'I''m logged out!!!'}
-    def get(self):
-        return {'message': 'No GET method for this endpoint.'}
-
-class DisableUser(Resource):
-    def post(self):
-        return {'response': 'Created new user!!!'}
-    def get(self, id):
-        return {'message': 'No GET method for this endpoint.'}
-
 api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
-api.add_resource(Logout, '/logout')
 api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(Signup, '/user/signup')
 api.add_resource(Repos, '/user/repos')
-api.add_resource(DisableUser, '/user/<string:_user>/disable')
