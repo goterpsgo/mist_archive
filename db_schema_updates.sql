@@ -30,6 +30,8 @@ SET permission_id = (
 )
 WHERE username = 'admin';
 
+alter table mistUsers add unique (username);
+
 alter table userAccess add is_assigned timestamp;
 
 # # NAME: sp_get_user
