@@ -241,18 +241,22 @@ class Users(Resource):
             return jsonify(rs_dict) # return rs_dict
 
         except (main.NoResultFound) as e:
+            print ("[NoResultFound] GET /api/v2/user %s" % e)
             return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
         except (main.ProgrammingError) as e:
+            print ("[ProgrammingError] GET /api/v2/user %s" % e)
             return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
         except (main.StatementError) as e:
-            main.session.rollback()
+            print ("[StatementError] GET /api/v2/user %s" % e)
             return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
         except (main.OperationalError) as e:
+            print ("[OperationalError] GET /api/v2/user %s" % e)
             return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
         except (main.InvalidRequestError) as e:
-            main.session.rollback()
+            print ("[InvalidRequestError] GET /api/v2/user %s" % e)
             return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
         except (main.ResourceClosedError) as e:
+            print ("[ResourceClosedError] GET /api/v2/user %s" % e)
             return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
 
     @jwt_required()
@@ -505,11 +509,11 @@ class Signup(Resource):
             return {'response': {'method': 'POST', 'result': 'success', 'message': 'User information submitted. Information will be reviewed and admin will contact you when approved.', 'class': 'alert alert-success', 'user_id': int(new_user.id)}}
 
         except (ValueError) as e:
-            print ("[ERROR] POST /api/v2/user/signupuser / ID: %s / %s" % (request.get_json(force=True)['username'], e))
+            print ("[ValueError] POST /api/v2/user/signupuser / ID: %s / %s" % (request.get_json(force=True)['username'], e))
             main.session.rollback()
             return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
         except (main.IntegrityError) as e:
-            print ("[ERROR] POST /api/v2/user/signupuser / ID: %s / %s" % (request.get_json(force=True)['username'],e))
+            print ("[IntegrityError] POST /api/v2/user/signupuser / ID: %s / %s" % (request.get_json(force=True)['username'],e))
             main.session.rollback()
             return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-danger'}}
 
@@ -522,23 +526,35 @@ class Signup(Resource):
 class Repos(Resource):
     # @jwt_required()
     def get(self):
-        # returns list of repos from Repos table
-        # (NOTE: since there's no dedicated normalized table for just repos, all combinations of returned fields from Repos are distinct)
-        rs_dict = dict()    # used to hold and eventually return repos_list[] recordset and associated metadata
-        # rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        try:
+            # returns list of repos from Repos table
+            # (NOTE: since there's no dedicated normalized table for just repos, all combinations of returned fields from Repos are distinct)
+            rs_dict = dict()    # used to hold and eventually return repos_list[] recordset and associated metadata
+            # rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
-        # NOTE: main.Repos.id is not being returned since Repos table is not properly normalized and including id will result in returning duplicates - JWT 7 Nov 2016
-        main.session.rollback()
-        rs_repos_handle = rs_repos().group_by(main.Repos.repoID, main.Repos.scID, main.Repos.repoName, main.Repos.serverName)\
-            .order_by(main.Repos.serverName, main.Repos.repoName)
+            # NOTE: main.Repos.id is not being returned since Repos table is not properly normalized and including id will result in returning duplicates - JWT 7 Nov 2016
+            main.session.rollback()
+            rs_repos_handle = rs_repos().group_by(main.Repos.repoID, main.Repos.scID, main.Repos.repoName, main.Repos.serverName)\
+                .order_by(main.Repos.serverName, main.Repos.repoName)
 
-        # add results to users_list[]
-        repos_list = []
-        for r_repo in rs_repos_handle:
-            repos_list.append(create_repo_dict(r_repo))
-        rs_dict['repos_list'] = repos_list  # add users_list[] to rs_dict
+            # add results to users_list[]
+            repos_list = []
+            for r_repo in rs_repos_handle:
+                repos_list.append(create_repo_dict(r_repo))
+            rs_dict['repos_list'] = repos_list  # add users_list[] to rs_dict
 
-        return jsonify(rs_dict) # return rs_dict
+            return jsonify(rs_dict) # return rs_dict
+
+        except (AttributeError) as e:
+            print ("[AttributeError] GET /api/v2/repos / %s" % e)
+            return {'response': {'method': 'GET', 'result': 'AttributeError', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (main.ResourceClosedError) as e:
+            print ("[ResourceClosedError] GET /api/v2/repos / %s" % e)
+            return {'response': {'method': 'GET', 'result': 'ResourceClosedError', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (main.ProgrammingError) as e:
+            print ("[ProgrammingError] GET /api/v2/repos / %s" % e)
+            return {'response': {'method': 'GET', 'result': 'ProgrammingError', 'message': str(e), 'class': 'alert alert-danger'}}
+
     def post(self):
         # TODO: will use for inserting new repo entries
         form_fields = request.get_json(force=True)
@@ -555,4 +571,4 @@ api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(Signup, '/user/signup')
-api.add_resource(Repos, '/user/repos')
+api.add_resource(Repos, '/repos')
