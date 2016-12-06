@@ -2,9 +2,11 @@
 <div><br /></div>
 
 <form id="form_signup" ng-submit="submit_assign_repos()">
+    <br />
     <div class="row">
         <div class="col-md-12">
-            <input type="submit" class="btn btn-primary"> <input type="reset" class="btn btn-primary">
+            <input type="submit" class="btn btn-primary" title="Check off at least one or more repos and a radio button for one user.">
+            <input type="reset" class="btn btn-primary">
         </div>
     </div>
     <br />
@@ -17,9 +19,17 @@
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <div ng-repeat="repo in assign_repos">
-                        <input type="checkbox" class="custom-control custom-checkbox"> {{repo.server_name}} {{repo.repo_name}}
-                    </div>
+                    <span ng-if="user.repos !== undefined">
+                        <input type="checkbox" ng-click="check_all_repos()" title="Check off all repos." /> <b>Check off all repos below.</b><br /><br />
+
+                        <span ng-init="cnt_assign_repo = 0"></span>
+                        <div ng-repeat="repo in assign_repos">
+                            <input type="checkbox" ng-model="repo.Checked" name="assign_repos" id="assign_repos_{{cnt_assign_repo}}" value="{{repo.repo_id}},{{repo.sc_id}}" class="custom-control custom-checkbox" title="Select one or more repos along with a user in right pane."> {{repo.server_name}} {{repo.repo_name}}
+                        </div>
+                    </span>
+                    <span ng-if="user.repos == undefined">
+                        No repos saved in system.
+                    </span>
                 </div>
                 <div class="panel-footer">
 
@@ -34,7 +44,8 @@
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <table class="table table-hover table-bordered">
+                    <!--<table class="table table-hover table-bordered">-->
+                    <table class="table table-hover">
                         <thead>
                             <th>User</th>
                             <th>Repos</th>
@@ -42,15 +53,21 @@
                         <tr ng-repeat="user in users">
                             <td>
                                 <span ng-init="cnt_repos = 0"></span>
+                                <input type="radio" name="user" value="{{user.id}},{{user.username}}" class="custom-control custom-checkbox" title="Click to select user and one or more repos in left pane.">
                                 <span ng-click="delete_user(user.id)" class="checkbox-inline">[X]</span>
                                 <span ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline" ng-init="value = (user.permission >= 2 ? 'Admin' : 'User')" ng-switch="value">
                                     [{{value}} {{user.permission}}]
                                 </span>
                                 {{user.first_name}} {{user.last_name}} ({{user.username}})</td>
                             <td>
-                                <div ng-repeat="repo in user.repos">
-                                    <span ng-click="repo_assign(user.id,repo.repo_data,user.permission,user.cnt_repos)" class="{{repo.class}}">{{repo.server_name}} {{repo.repo_name}}<br/></span>
-                                </div>
+                                <span ng-if="user.repos !== undefined">
+                                    <div ng-repeat="repo in user.repos">
+                                        <span ng-click="repo_assign(user.id,repo.repo_data,user.permission,user.cnt_repos)" class="{{repo.class}}">{{repo.server_name}} {{repo.repo_name}}<br/></span>
+                                    </div>
+                                </span>
+                                <span ng-if="user.repos == undefined">
+                                    No repos requested/assigned
+                                </span>
                             </td>
                         </tr>
                     </table>

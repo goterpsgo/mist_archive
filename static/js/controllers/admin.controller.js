@@ -5,26 +5,40 @@
         .module('app')
         .controller('Admin.IndexController', Controller);
 
-    function Controller($scope, $localStorage, MistUsersService, ReposService) {
+    function Controller($scope, $localStorage, MistUsersService, ReposService, $timeout) {
         $scope.users;   // may not be needed...
         $scope.assign_repos;
+        $scope.check_all = false;
         var vm = this;
 
         initController();
 
         function initController() {
-            load_page_data();
+            // load_page_data();
+            get_repos();
+            // Delay get_users() by 1ms to not overwhelm the database (unless there's a better solution - JWT 6 Dec 2016)
+            $timeout(function() {
+                get_users();
+            }, 1);
         }
 
         $scope.submit_assign_repos = function() {
-            console.log('[signup.controller:15] $scope._user:');
-            console.log($scope._user);
-            return MistUsersService._signup_user($scope._user)
-                .then(function(result) {
-                    $scope.response_message = result.response.message;
-                    $scope.result = result.response.result;
-                    $scope.class = result.response.class;
-            });
+            console.log('[25] Got here');
+            // var form_data = {'permission': permission, 'repo': repo, 'cnt_repos': cnt_repos};
+            // MistUsersService._update_user(user, form_data)
+            //     .then(
+            //           function(users) {
+            //               $scope.users = users.users_list;
+            //           }
+            //         , function(err) {
+            //             $scope.status = 'Error loading data: ' + err.message;
+            //           }
+            //     )
+            //     .then(
+            //         function() {
+            //             get_users();
+            //         }
+            //     );
         }
 
         $scope.repo_assign = function(user, repo, permission, cnt_repos) {
@@ -87,8 +101,6 @@
                 .then(
                       function(users) {
                           $scope.users = users.users_list;
-                          console.log('[91] users_list');
-                          console.log($scope.users_list);
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
@@ -131,6 +143,18 @@
                         $scope.status = 'Error loading data: ' + err.message;
                       }
                 );
+        };
+
+        $scope.check_all_repos = function() {
+            if ($scope.check_all) {
+                $scope.check_all = false;
+            }
+            else {
+                $scope.check_all = true;
+            }
+            angular.forEach($scope.assign_repos, function(repo) {
+                repo.Checked = $scope.check_all;
+            })
         };
     }
 })();
