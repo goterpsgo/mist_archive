@@ -40,9 +40,5 @@
                       }
                 );
         }
-
-        $scope.add_repo = function() {
-            console.log('Add repo');
-        };
     }
 })();
