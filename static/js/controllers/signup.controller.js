@@ -12,8 +12,6 @@
         $scope.response_message = '';
 
         $scope.submit_signup = function() {
-            console.log('[signup.controller:15] $scope._user:');
-            console.log($scope._user);
             return MistUsersService._signup_user($scope._user)
                 .then(function(result) {
                     $scope.response_message = result.response.message;
