@@ -1,24 +1,64 @@
 <div><br /></div>
 <div><br /></div>
-<div class="col-md-12 col-md-offset-0">
-    <table class="table table-hover table-bordered">
-        <thead>
-            <th>User</th>
-            <th>Repos</th>
-        </thead>
-        <tr ng-repeat="user in users">
-            <td>
-                <span ng-init="cnt_repos = 0"></span>
-                <span ng-click="delete_user(user.id)" class="checkbox-inline">[X]</span>
-                <span ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline" ng-init="value = (user.permission >= 2 ? 'Admin' : 'User')" ng-switch="value">
-                    [{{value}} {{user.permission}}]
-                </span>
-                {{user.first_name}} {{user.last_name}} ({{user.username}})</td>
-            <td>
-                <div ng-repeat="repo in user.repos">
-                    <span ng-click="repo_assign(user.id,repo.repo_data,user.permission,user.cnt_repos)" class="{{repo.class}}">{{repo.server_name}} {{repo.repo_name}}<br/></span>
+
+<form id="form_signup" ng-submit="submit_assign_repos()">
+    <div class="row">
+        <div class="col-md-12">
+            <input type="submit" class="btn btn-primary"> <input type="reset" class="btn btn-primary">
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Repos Available
+                    </h3>
                 </div>
-            </td>
-        </tr>
-    </table>
-</div>
+                <div class="panel-body">
+                    <div ng-repeat="repo in assign_repos">
+                        <input type="checkbox" class="custom-control custom-checkbox"> {{repo.server_name}} {{repo.repo_name}}
+                    </div>
+                </div>
+                <div class="panel-footer">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Users
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <th>User</th>
+                            <th>Repos</th>
+                        </thead>
+                        <tr ng-repeat="user in users">
+                            <td>
+                                <span ng-init="cnt_repos = 0"></span>
+                                <span ng-click="delete_user(user.id)" class="checkbox-inline">[X]</span>
+                                <span ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline" ng-init="value = (user.permission >= 2 ? 'Admin' : 'User')" ng-switch="value">
+                                    [{{value}} {{user.permission}}]
+                                </span>
+                                {{user.first_name}} {{user.last_name}} ({{user.username}})</td>
+                            <td>
+                                <div ng-repeat="repo in user.repos">
+                                    <span ng-click="repo_assign(user.id,repo.repo_data,user.permission,user.cnt_repos)" class="{{repo.class}}">{{repo.server_name}} {{repo.repo_name}}<br/></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="panel-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
