@@ -8,7 +8,7 @@
     function Controller($scope, $localStorage, MistUsersService, ReposService, $timeout) {
         $scope.users;   // may not be needed...
         $scope.assign_repos;
-        $scope.check_all = false;
+        $scope.check_all_repos_state = false;
         var vm = this;
 
         initController();
@@ -146,14 +146,9 @@
         };
 
         $scope.check_all_repos = function() {
-            if ($scope.check_all) {
-                $scope.check_all = false;
-            }
-            else {
-                $scope.check_all = true;
-            }
+            $scope.check_all_repos_state = (($scope.check_all_repos_state) ? false : true);
             angular.forEach($scope.assign_repos, function(repo) {
-                repo.Checked = $scope.check_all;
+                repo.Checked = $scope.check_all_repos_state;
             })
         };
     }

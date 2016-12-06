@@ -20,7 +20,7 @@
                 </div>
                 <div class="panel-body">
                     <span ng-if="user.repos !== undefined">
-                        <input type="checkbox" ng-click="check_all_repos()" title="Check off all repos." /> <b>Check off all repos below.</b><br /><br />
+                        <input type="checkbox" ng-click="check_all_repos()" title="Check/clear all repos below." /> <b>Check/clear all repos below.</b><br /><br />
 
                         <span ng-init="cnt_assign_repo = 0"></span>
                         <div ng-repeat="repo in assign_repos">
