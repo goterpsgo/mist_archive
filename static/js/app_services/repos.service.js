@@ -17,7 +17,7 @@
 
         function get_repos() {
             var deferred = $q.defer();
-            $http.get('https://10.11.1.239:8443/api/v2/user/repos')
+            $http.get('https://10.11.1.239:8444/api/v2/repos')
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
