@@ -13,8 +13,18 @@
         initController();
 
         function initController() {
-            get_repos();
-            get_users();
+            load_page_data();
+        }
+
+        $scope.submit_assign_repos = function() {
+            console.log('[signup.controller:15] $scope._user:');
+            console.log($scope._user);
+            return MistUsersService._signup_user($scope._user)
+                .then(function(result) {
+                    $scope.response_message = result.response.message;
+                    $scope.result = result.response.result;
+                    $scope.class = result.response.class;
+            });
         }
 
         $scope.repo_assign = function(user, repo, permission, cnt_repos) {
@@ -70,6 +80,34 @@
                     }
                 );
         };
+
+        function load_page_data() {
+            MistUsersService
+                ._get_users()
+                .then(
+                      function(users) {
+                          $scope.users = users.users_list;
+                          console.log('[91] users_list');
+                          console.log($scope.users_list);
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                )
+                .then(
+                    ReposService
+                        ._get_repos()
+                        .then(
+                              function(repos) {
+                                  $scope.assign_repos = repos.repos_list;
+                              }
+                            , function(err) {
+                                $scope.status = 'Error loading data: ' + err.message;
+                              }
+                        )
+                );
+        };
+
 
         function get_users() {
             MistUsersService._get_users()
