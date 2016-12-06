@@ -5,14 +5,15 @@
         .module('app')
         .controller('Admin.IndexController', Controller);
 
-    function Controller($scope, $localStorage, MistUsersService) {
+    function Controller($scope, $localStorage, MistUsersService, ReposService) {
         $scope.users;   // may not be needed...
-        $scope.foo = 'bar';
+        $scope.assign_repos;
         var vm = this;
 
         initController();
 
         function initController() {
+            get_repos();
             get_users();
         }
 
@@ -80,6 +81,18 @@
                         $scope.status = 'Error loading data: ' + err.message;
                       }
                 );
-        }
+        };
+
+        function get_repos() {
+            ReposService._get_repos()
+                .then(
+                      function(repos) {
+                          $scope.assign_repos = repos.repos_list;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        };
     }
 })();
