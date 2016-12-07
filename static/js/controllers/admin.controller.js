@@ -9,6 +9,8 @@
         $scope.users;   // may not be needed...
         $scope.assign_repos;
         $scope.check_all_repos_state = false;
+        $scope._repo = {}
+        $scope._form_fields = {}
         var vm = this;
 
         initController();
@@ -23,27 +25,37 @@
         }
 
         $scope.submit_assign_repos = function() {
-            console.log('[25] Got here');
             // var form_data = {'permission': permission, 'repo': repo, 'cnt_repos': cnt_repos};
-            // MistUsersService._update_user(user, form_data)
-            //     .then(
-            //           function(users) {
-            //               $scope.users = users.users_list;
-            //           }
-            //         , function(err) {
-            //             $scope.status = 'Error loading data: ' + err.message;
-            //           }
-            //     )
-            //     .then(
-            //         function() {
-            //             get_users();
-            //         }
-            //     );
+
+            var arr_user = $scope._form_fields.assign_user.split(',');
+            $scope._form_fields.id = arr_user[0];
+            $scope._form_fields.username = arr_user[1];
+            $scope._form_fields.permission = arr_user[2];
+            $scope._form_fields.assign_submit = true;
+            delete $scope._form_fields['assign_user'];
+
+            MistUsersService
+                ._update_user($scope._form_fields.id, $scope._form_fields)
+                .then(
+                      function(users) {
+                          $scope.users = users.users_list;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                )
+                .then(
+                    function() {
+                        get_users();
+                        $scope._form_fields = {};
+                    }
+                );
         }
 
         $scope.repo_assign = function(user, repo, permission, cnt_repos) {
             var form_data = {'permission': permission, 'repo': repo, 'cnt_repos': cnt_repos};
-            MistUsersService._update_user(user, form_data)
+            MistUsersService
+                ._update_user(user, form_data)
                 .then(
                       function(users) {
                           $scope.users = users.users_list;
