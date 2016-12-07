@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-md-12">
             <input type="submit" class="btn btn-primary" title="Check off at least one or more repos and a radio button for one user.">
-            <input type="reset" class="btn btn-primary">
+            <input type="reset" class="btn btn-primary" ng-click="_form_fields = {}">
         </div>
     </div>
     <br />
@@ -20,12 +20,9 @@
                 </div>
                 <div class="panel-body">
                     <span ng-if="user.repos !== undefined">
-                        <input type="checkbox" ng-click="check_all_repos()" title="Check/clear all repos below." /> <b>Check/clear all repos below.</b><br /><br />
-
-                        <span ng-init="cnt_assign_repo = 0"></span>
-                        <div ng-repeat="repo in assign_repos">
-                            <input type="checkbox" ng-model="repo.Checked" name="assign_repos" id="assign_repos_{{cnt_assign_repo}}" value="{{repo.repo_id}},{{repo.sc_id}}" class="custom-control custom-checkbox" title="Select one or more repos along with a user in right pane."> {{repo.server_name}} {{repo.repo_name}}
-                        </div>
+                        <select ng-model="_form_fields.assign_repos" multiple>
+                            <option ng-repeat="_repo in assign_repos" value="{{_repo.repo_id}},{{_repo.sc_id}}">{{_repo.server_name}} {{_repo.repo_name}}</option>
+                        </select>
                     </span>
                     <span ng-if="user.repos == undefined">
                         No repos saved in system.
@@ -53,7 +50,7 @@
                         <tr ng-repeat="user in users">
                             <td>
                                 <span ng-init="cnt_repos = 0"></span>
-                                <input type="radio" name="user" value="{{user.id}},{{user.username}}" class="custom-control custom-checkbox" title="Click to select user and one or more repos in left pane.">
+                                <input ng-model="_form_fields.assign_user" type="radio" name="user" value="{{user.id}},{{user.username}},{{user.permission}}" class="custom-control custom-checkbox" title="Click to select user and one or more repos in left pane.">
                                 <span ng-click="delete_user(user.id)" class="checkbox-inline">[X]</span>
                                 <span ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline" ng-init="value = (user.permission >= 2 ? 'Admin' : 'User')" ng-switch="value">
                                     [{{value}} {{user.permission}}]
@@ -79,3 +76,6 @@
         </div>
     </div>
 </form>
+<pre>
+    {{_form_fields}}
+</pre>
