@@ -12,6 +12,7 @@ import config
 import json
 import requests
 import socket
+import pdb
 
 api_endpoints = Blueprint('mist_auth', __name__, url_prefix="/api/v2")
 api = Api(api_endpoints)
@@ -302,34 +303,102 @@ class Users(Resource):
 
     @jwt_required()
     # for a given user ID:
-    # 1. Update simple fields directly into mistUsers table
-    # 2. Extract user ID, username, delete all userAccess rows with that user ID, and insert new rows with user ID, username, scID, and repoID
-    # 3. Update permission in mistUsers table
+    # 1. Assign one or more selected repos to a given user
+    # 2. Update simple fields directly into mistUsers table
+    # 3. Extract user ID, username, delete all userAccess rows with that user ID, and insert new rows with user ID, username, scID, and repoID
+    # 4. Update permission in mistUsers table
     def put(self, _user):
         try:
             form_fields = request.get_json(force=True)
-            permission = form_fields['permission']
+            permission = int(form_fields['permission'])
 
+            # Note whether or not data was from form submission (eg <form> in admin.view.html vs JSON data params)
+            assign_submit = None
+            if ("assign_submit" in form_fields):
+                assign_submit = True
+                form_fields.pop('assign_submit')
+
+            # ==================================================
             # Set aside any non-MistUser-specific values
-            user_admin_toggle = None
-            if ("user_admin_toggle" in form_fields):
-                user_admin_toggle = form_fields.pop('user_admin_toggle')
+            user_admin_toggle = form_fields.pop('user_admin_toggle') if ("user_admin_toggle" in form_fields) else None
+
             this_user = main.session.query(main.MistUser).filter(main.MistUser.id == int(_user))
 
-            repo = None
+            # Used for toggle switch single repo/user assignment
+            single_repo = None
             if ("repo" in form_fields):
-                repo = {}
-                repo['userID'], repo['scID'], repo['repoID'], repo['userName'] = form_fields.pop('repo').split(',')
+                single_repo = {}
+                single_repo['userID'], single_repo['scID'], single_repo['repoID'], single_repo['userName'] = form_fields.pop('repo').split(',')
 
-            # currently provided by Users.get(), currently not needed - JWT 5 Dec 2016
+            # Keeps count of how many assigned repos a user has
             cnt_repos = None
             if ("cnt_repos" in form_fields):
                 cnt_repos = form_fields.pop('cnt_repos')
 
             # ==================================================
+            # POST MULTIPLE REPOS/USER ASSIGNMENTS
+
+            if (assign_submit): # run if action from form submit
+                # Remove all entries from userAccess table containing matched userID value
+                userAccessEntry = main.session.query(main.UserAccess) \
+                    .filter(main.UserAccess.userID == form_fields['id'])
+
+                userAccessEntry.delete()
+                main.session.begin_nested()
+
+                # Set permission to zero if not an admin
+                print "[350] permission: %r" % permission
+                if (permission < 2):
+                    print "[352] reset permission to 0"
+                    upd_form = {
+                        "permission": 0
+                    }
+                    print this_user.update(upd_form)
+                    main.session.begin_nested()
+
+                # Add any assigned repos to user (if any)
+                if ("assign_repos" in form_fields):
+                    print "[360] assign_repos"
+                    for assign_repo in form_fields['assign_repos']:
+                        repo_id, sc_id = assign_repo.split(',')
+
+                        new_repo_assignment = main.UserAccess(
+                              userID=form_fields['id']
+                            , scID=sc_id
+                            , repoID=repo_id
+                            , userName=form_fields['username']
+                        )
+                        main.session.add(new_repo_assignment)
+                        main.session.begin_nested()
+
+                    # Set permission to 1 if not an admin
+                    print "[374] permission: %r" % permission
+                    if (permission < 2):
+                        print "[376] reset permission to 1"
+                        upd_form = {
+                            "permission": 1
+                        }
+                        print this_user.update(upd_form)
+                        main.session.begin_nested()
+
+                    form_fields.pop('assign_repos')
+
+
+                # Mark any non-admin user with one or more assigned repos as having user permissions.
+                if (permission < 2):
+                    upd_form = {
+                        "permission": 1 if (cnt_repos > 0) else 0
+                    }
+                    this_user.update(upd_form)
+                    main.session.begin_nested()
+
+
+
+            # ==================================================
             # UPDATE GENERAL USER DATA
 
             # Pass _user value to get mistUser object and update with values in form_fields
+            # pdb.set_trace()
             if ("password" in form_fields):
                 form_fields["password"] = hashlib.sha256(form_fields["password"]).hexdigest()
             if (any(form_fields)):
@@ -357,11 +426,11 @@ class Users(Resource):
             # TOGGLE USER REPO ASSIGNMENTS
 
             # Extract only simple fields (ie not permission, repos) and copy them into db_fields
-            if (repo is not None):
-                repo['userID'] = int(repo['userID'])
-                repo['scID'] = str(repo['scID'])
-                repo['repoID'] = int(repo['repoID'])
-                repo['userName'] = str(repo['userName'])
+            if (single_repo is not None):
+                single_repo['userID'] = int(single_repo['userID'])
+                single_repo['scID'] = str(single_repo['scID'])
+                single_repo['repoID'] = int(single_repo['repoID'])
+                single_repo['userName'] = str(single_repo['userName'])
                 # repo = {key:str(value) for key, value in repo.iteritems()}  # convert to string values
 
                 # Flush any exceptions currently in session
@@ -371,20 +440,20 @@ class Users(Resource):
                 # Repo assignments are marked as approved if also saved in UserAccess table
                 # obj_repos = rs_repos_handle.filter(main.and_(main.Repos.scID == obj_repo_access.scID, main.Repos.repoID == obj_repo_access.repoID))
                 userAccessEntry = main.session.query(main.UserAccess)\
-                    .filter(main.and_(main.UserAccess.userID == repo['userID'], main.UserAccess.scID == repo['scID'], main.UserAccess.repoID == repo['repoID']))
+                    .filter(main.and_(main.UserAccess.userID == single_repo['userID'], main.UserAccess.scID == single_repo['scID'], main.UserAccess.repoID == single_repo['repoID']))
 
                 requestUserAccessEntry = main.session.query(main.requestUserAccess)\
-                    .filter(main.and_(main.requestUserAccess.userID == repo['userID'], main.requestUserAccess.scID == repo['scID'], main.requestUserAccess.repoID == repo['repoID']))
+                    .filter(main.and_(main.requestUserAccess.userID == single_repo['userID'], main.requestUserAccess.scID == single_repo['scID'], main.requestUserAccess.repoID == single_repo['repoID']))
 
                 # Toggle repo entry between requested and assigned
                 if (userAccessEntry.first() is None):   # If user requested to use that repo, and the repo/user assignment is not in userAccessEntry...
-                    new_repo = main.UserAccess(
-                          userID = repo['userID']
-                        , scID = repo['scID']
-                        , repoID = repo['repoID']
-                        , userName = repo['userName']
+                    new_repo_assignment = main.UserAccess(
+                          userID = single_repo['userID']
+                        , scID = single_repo['scID']
+                        , repoID = single_repo['repoID']
+                        , userName = single_repo['userName']
                     )
-                    main.session.add(new_repo)  # maybe remove one day? - JWT 1 Dec 2016
+                    main.session.add(new_repo_assignment)  # maybe remove one day? - JWT 1 Dec 2016
 
                     # # Ignore permission toggle if user is admin
                     # if (this_user_permission < 2):
