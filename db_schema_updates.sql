@@ -31,8 +31,10 @@ SET permission_id = (
 WHERE username = 'admin';
 
 alter table mistUsers add unique (username);
+alter table securityCenters add UNIQUE (fqdn_IP, serverName);
 
 alter table userAccess add is_assigned timestamp;
+
 
 # # NAME: sp_get_user
 # # INPUT: mistUser id (INT) or username value (VARCHAR) or null
