@@ -59,11 +59,11 @@ class SecurityCenter(Base.Model):
     __tablename__ = "securityCenters"
     id = Column(Integer, primary_key=True)
     fqdn_IP = Column(String(256))
-    serverName = Column(String(100))
+    serverName = Column(String(100), nullable=True)
     version = Column(String(45))
-    username = Column(String(45))
-    pw = Column(String(256))
-    certificateFile = Column(String(512))
+    username = Column(String(45), nullable=True)
+    pw = Column(String(256), nullable=True)
+    certificateFile = Column(String(512), nullable=True)
     keyFile = Column(String(512))
 
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
