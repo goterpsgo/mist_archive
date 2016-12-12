@@ -31,6 +31,15 @@ def rs_request_user_access():
 def rs_repos():
     return main.session.query(main.Repos)
 
+def rs_security_centers():
+    return main.session.query(main.SecurityCenter)
+
+# http://stackoverflow.com/a/1960546/6554056
+def row_to_dict(row):
+    d = {}
+    for column in row.__table__.columns:
+        d[column.name] = str(getattr(row, column.name))
+    return d
 
 # TODO: refactor authenticate() into User class if possible
 class User(object):
@@ -146,6 +155,7 @@ def create_user_dict(obj_user):
                 identifier = obj_repo.serverName + "," + obj_repo.repoName + "," + str(obj_requested_repo_access.repoID) + "," + str(obj_requested_repo_access.scID)
                 repo_data = str(obj_user.id) + "," + str(obj_requested_repo_access.scID) + "," + str(obj_requested_repo_access.repoID) + "," + obj_user.username # used to populate UserAccess and requestUserAccess tables
                 # NOTE: Bootstrap default CSS checkbox-inline used for "cursor: pointer" to indicate clickable resource
+
                 repo = {
                       'server_name': obj_repo.serverName
                     , 'repo_name': obj_repo.repoName
@@ -598,7 +608,7 @@ class Repos(Resource):
         try:
             # returns list of repos from Repos table
             # (NOTE: since there's no dedicated normalized table for just repos, all combinations of returned fields from Repos are distinct)
-            rs_dict = dict()    # used to hold and eventually return repos_list[] recordset and associated metadata
+            rs_dict = {}    # used to hold and eventually return repos_list[] recordset and associated metadata
             # rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
             # NOTE: main.Repos.id is not being returned since Repos table is not properly normalized and including id will result in returning duplicates - JWT 7 Nov 2016
@@ -636,8 +646,58 @@ class Repos(Resource):
         return {'message': 'No DELETE method for this endpoint.'}
 
 
+class SecurityCenter(Resource):
+    # @jwt_required()
+    def get(self):
+        rs_sc = []
+        rs_sc_handle = rs_security_centers().order_by(main.SecurityCenter.serverName)
+
+        for r_sc in rs_sc_handle:
+            rs_sc.append(row_to_dict(r_sc))
+
+        return jsonify(rs_sc)   # return securityCenter dict
+    def post(self):
+        try:
+            form_fields = request.get_json(force=True)
+
+            new_sc = main.SecurityCenter(
+                  fqdn_IP = form_fields['fqdn_IP']
+                , serverName = form_fields['serverName']
+                , version = form_fields['version']
+                , username = form_fields['username'] if ("username" in form_fields) else None
+                , pw = form_fields['pw'] if ("pw" in form_fields) else None
+                , certificateFile = form_fields['certificateFile'] if ("certificateFile" in form_fields) else None
+                , keyFile = form_fields['keyFile'] if ("keyFile" in form_fields) else None
+            )
+
+            main.session.add(new_sc)
+            main.session.commit()
+            main.session.flush()
+
+            return {'response': {'method': 'POST', 'result': 'success', 'message': 'New SecurityCenter entry submitted.', 'class': 'alert alert-success', 'user_id': int(new_sc.id)}}
+
+        except (TypeError) as e:
+            print ("[TypeError] POST /api/v2/securitycenters / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (ValueError) as e:
+            print ("[ValueError] POST /api/v2/securitycenters / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (main.IntegrityError) as e:
+            print ("[IntegrityError] POST /api/v2/securitycenters / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-danger'}}
+
+    def put(self, _user=None):
+        return {'message': 'No PUT method for this endpoint.'}
+    def delete(self, _user=None):
+        return {'message': 'No DELETE method for this endpoint.'}
+
+
 api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(Signup, '/user/signup')
 api.add_resource(Repos, '/repos')
+api.add_resource(SecurityCenter, '/securitycenters', '/securitycenter/<int:id>')
