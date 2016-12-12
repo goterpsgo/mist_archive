@@ -8,6 +8,7 @@ from common.models import main, base_model
 from common.db_helpers import PasswordCheck
 import re
 import hashlib
+import base64
 import config
 import json
 import requests
@@ -37,8 +38,9 @@ def rs_security_centers():
 # http://stackoverflow.com/a/1960546/6554056
 def row_to_dict(row):
     d = {}
-    for column in row.__table__.columns:
-        d[column.name] = str(getattr(row, column.name))
+    if (row is not None):
+        for column in row.__table__.columns:
+            d[column.name] = str(getattr(row, column.name))
     return d
 
 # TODO: refactor authenticate() into User class if possible
@@ -227,11 +229,10 @@ class Users(Resource):
     # If get() is not given a _user value, then the method will return a list of users
     def get(self, _user=None):
         try:
-            rs_dict = dict()    # used to hold and eventually return users_list[] recordset and associated metadata
+            rs_dict = {}    # used to hold and eventually return users_list[] recordset and associated metadata
             rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
             # query for user/users
-            main.session.rollback()
             rs_users_handle = rs_users()
             r_single_user = None
             if _user is not None:
@@ -357,18 +358,15 @@ class Users(Resource):
                 main.session.begin_nested()
 
                 # Set permission to zero if not an admin
-                print "[350] permission: %r" % permission
                 if (permission < 2):
-                    print "[352] reset permission to 0"
                     upd_form = {
                         "permission": 0
                     }
-                    print this_user.update(upd_form)
+                    this_user.update(upd_form)
                     main.session.begin_nested()
 
                 # Add any assigned repos to user (if any)
                 if ("assign_repos" in form_fields):
-                    print "[360] assign_repos"
                     for assign_repo in form_fields['assign_repos']:
                         repo_id, sc_id = assign_repo.split(',')
 
@@ -382,13 +380,11 @@ class Users(Resource):
                         main.session.begin_nested()
 
                     # Set permission to 1 if not an admin
-                    print "[374] permission: %r" % permission
                     if (permission < 2):
-                        print "[376] reset permission to 1"
                         upd_form = {
                             "permission": 1
                         }
-                        print this_user.update(upd_form)
+                        this_user.update(upd_form)
                         main.session.begin_nested()
 
                     form_fields.pop('assign_repos')
@@ -648,14 +644,44 @@ class Repos(Resource):
 
 class SecurityCenter(Resource):
     # @jwt_required()
-    def get(self):
-        rs_sc = []
-        rs_sc_handle = rs_security_centers().order_by(main.SecurityCenter.serverName)
+    # If get() gets a valid _user value (user ID or username), then the method will return a single user entry
+    # If get() is not given a _user value, then the method will return a list of users
+    def get(self, _id=None):
 
-        for r_sc in rs_sc_handle:
-            rs_sc.append(row_to_dict(r_sc))
+        try:
+            rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
+            # rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
-        return jsonify(rs_sc)   # return securityCenter dict
+            rs_sc_handle = rs_security_centers().order_by(main.SecurityCenter.serverName)
+            r_single_sc = None
+            if _id is not None:
+                r_single_sc = rs_sc_handle.filter(
+                    main.SecurityCenter.id == int(_id)
+                ).first()
+
+            # add results to sc_list
+            sc_list = []
+            if _id is None:
+                for r_sc in rs_sc_handle:
+                    sc_list.append(row_to_dict(r_sc))
+            else:
+                sc_list.append(row_to_dict(r_single_sc))
+
+            rs_dict['sc_list'] = sc_list  # add users_list[] to rs_dict
+
+            return jsonify(rs_dict) # return rs_dict
+
+        except (main.NoResultFound) as e:
+            print ("[NoResultFound] GET /api/v2/securitycenter %s" % e)
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (AttributeError) as e:
+            print ("[AttributeError] GET /api/v2/securitycenter %s" % e)
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (TypeError) as e:
+            print ("[TypeError] GET /api/v2/securitycenter %s" % e)
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+
+
     def post(self):
         try:
             form_fields = request.get_json(force=True)
@@ -689,10 +715,48 @@ class SecurityCenter(Resource):
             main.session.rollback()
             return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-danger'}}
 
-    def put(self, _user=None):
-        return {'message': 'No PUT method for this endpoint.'}
-    def delete(self, _user=None):
-        return {'message': 'No DELETE method for this endpoint.'}
+    def put(self, _id=None):
+        try:
+            form_fields = request.get_json(force=True)
+
+            # # Note whether or not data was from form submission (eg <form> in admin.view.html vs JSON data params)
+            # assign_submit = None
+            # if ("assign_submit" in form_fields):
+            #     assign_submit = True
+            #     form_fields.pop('assign_submit')
+
+            this_sc = main.session.query(main.SecurityCenter).filter(main.SecurityCenter.id == int(_id))
+
+            if ("pw" in form_fields):
+                form_fields["pw"] = base64.b64encode(form_fields["pw"]) # need to check if b64 is the right hash algorithm - JWT 12 Dec 2016
+            if (any(form_fields)):
+                this_sc.update(form_fields)
+            main.session.begin_nested()
+
+            return {'response': {'method': 'PUT', 'result': 'success', 'message': 'SecurityCenter successfully updated.', 'class': 'alert alert-success', '_id': int(_id)}}
+
+        except (AttributeError) as e:
+            print ("[AttributeError] PUT /api/v2/securitycenter/%s / %s" % (_id,e))
+            main.session.rollback()
+            return {'response': {'method': 'PUT', 'result': 'AttributeError', 'message': e, 'class': 'alert alert-danger'}}
+        except (main.ProgrammingError) as e:
+            print ("[ProgrammingError] PUT /api/v2/securitycenter/%s / %s" % (_id,e))
+            main.session.rollback()
+            return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
+        except (TypeError) as e:
+            print ("[TypeError] PUT /api/v2/securitycenter/%s / %s" % (_id,e))
+            main.session.rollback()
+            return {'response': {'method': 'PUT', 'result': 'TypeError', 'message': 'TypeError', 'class': 'alert alert-danger'}}
+        except (main.NoSuchColumnError) as e:
+            print ("[NoSuchColumnError] PUT /api/v2/securitycenter/%s / %s" % (_id,e))
+            main.session.rollback()
+            return {'response': {'method': 'PUT', 'result': 'NoSuchColumnError', 'message': e, 'class': 'alert alert-danger'}}
+
+    def delete(self, _id):
+        main.session.query(main.SecurityCenter).filter(main.SecurityCenter.id == _id).delete()
+        main.session.commit()
+        main.session.flush()
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'SecurityCenter successfully deleted.', 'class': 'alert alert-success', 'id': _id}}
 
 
 api.add_resource(TodoItem, '/todos/<int:id>')
@@ -700,4 +764,4 @@ api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(Signup, '/user/signup')
 api.add_resource(Repos, '/repos')
-api.add_resource(SecurityCenter, '/securitycenters', '/securitycenter/<int:id>')
+api.add_resource(SecurityCenter, '/securitycenters', '/securitycenter/<int:_id>')
