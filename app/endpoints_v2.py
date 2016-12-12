@@ -643,14 +643,13 @@ class Repos(Resource):
 
 
 class SecurityCenter(Resource):
-    # @jwt_required()
+    @jwt_required()
     # If get() gets a valid _user value (user ID or username), then the method will return a single user entry
     # If get() is not given a _user value, then the method will return a list of users
     def get(self, _id=None):
-
         try:
             rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-            # rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+            rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
             rs_sc_handle = rs_security_centers().order_by(main.SecurityCenter.serverName)
             r_single_sc = None
@@ -681,7 +680,7 @@ class SecurityCenter(Resource):
             print ("[TypeError] GET /api/v2/securitycenter %s" % e)
             return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
 
-
+    @jwt_required()
     def post(self):
         try:
             form_fields = request.get_json(force=True)
@@ -715,6 +714,7 @@ class SecurityCenter(Resource):
             main.session.rollback()
             return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-danger'}}
 
+    @jwt_required()
     def put(self, _id=None):
         try:
             form_fields = request.get_json(force=True)
@@ -752,6 +752,7 @@ class SecurityCenter(Resource):
             main.session.rollback()
             return {'response': {'method': 'PUT', 'result': 'NoSuchColumnError', 'message': e, 'class': 'alert alert-danger'}}
 
+    @jwt_required()
     def delete(self, _id):
         main.session.query(main.SecurityCenter).filter(main.SecurityCenter.id == _id).delete()
         main.session.commit()
