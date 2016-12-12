@@ -59,12 +59,12 @@ class SecurityCenter(Base.Model):
     __tablename__ = "securityCenters"
     id = Column(Integer, primary_key=True)
     fqdn_IP = Column(String(256))
-    serverName = Column(String(100), nullable=True)
+    serverName = Column(String(100))
     version = Column(String(45))
     username = Column(String(45), nullable=True)
     pw = Column(String(256), nullable=True)
     certificateFile = Column(String(512), nullable=True)
-    keyFile = Column(String(512))
+    keyFile = Column(String(512), nullable=True)
 
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
