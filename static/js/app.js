@@ -133,6 +133,7 @@
                   }
               }
             })
+            // NOTE: the entirety of the general config state defined below is still needed for nested views
             .state('config', {
               url: '/config',
               views : {
@@ -144,6 +145,127 @@
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
                     controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
+            // Start config nested states
+            .state('config.global_parameters', {
+              url: '/config.global_parameters',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/config.view.html',
+                  controller: 'Config.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_main@config' : {
+                  templateUrl: 'static/html/config_global_parameters.view.html',
+                    controller: 'Config.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
+            .state('config.set_banner_text', {
+              url: '/config.set_banner_text',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/config.view.html',
+                  controller: 'Config.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_main@config' : {
+                  templateUrl: 'static/html/config_set_banner_text.view.html',
+                    controller: 'Config.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
+            .state('config.set_classification_level', {
+              url: '/config.set_classification_level',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/config.view.html',
+                  controller: 'Config.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_main@config' : {
+                  templateUrl: 'static/html/config_set_classification_level.view.html',
+                    controller: 'Config.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
+            .state('config.manage_security_centers', {
+              url: '/config.manage_security_centers',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/config.view.html',
+                  controller: 'Config.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_main@config' : {
+                  templateUrl: 'static/html/config_manage_security_centers.view.html',
+                    controller: 'Config.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
+            .state('config.manage_publishing_sites', {
+              url: '/config.manage_publishing_sites',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/config.view.html',
+                  controller: 'Config.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_main@config' : {
+                  templateUrl: 'static/html/config_manage_publishing_sites.view.html',
+                    controller: 'Config.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
+            .state('config.remove_tag_definitions', {
+              url: '/config.remove_tag_definitions',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/config.view.html',
+                  controller: 'Config.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_main@config' : {
+                  templateUrl: 'static/html/config_remove_tag_definitions.view.html',
+                    controller: 'Config.IndexController',
                     controllerAs: 'vm'
                   }
               }
