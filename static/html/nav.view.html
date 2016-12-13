@@ -1,22 +1,24 @@
-<span ng-if="user.permission === 2 || user.permission === 3">
-    <ul class="nav nav-pills" style="display:inline-block; padding-top: 34px;">
-        <li ng-class="{active: selectedTab == 1}"><a ui-sref="profile" ng-click="selectedTab = 1;">Profile Update</a></li>
-        <li ng-class="{active: selectedTab == 2}"><a ui-sref="repostag" ng-click="selectedTab = 2;">Repos Auto Tags</a></li>
-        <li ng-class="{active: selectedTab == 3}"><a ui-sref="assetstag" ng-click="selectedTab = 3;">Assets Manual Tags</a></li>
-        <li ng-class="{active: selectedTab == 4}"><a ui-sref="publish" ng-click="selectedTab = 4;">Publish</a></li>
-        <li ng-class="{active: selectedTab == 5}"><a ui-sref="config" ng-click="selectedTab = 5;">Config</a></li>
-        <li ng-class="{active: selectedTab == 6}"><a ui-sref="tagactivities" ng-click="selectedTab = 6;">Tag Activities</a></li>
-        <li ng-class="{active: selectedTab == 7}"><a ui-sref="locallogs" ng-click="selectedTab = 7;">Local Logs</a></li>
-        <li ng-class="{active: selectedTab == 8}"><a ui-sref="admin" ng-click="selectedTab = 8;">Admin</a></li>
-        <li style="font-weight: bold;"><a ui-sref="login">Logout</a></li>
-    </ul>
-</span>
-<span ng-if="user.permission !== 2 && user.permission !== 3">
-    <ul class="nav nav-pills" style="display:inline-block; padding-top: 34px;">
-        <li ng-class="{active: selectedTab == 1}"><a ui-sref="profile" ng-click="selectedTab = 1;">Profile Update</a></li>
-        <li ng-class="{active: selectedTab == 2}"><a ui-sref="repostag" ng-click="selectedTab = 2;">Repos Auto Tags</a></li>
-        <li ng-class="{active: selectedTab == 3}"><a ui-sref="assetstag" ng-click="selectedTab = 3;">Assets Manual Tags</a></li>
-        <li ng-class="{active: selectedTab == 4}"><a ui-sref="publish" ng-click="selectedTab = 4;">Publish</a></li>
-        <li style="font-weight: bold;"><a ui-sref="login">Logout</a></li>
-    </ul>
-</span>
+<div class="row">
+    <span ng-if="user.permission === 2 || user.permission === 3">
+        <ul class="nav nav-pills" style="display:inline-block; padding-top: 34px;">
+            <li ng-class="{active: selectedTab == 1}"><a ui-sref="profile" ng-click="selectedTab = 1;">Profile Update</a></li>
+            <li ng-class="{active: selectedTab == 2}"><a ui-sref="repostag" ng-click="selectedTab = 2;">Repos Auto Tags</a></li>
+            <li ng-class="{active: selectedTab == 3}"><a ui-sref="assetstag" ng-click="selectedTab = 3;">Assets Manual Tags</a></li>
+            <li ng-class="{active: selectedTab == 4}"><a ui-sref="publish" ng-click="selectedTab = 4;">Publish</a></li>
+            <li ng-class="{active: selectedTab == 6}"><a ui-sref="tagactivities" ng-click="selectedTab = 6;">Tag Activities</a></li>
+            <li ng-class="{active: selectedTab == 7}"><a ui-sref="locallogs" ng-click="selectedTab = 7;">Local Logs</a></li>
+            <li ng-class="{active: selectedTab == 5}"><a ui-sref="config.global_parameters" ng-click="selectedTab = 5;">Config</a></li>
+            <li ng-class="{active: selectedTab == 8}"><a ui-sref="admin" ng-click="selectedTab = 8;">Admin</a></li>
+            <li style="font-weight: bold;"><a ui-sref="login">Logout</a></li>
+        </ul>
+    </span>
+    <span ng-if="user.permission !== 2 && user.permission !== 3">
+        <ul class="nav nav-pills" style="display:inline-block; padding-top: 34px;">
+            <li ng-class="{active: selectedTab == 1}"><a ui-sref="profile" ng-click="selectedTab = 1;">Profile Update</a></li>
+            <li ng-class="{active: selectedTab == 2}"><a ui-sref="repostag" ng-click="selectedTab = 2;">Repos Auto Tags</a></li>
+            <li ng-class="{active: selectedTab == 3}"><a ui-sref="assetstag" ng-click="selectedTab = 3;">Assets Manual Tags</a></li>
+            <li ng-class="{active: selectedTab == 4}"><a ui-sref="publish" ng-click="selectedTab = 4;">Publish</a></li>
+            <li style="font-weight: bold;"><a ui-sref="login">Logout</a></li>
+        </ul>
+    </span>
+</div>
