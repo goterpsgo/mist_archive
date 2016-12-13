@@ -48,12 +48,17 @@
 
     <!--<nav class="navbar navbar-inverse navbar-fixed-top">-->
     <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container-fluid" style="height: 80px; font-size: 20px;">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/"><img src="/static/img/mist-PNG_small_dark.png"></a>
+        <div class="row bg-green text-white">
+            <div class="col-md-12">
+                Status
+            </div>
         </div>
-        <div ui-view="_nav"></div>
-      </div>
+        <div class="container-fluid" style="height: 80px; font-size: 20px;">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/"><img src="/static/img/mist-PNG_small_dark.png"></a>
+            </div>
+            <div ui-view="_nav"></div>
+        </div>
     </nav>
 
     <!-- main app container -->
@@ -71,5 +76,12 @@
     </div>
 
 
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="row bg-green text-white">
+            <div class="col-md-12 ">
+                Status
+            </div>
+        </div>
+    </nav>
 </body>
 </html>
