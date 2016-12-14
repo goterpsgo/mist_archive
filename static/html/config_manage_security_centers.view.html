@@ -1,5 +1,5 @@
 <form ng-submit="submit_sc_insert">
-    <div class="row" style="margin-top: 15px;">
+    <div class="row" style="padding-top: 10px; padding-bottom: 10px; background-color: #F3FBFF;">
         <div class="col-md-2">
             <input type="text" class="form-control" ng-model="form_data.serverName" size="25" placeholder="Server Name" title="Server Name">
         </div>
@@ -25,7 +25,6 @@
 </form>
 
 <span ng-repeat="sc in sc_list">
-    <span ng-init="form_data.pw = ''"></span>
     <form ng-submit="submit_sc_update">
         <div class="row" style="margin-top: 15px;">
             <div class="col-md-2">
@@ -39,8 +38,8 @@
                 <input type="radio" ng-model="sc.version" value="5" title="Select for version 5."> 5
             </div>
             <div class="col-md-2">
-                <input type="text" class="form-control" ng-model="sc.username" size="10" placeholder="Provide username." title="Provide username.">
-                <input type="text" class="form-control" ng-model="sc.pw" size="10" placeholder="Provide value for update." title="Provide value for update.">
+                <input type="text" class="form-control" ng-model="sc.username" size="10" placeholder="Update username." title="Update username.">
+                <input type="text" class="form-control" ng-model="sc.pw" size="10" placeholder="Update value for update." title="Update value for update.">
             </div>
             <div class="col-md-4">
                 <input type="text" class="form-control" ng-model="sc.certificateFile" size="20" placeholder="Update certificate file." title="Update certificate file.">
