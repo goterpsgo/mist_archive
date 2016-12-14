@@ -48,11 +48,10 @@
 
         $scope.submit_sc_insert = function() {
             console.log('[49] Got here insert');
-        }
+        };
 
         $scope.submit_sc_update = function() {
             console.log('[53] Got here update: ' + $scope.sc['id']);
-            console.log($scope.sc);
-        }
+        };
     }
 })();
