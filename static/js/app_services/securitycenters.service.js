@@ -3,16 +3,15 @@
 
     angular
         .module('app')
-        .factory('MistUsersService', Service);
+        .factory('SecurityCentersService', Service);
 
     function Service($http, $q) {
         var factory = {
-              _get_users: get_users
-            , _get_user: get_user
-            , _create_user: create_user
-            , _update_user: update_user
-            , _delete_user: delete_user
-            , _signup_user: signup_user
+              _get_scs: get_scs
+            , _get_sc: get_sc
+            , _create_sc: create_sc
+            , _update_sc: update_sc
+            , _delete_sc: delete_sc
         };
 
         return factory;
@@ -36,9 +35,9 @@
             return obj_rows;
         }
 
-        function get_users() {
+        function get_scs() {
             var deferred = $q.defer();
-            $http.get('https://10.11.1.239:8444/api/v2/users')
+            $http.get('https://10.11.1.239:8444/api/v2/securitycenters')
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
@@ -47,9 +46,9 @@
             return deferred.promise;
         }
 
-        function get_user(id) {
+        function get_sc(id) {
             var deferred = $q.defer();
-            $http.get('https://10.11.1.239:8444/api/v2/user/' + id)
+            $http.get('https://10.11.1.239:8444/api/v2/securitycenter/' + id)
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
@@ -58,12 +57,7 @@
             return deferred.promise;
         }
 
-        function create_user() {
-            var deferred = $q.defer();
-            return deferred.promise;
-        }
-
-        function signup_user(form_data) {
+        function create_sc(form_data) {
             var deferred = $q.defer();
             var config = {
                 headers : {
@@ -74,7 +68,7 @@
             // since values from pulldown is in comma delimited list, list is converted in to obj
             form_data.repos = serial_to_obj(form_data.repos);   // converting delimited strings into JSON objects
 
-            $http.post('https://10.11.1.239:8444/api/v2/user/signup', form_data, config)
+            $http.post('https://10.11.1.239:8444/api/v2/securitycenter', form_data, config)
                 .success(function(form_data, status, headers, config) {
                     deferred.resolve(form_data);
                 })
@@ -85,7 +79,7 @@
             return deferred.promise;
         }
 
-        function update_user(id, form_data) {
+        function update_sc(id, form_data) {
             var deferred = $q.defer();
             var config = {
                 headers : {
@@ -96,7 +90,7 @@
             console.log(form_data);
 
 
-            $http.put('https://10.11.1.239:8444/api/v2/user/' + id, form_data, config)
+            $http.put('https://10.11.1.239:8444/api/v2/securitycenter/' + id, form_data, config)
                 .success(function(form_data, status, headers, config) {
                     deferred.resolve(form_data);
                 })
@@ -107,7 +101,7 @@
             return deferred.promise;
         }
 
-        function delete_user(id) {
+        function delete_sc(id) {
             console.log('[mistuser.service:94] delete: ' + id);
             var deferred = $q.defer();
             var config = {
@@ -117,7 +111,7 @@
             };
 
             console.log('[mistuser.service:102] before delete');
-            $http.delete('https://10.11.1.239:8444/api/v2/user/' + id)
+            $http.delete('https://10.11.1.239:8444/api/v2/securitycenter/' + id)
                 .success(function(data, status, headers) {
                     console.log('[mistuser.service:105] delete success');
                     deferred.resolve(data);
