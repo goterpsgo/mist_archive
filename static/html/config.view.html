@@ -1,45 +1,43 @@
 <div><br /></div>
 <div><br /></div>
 
-<form id="form_signup" ng-submit="submit_assign_repos()">
-    <br />
-    <br />
-    <div class="row">
-        <div class="col-md-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        Configuration Tasks
-                    </h3>
-                </div>
-                <div class="panel-body">
-                    <div class="btn-group-vertical" role="group">
-                        <button type="button" class="btn btn-default" ng-click="select_task('Global Parameters')" ui-sref="config.global_parameters">Global Parameters</button>
-                        <button type="button" class="btn btn-default" ng-click="select_task('Set Banner Text')" ui-sref="config.set_banner_text">Set Banner Text</button>
-                        <button type="button" class="btn btn-default" ng-click="select_task('Set Classification Level')" ui-sref="config.set_classification_level">Set Classification Level</button>
-                        <button type="button" class="btn btn-default" ng-click="select_task('Manage Security Centers')" ui-sref="config.manage_security_centers">Manage Security Centers</button>
-                        <button type="button" class="btn btn-default" ng-click="select_task('Manage Publishing Sites')" ui-sref="config.manage_publishing_sites">Manage Publishing Sites</button>
-                        <button type="button" class="btn btn-default" ng-click="select_task('Remove Tag Definitions')" ui-sref="config.remove_tag_definitions">Remove Tag Defintions</button>
-                    </div>
-                </div>
-                <div class="panel-footer">
-
+<br />
+<br />
+<div class="row">
+    <div class="col-md-2">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Configuration Tasks
+                </h3>
+            </div>
+            <div class="panel-body">
+                <div class="btn-group-vertical" role="group">
+                    <button type="button" class="btn btn-default" ng-click="select_task('Global Parameters')" ui-sref="config.global_parameters">Global Parameters</button>
+                    <button type="button" class="btn btn-default" ng-click="select_task('Set Banner Text')" ui-sref="config.set_banner_text">Set Banner Text</button>
+                    <button type="button" class="btn btn-default" ng-click="select_task('Set Classification Level')" ui-sref="config.set_classification_level">Set Classification Level</button>
+                    <button type="button" class="btn btn-default" ng-click="select_task('Manage Security Centers')" ui-sref="config.manage_security_centers">Manage Security Centers</button>
+                    <button type="button" class="btn btn-default" ng-click="select_task('Manage Publishing Sites')" ui-sref="config.manage_publishing_sites">Manage Publishing Sites</button>
+                    <button type="button" class="btn btn-default" ng-click="select_task('Remove Tag Definitions')" ui-sref="config.remove_tag_definitions">Remove Tag Defintions</button>
                 </div>
             </div>
-        </div>
-        <div class="col-md-10">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        {{_task}}
-                    </h3>
-                </div>
-                <div class="panel-body" ui-view="_main" style="margin-left: 10px; margin-right: 10px;">
-                </div>
-                <div class="panel-footer">
+            <div class="panel-footer">
 
-                </div>
             </div>
         </div>
     </div>
-</form>
+    <div class="col-md-10">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    {{_task}}
+                </h3>
+            </div>
+            <div class="panel-body" ui-view="_main" style="margin-left: 10px; margin-right: 10px;">
+            </div>
+            <div class="panel-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
