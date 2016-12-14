@@ -40,6 +40,17 @@
             $http.get('https://10.11.1.239:8444/api/v2/securitycenters')
                 .then(
                     function(response) {
+                        // Replace "None" with empty string
+                        for (var _cnt = 0; _cnt < response.data.sc_list.length; _cnt++) {
+                            Object.keys(response.data.sc_list[_cnt]).forEach(function (key) {
+                                if (response.data.sc_list[_cnt][key] == 'None') {
+                                    response.data.sc_list[_cnt][key] = '';
+                                }
+                            });
+                            response.data.sc_list[_cnt]['pw'] = ''
+                        }
+
+
                         deferred.resolve(response.data);
                     }
                 );
