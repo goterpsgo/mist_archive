@@ -50,7 +50,6 @@
                             response.data.sc_list[_cnt]['pw'] = ''
                         }
 
-
                         deferred.resolve(response.data);
                     }
                 );

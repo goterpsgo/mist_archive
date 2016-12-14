@@ -16,6 +16,7 @@
         obj_tasks['config.manage_publishing_sites'] = 'Manage Publishing Sites';
         obj_tasks['config.remove_tag_definitions'] = 'Remove Tag Definitions';
         $scope.sc_list = []; // used for binding forms for updating existing SC entries
+        $scope.sc = {};
         // use for binding form for inserting new SC entry
         $scope.form_data = {
             'version': 5    // check version 5 as default version for new entries
@@ -44,5 +45,14 @@
                       }
                 );
         };
+
+        $scope.submit_sc_insert = function() {
+            console.log('[49] Got here insert');
+        }
+
+        $scope.submit_sc_update = function() {
+            console.log('[53] Got here update: ' + $scope.sc['id']);
+            console.log($scope.sc);
+        }
     }
 })();

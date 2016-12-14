@@ -1,5 +1,5 @@
-<form ng-submit="submit_sc_insert">
-    <div class="row" style="padding-top: 10px; padding-bottom: 10px; background-color: #F3FBFF;">
+<form ng-submit="submit_sc_insert()">
+    <div class="row" style="padding-top: 10px; padding-bottom: 10px; background-color: #E4F5FF;">
         <div class="col-md-2">
             <input type="text" class="form-control" ng-model="form_data.serverName" size="25" placeholder="Server Name" title="Server Name">
         </div>
@@ -19,13 +19,13 @@
             <input type="text" class="form-control" ng-model="form_data.keyFile" size="20" placeholder="Key File" title="Key File">
         </div>
         <div class="col-md-1">
-            <input type="submit" value="Insert New"> <input type="reset">
+            <input type="submit" value="Insert" class="btn btn-default"> <input type="reset" class="btn btn-default">
         </div>
     </div>
 </form>
 
 <span ng-repeat="sc in sc_list">
-    <form ng-submit="submit_sc_update">
+    <form ng-submit="submit_sc_update()">
         <div class="row" style="margin-top: 15px;">
             <div class="col-md-2">
                 <input type="text" class="form-control" ng-model="sc.serverName" size="25" placeholder="Update servername." title="Update servername.">
@@ -46,7 +46,7 @@
                 <input type="text" class="form-control" ng-model="sc.keyFile" size="20" placeholder="Update key file." title="Update key file.">
             </div>
             <div class="col-md-1">
-                <input type="submit" ng-model="sc.id" value="Update Entry">
+                <input type="submit" ng-model="sc.id" value="Update" class="btn btn-default">
             </div>
         </div>
     </form>
