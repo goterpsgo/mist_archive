@@ -31,3 +31,7 @@
 {
     color: white;
 }
+
+.row-hover:hover {
+    background-color: #EEEEEE;
+}
