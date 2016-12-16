@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('app', ['ui.router', 'ngMessages', 'ngStorage', 'ngAnimate', 'ngTouch', 'ui.bootstrap', 'satellizer'])
+        .module('app', ['ui.router', 'ngMessages', 'ngStorage', 'ngAnimate', 'ngTouch', 'ui.bootstrap', 'satellizer', 'ng-file-input'])
         .config(config)
         .run(run);
 
