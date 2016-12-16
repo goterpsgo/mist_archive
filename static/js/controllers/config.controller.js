@@ -16,10 +16,9 @@
         obj_tasks['config.manage_publishing_sites'] = 'Manage Publishing Sites';
         obj_tasks['config.remove_tag_definitions'] = 'Remove Tag Definitions';
         $scope.sc_list = []; // used for binding forms for updating existing SC entries
-        $scope.sc = {};
         // use for binding form for inserting new SC entry
         $scope.form_data = {
-            'version': 5    // check version 5 as default version for new entries
+              'version': 5    // check version 5 as default version for new entries
         };
 
         initController();
@@ -38,7 +37,14 @@
                 ._get_scs()
                 .then(
                       function(security_centers) {
-                          $scope.sc_list = security_centers.sc_list;
+                        $scope.sc_list = security_centers.sc_list;
+
+                        for (var _cnt = 0; _cnt < $scope.sc_list.length; _cnt++) {
+                            $scope.sc_list[_cnt]['_index'] = _cnt;
+                        }
+
+                        console.log('[41] $scope.sc_list[1]: ');
+                        console.log($scope.sc_list[1]);
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
@@ -47,11 +53,11 @@
         };
 
         $scope.submit_sc_insert = function() {
-            console.log('[49] Got here insert');
+            console.log('[51] Got here insert');
         };
 
-        $scope.submit_sc_update = function() {
-            console.log('[53] Got here update: ' + $scope.sc['id']);
+        $scope.submit_sc_update = function(index) {
+            console.log('[55] Got here insert');
         };
     }
 })();
