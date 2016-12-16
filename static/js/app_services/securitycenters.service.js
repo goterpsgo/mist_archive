@@ -75,10 +75,7 @@
                 }
             }
 
-            // since values from pulldown is in comma delimited list, list is converted in to obj
-            form_data.repos = serial_to_obj(form_data.repos);   // converting delimited strings into JSON objects
-
-            $http.post('https://10.11.1.239:8444/api/v2/securitycenter', form_data, config)
+            $http.post('https://10.11.1.239:8444/api/v2/securitycenters', form_data, config)
                 .success(function(form_data, status, headers, config) {
                     deferred.resolve(form_data);
                 })

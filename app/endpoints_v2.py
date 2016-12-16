@@ -685,6 +685,8 @@ class SecurityCenter(Resource):
         try:
             form_fields = request.get_json(force=True)
 
+            print "[688] form_fields: %r" % form_fields
+
             new_sc = main.SecurityCenter(
                   fqdn_IP = form_fields['fqdn_IP']
                 , serverName = form_fields['serverName']

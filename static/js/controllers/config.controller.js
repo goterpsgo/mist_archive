@@ -48,6 +48,13 @@
         $scope.submit_sc_insert = function() {
             console.log('[49] Got here insert');
             console.log($scope.form_data);
+
+            return SecurityCentersService._create_sc($scope.form_data)
+                .then(function(result) {
+                    // $scope.response_message = result.response.message;
+                    // $scope.result = result.response.result;
+                    // $scope.class = result.response.class;
+            });
         };
 
         $scope.submit_sc_update = function(index) {
