@@ -1,6 +1,3 @@
-<script>
-    var _cnt = 0;
-</script>
 <form ng-submit="submit_sc_insert()">
     <div class="row" style="padding-top: 10px; padding-bottom: 10px; background-color: #E4F5FF;">
         <div class="col-md-2">
@@ -35,8 +32,7 @@
     <form enctype='multipart/form-data' ng-submit="submit_sc_update($index)">
         <div class="row row-hover" style="padding-top: 10px; padding-bottom: 10px;">
             <div class="col-md-2">
-                <input type="text" ng-model="sc._index" name="index" size="2">
-                <input type="text" class="form-control" name="serverName" ng-model="sc.serverName" size="20" placeholder="Update servername." title="Update servername.">
+                <input type="text" class="form-control" name="serverName" ng-model="sc.serverName" size="25" placeholder="Update servername." title="Update servername.">
             </div>
             <div class="col-md-2">
                 <input type="text" class="form-control" name="fqdn_IP" ng-model="sc.fqdn_IP" size="25" placeholder="Update FQDN/IP." title="Update FQDN/IP.">
@@ -61,10 +57,6 @@
             {{$index}}
         </div>
     </form>
-    <script>
-        _cnt += 1;
-        console.log('cnt: ' + _cnt);
-    </script>
 </span>
 
 

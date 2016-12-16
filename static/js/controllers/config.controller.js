@@ -38,13 +38,6 @@
                 .then(
                       function(security_centers) {
                         $scope.sc_list = security_centers.sc_list;
-
-                        for (var _cnt = 0; _cnt < $scope.sc_list.length; _cnt++) {
-                            $scope.sc_list[_cnt]['_index'] = _cnt;
-                        }
-
-                        console.log('[41] $scope.sc_list[1]: ');
-                        console.log($scope.sc_list[1]);
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
