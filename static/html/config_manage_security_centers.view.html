@@ -1,53 +1,89 @@
+<script>
+    var _cnt = 0;
+</script>
 <form ng-submit="submit_sc_insert()">
     <div class="row" style="padding-top: 10px; padding-bottom: 10px; background-color: #E4F5FF;">
         <div class="col-md-2">
-            <input type="text" class="form-control" ng-model="form_data.serverName" size="25" placeholder="Server Name" title="Server Name">
+            <input type="text" class="form-control" name="serverName" ng-model="form_data.serverName" size="25" placeholder="Server Name" title="Server Name">
         </div>
         <div class="col-md-2">
-            <input type="text" class="form-control" ng-model="form_data.fqdn_IP" size="25" placeholder="FQDN or IP" title="FQDN or IP">
+            <input type="text" class="form-control" name="fqdn_IP" ng-model="form_data.fqdn_IP" size="25" placeholder="FQDN or IP" title="FQDN or IP">
         </div>
         <div class="col-md-1">
-            <input name="version" type="radio" ng-model="form_data.version" value="4"> 4
-            <input name="version" type="radio" ng-model="form_data.version" value="5"> 5
+            <input type="radio" ng-model="form_data.version" name="version" value="4" title="Select for version 4."> 4
+            <input type="radio" ng-model="form_data.version" name="version" value="5" title="Select for version 5."> 5
         </div>
         <div class="col-md-2">
-            <input type="text" class="form-control" ng-model="form_data.username" size="10" placeholder="Username" title="Username">
-            <input type="text" class="form-control" ng-model="form_data.pw" size="10" placeholder="Password" title="Password">
+            <input type="text" class="form-control" name="username" ng-model="form_data.username" size="10" placeholder="Username" title="Username">
+            <input type="text" class="form-control" name="pw" ng-model="form_data.pw" size="10" placeholder="Password" title="Password">
         </div>
         <div class="col-md-4">
-            <input type="text" class="form-control" ng-model="form_data.certificateFile" size="20" placeholder="Certificate File" title="Certificate File">
-            <input type="text" class="form-control" ng-model="form_data.keyFile" size="20" placeholder="Key File" title="Key File">
+            <input type="file" class="form-control" name="certificateFile" ng-model="form_data.certificateFile" size="20" placeholder="Certificate File" title="Certificate File">
+            <input type="file" class="form-control" name="keyFile" ng-model="form_data.keyFile" size="20" placeholder="Key File" title="Key File">
         </div>
         <div class="col-md-1">
-            <input type="submit" value="Insert" class="btn btn-default"> <input type="reset" class="btn btn-default">
+            <input type="submit" name="submit_insert" value="Insert" class="btn btn-default"> <input type="reset" class="btn btn-default">
         </div>
     </div>
 </form>
 
+<div>
+    {{form_data}}
+</div>
+
 <span ng-repeat="sc in sc_list">
-    <form ng-submit="submit_sc_update()">
+    <form enctype='multipart/form-data' ng-submit="submit_sc_update($index)">
         <div class="row row-hover" style="padding-top: 10px; padding-bottom: 10px;">
             <div class="col-md-2">
-                <input type="text" class="form-control" ng-model="sc.serverName" size="25" placeholder="Update servername." title="Update servername.">
+                <input type="text" ng-model="sc._index" name="index" size="2">
+                <input type="text" class="form-control" name="serverName" ng-model="sc.serverName" size="20" placeholder="Update servername." title="Update servername.">
             </div>
             <div class="col-md-2">
-                <input type="text" class="form-control" ng-model="sc.fqdn_IP" size="25" placeholder="Update FQDN/IP." title="Update FQDN/IP.">
+                <input type="text" class="form-control" name="fqdn_IP" ng-model="sc.fqdn_IP" size="25" placeholder="Update FQDN/IP." title="Update FQDN/IP.">
             </div>
             <div class="col-md-1">
-                <input type="radio" ng-model="sc.version" value="4" title="Select for version 4."> 4
-                <input type="radio" ng-model="sc.version" value="5" title="Select for version 5."> 5
+                <input type="radio" ng-model="sc.version" name="version" value="4" title="Select for version 4."> 4
+                <input type="radio" ng-model="sc.version" name="version" value="5" title="Select for version 5."> 5
             </div>
             <div class="col-md-2">
-                <input type="text" class="form-control" ng-model="sc.username" size="10" placeholder="Update username." title="Update username.">
-                <input type="text" class="form-control" ng-model="sc.pw" size="10" placeholder="Update value for update." title="Update value for update.">
+                <input type="text" class="form-control" name="username" ng-model="sc.username" size="10" placeholder="Update username." title="Update username.">
+                <input type="text" class="form-control" name="pw" ng-model="sc.pw" size="10" placeholder="Update value for update." title="Update value for update.">
             </div>
             <div class="col-md-4">
-                <input type="text" class="form-control" ng-model="sc.certificateFile" size="20" placeholder="Update certificate file." title="Update certificate file.">
-                <input type="text" class="form-control" ng-model="sc.keyFile" size="20" placeholder="Update key file." title="Update key file.">
+                <input type="file" class="form-control" name="certificateFile" ng-model="sc.certificateFile" size="20" placeholder="Update certificate file." title="Update certificate file.">
+                <input type="file" class="form-control" name="keyFile" ng-model="sc.keyFile" size="20" placeholder="Update key file." title="Update key file.">
             </div>
             <div class="col-md-1">
-                <input type="submit" ng-model="sc.id" value="Update" class="btn btn-default">
+                <input type="submit" name="submit_update" value="Update" class="btn btn-default">
             </div>
         </div>
+        <div class="row row-hover" style="padding-top: 10px; padding-bottom: 10px;">
+            {{$index}}
+        </div>
     </form>
+    <script>
+        _cnt += 1;
+        console.log('cnt: ' + _cnt);
+    </script>
 </span>
+
+
+<span ng-repeat="sc in sc_list">
+    <div>{{$index}}</div>
+    <div>{{sc}}</div>
+</span>
+
+<div ng-repeat="row in rows">
+
+    <form enctype='multipart/form-data' ng-submit="uploadFile($index)">
+      <input type="text" ng-model="row.user"><br />
+      <input type="file" file-model="row._keyFile"/>
+      <input type="submit" value="click me">
+    </form>
+[{{$index}}] [{{row._keyFile}}]
+  </div>
+
+
+<div>
+    {{rows}}
+</div>
