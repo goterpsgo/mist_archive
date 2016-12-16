@@ -5,7 +5,7 @@
         .module('app')
         .controller('Config.IndexController', Controller);
 
-    function Controller($scope, $state, SecurityCentersService) {
+    function Controller($scope, $state, SecurityCentersService, $timeout) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
@@ -46,11 +46,33 @@
         };
 
         $scope.submit_sc_insert = function() {
-            console.log('[51] Got here insert');
+            console.log('[49] Got here insert');
+            console.log($scope.form_data);
         };
 
         $scope.submit_sc_update = function(index) {
-            console.log('[55] Got here insert');
+            console.log('[54] Got here update');
+            console.log($scope.sc_list[index]);
+        };
+
+        $scope.delete_sc = function(index) {
+            console.log('[59] Got here delete');
+            console.log($scope.sc_list[index]);
+            var _id = $scope.sc_list[index]['id'];
+            SecurityCentersService._delete_sc(_id)
+                .then(
+                      function() {
+                        $scope.status = 'success';
+                      }
+                    , function(err) {
+                        $scope.status = 'Error deleting data: ' + err.message;
+                      }
+                );
+
+            // Delay get_users() by 1ms to not overwhelm the database (unless there's a better solution - JWT 6 Dec 2016)
+            $timeout(function() {
+                load_sc_data();
+            }, 1);
         };
     }
 })();
