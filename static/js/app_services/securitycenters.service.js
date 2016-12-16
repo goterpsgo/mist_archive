@@ -47,7 +47,7 @@
                                     response.data.sc_list[_cnt][key] = '';
                                 }
                             });
-                            response.data.sc_list[_cnt]['pw'] = ''
+                            response.data.sc_list[_cnt]['pw'] = '';
                         }
 
                         deferred.resolve(response.data);
