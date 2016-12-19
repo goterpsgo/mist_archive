@@ -4,15 +4,18 @@ MIST rewrite v2
 
 Summary:
  - Uses current MIST MySQL datasource
- - Installed under /opt/mist_base (installation may be automated later)
- - Back end uses Python v2.7
+ - Installed under ``/opt/mist_base`` (installation may be automated later)
+ - Back end uses Python v2.7.13
    - Custom environment built under CentOS v6.x
    - Included as virtualenv; install modules with pip using requirements.txt
  - Front end SPA uses AngularJS v1.5.x
+   - NOTE: upgrade to v1.6.x will require refactoring some code
 
 Installation
  - Clone into /opt/mist_base
-   - If needed, install dependencies using pip: pip install -r /opt/mist_base/requirements.txt
+   - If needed, install dependencies using pip: ``pip install -r /opt/mist_base/requirements.txt``
+     - To upgrade dependencies use: ``pip install --upgrade -r /opt/mist_base/requirements.txt``
+     - (To up grade pip use: ``pip install --upgrade pip``)
  - Directories are as follows:
    - app: the Python/Flask-based scripts/API endpoints
    - certificates: used for database connectivity
@@ -38,14 +41,13 @@ Assuming you're running everything using a generic generic environment:
 2. Start the application server:
  ```
  $ /opt/mist_base/env/bin/uwsgi --master --chdir=/opt/mist_base/app --socket=/tmp/mist_app.sock --threads=5 --die-on-term \
-   --pidfile=/tmp/mist_app.pid-module=wsgi --virtualenv=/opt/mist_base/env --logto=/opt/mist_base/log/mist_app.log \
-   --honour-stdin --py-autoreload 1 
+   --pidfile=/tmp/mist_app.pid-module=wsgi --virtualenv=/opt/mist_base/env --honour-stdin \
+   --py-autoreload 1 --logto=/opt/mist_base/log/mist_app.log
  ```
 
 (Deprecated but retained for reference) Running the application server by itself: 
  ```
  $ uwsgi --wsgi-file /opt/mist_base/app/mist_main.py  -s 0.0.0.0:8080 --protocol=http -w wsgi --static-map /static=/opt/mist_base/static --honour-stdin
+ ```
  - honour-stdin param can be omitted if you don't need to see results sent to stdout.
  - wsgi-file param must reference script with either an application declaration or reference to Flask().
- ```
- 
