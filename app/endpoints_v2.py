@@ -8,7 +8,9 @@ from common.models import main, base_model
 from common.db_helpers import PasswordCheck
 import re
 import hashlib
+from werkzeug.utils import secure_filename
 import base64
+import os
 import config
 import json
 import requests
@@ -19,6 +21,10 @@ api_endpoints = Blueprint('mist_auth', __name__, url_prefix="/api/v2")
 api = Api(api_endpoints)
 this_app = return_app()
 
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1] in this_app.config['ALLOWED_EXTENSIONS']
 
 def rs_users():
     return main.session.query(main.MistUser).join(main.UserPermission, main.MistUser.permission_id == main.UserPermission.id)
@@ -719,13 +725,24 @@ class SecurityCenter(Resource):
     @jwt_required()
     def put(self, _id=None):
         try:
-            form_fields = request.get_json(force=True)
+            form_fields = {}
+            for key, value in request.form.iteritems():
+                if (key != 'id' and key != 'status' and key != 'status_class'):   # don't need "id" since value is being provided by _id, may want to replace with regex in future
+                    form_fields[key] = value
 
-            # # Note whether or not data was from form submission (eg <form> in admin.view.html vs JSON data params)
-            # assign_submit = None
-            # if ("assign_submit" in form_fields):
-            #     assign_submit = True
-            #     form_fields.pop('assign_submit')
+            if (request.files['certificateFile']):
+                certificateFile = request.files['certificateFile']
+                certificateFile_name = secure_filename(certificateFile.filename)
+                certificateFile.save(os.path.join(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'], certificateFile_name))
+                form_fields['certificateFile'] = this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'] + "/" + certificateFile_name
+
+            if (request.files['keyFile']):
+                keyFile = request.files['keyFile']
+                keyFile_name = secure_filename(keyFile.filename)
+                keyFile.save(os.path.join(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'], keyFile_name))
+                form_fields['keyFile'] = this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'] + "/" + keyFile_name
+
+            form_fields.pop('$$hashKey')    # remove files node now that we're done with them
 
             this_sc = main.session.query(main.SecurityCenter).filter(main.SecurityCenter.id == int(_id))
 
@@ -733,10 +750,15 @@ class SecurityCenter(Resource):
                 form_fields["pw"] = base64.b64encode(form_fields["pw"]) # need to check if b64 is the right hash algorithm - JWT 12 Dec 2016
             if (any(form_fields)):
                 this_sc.update(form_fields)
-            main.session.begin_nested()
+                main.session.commit()
+                main.session.flush()
 
             return {'response': {'method': 'PUT', 'result': 'success', 'message': 'SecurityCenter successfully updated.', 'class': 'alert alert-success', '_id': int(_id)}}
 
+        except (ValueError) as e:
+            print ("[ValueError] PUT /api/v2/securitycenter/%s / %s" % (_id, e))
+            main.session.rollback()
+            return {'response': {'method': 'PUT', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
         except (AttributeError) as e:
             print ("[AttributeError] PUT /api/v2/securitycenter/%s / %s" % (_id,e))
             main.session.rollback()
