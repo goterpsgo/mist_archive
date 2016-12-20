@@ -689,9 +689,22 @@ class SecurityCenter(Resource):
     @jwt_required()
     def post(self):
         try:
-            form_fields = request.get_json(force=True)
+            form_fields = {}
+            for key, value in request.form.iteritems():
+                if (key != 'id' and key != 'status' and key != 'status_class'):   # don't need "id" since value is being provided by _id, may want to replace with regex in future
+                    form_fields[key] = value
 
-            print "[688] form_fields: %r" % form_fields
+            if ('certificateFile' in request.files):
+                certificateFile = request.files['certificateFile']
+                certificateFile_name = secure_filename(certificateFile.filename)
+                certificateFile.save(os.path.join(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'], certificateFile_name))
+                form_fields['certificateFile'] = this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'] + "/" + certificateFile_name
+
+            if ('keyFile' in request.files):
+                keyFile = request.files['keyFile']
+                keyFile_name = secure_filename(keyFile.filename)
+                keyFile.save(os.path.join(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'], keyFile_name))
+                form_fields['keyFile'] = this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'] + "/" + keyFile_name
 
             new_sc = main.SecurityCenter(
                   fqdn_IP = form_fields['fqdn_IP']
@@ -730,13 +743,13 @@ class SecurityCenter(Resource):
                 if (key != 'id' and key != 'status' and key != 'status_class'):   # don't need "id" since value is being provided by _id, may want to replace with regex in future
                     form_fields[key] = value
 
-            if (request.files['certificateFile']):
+            if ('certificateFile' in request.files):
                 certificateFile = request.files['certificateFile']
                 certificateFile_name = secure_filename(certificateFile.filename)
                 certificateFile.save(os.path.join(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'], certificateFile_name))
                 form_fields['certificateFile'] = this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'] + "/" + certificateFile_name
 
-            if (request.files['keyFile']):
+            if ('keyFile' in request.files):
                 keyFile = request.files['keyFile']
                 keyFile_name = secure_filename(keyFile.filename)
                 keyFile.save(os.path.join(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'], keyFile_name))
