@@ -24,3 +24,6 @@ SECRET_KEY = "key4Mist!!!"
 JWT_EXPIRATION_DELTA = timedelta(seconds=600)
 JWT_VERIFY_CLAIMS = ['signature', 'exp', 'nbf', 'iat']
 JWT_REQUIRED_CLAIMS = ['exp', 'iat', 'nbf']
+
+UPLOAD_FOLDER = '/opt/mist_base/app/sc_certs'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf'])
