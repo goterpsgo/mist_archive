@@ -51,12 +51,28 @@
             console.log('[49] Got here insert');
             console.log($scope.form_data);
 
-            return SecurityCentersService._create_sc($scope.form_data)
+            return SecurityCentersService._insert_sc($scope.form_data).then()
                 .then(function(result) {
-                    // $scope.response_message = result.response.message;
-                    // $scope.result = result.response.result;
-                    // $scope.class = result.response.class;
-            });
+                    $scope.form_data['status'] = result.message;
+                    $scope.form_data['status_class'] = result.class;
+                    $scope.form_data['serverName'] = '';
+                    $scope.form_data['fqdn_IP'] = '';
+                    $scope.form_data['username'] = '';
+                    $scope.form_data['pw'] = '';
+                    $scope.form_data['certificateFile'] = '';
+                    $scope.form_data['keyFile'] = '';
+                    $scope.form_data['version'] = 5;
+                })
+                .then(function() {
+                    load_sc_data();
+                })
+                .then(function() {
+                    // clear status message after five seconds
+                    $timeout(function() {
+                        $scope.form_data['status'] = '';
+                        $scope.form_data['status_class'] = '';
+                    }, 5000);
+                });
         };
 
         $scope.submit_sc_update = function(index) {
@@ -73,8 +89,10 @@
                     $timeout(function() {
                         $scope.sc_list[index]['status'] = '';
                         $scope.sc_list[index]['status_class'] = '';
-                    }, 5000);
-                })
+                    }, 5000).then(function() {
+                        load_sc_data();
+                    });
+                });
 
         };
 
@@ -88,11 +106,9 @@
                         $scope.status = 'Error deleting data: ' + err.message;
                       }
                 )
-                .then(
-                    function() {
+                .then(function() {
                         load_sc_data();
-                    }
-                );
+                });
         };
     }
 })();

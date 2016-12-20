@@ -69,20 +69,22 @@
 
         function insert_sc(form_data) {
             var deferred = $q.defer();
-            var config = {
-                headers : {
-                    'Content-Type': 'application/json;charset=utf-8;'
-                }
-            }
 
-            $http.post('https://10.11.1.239:8444/api/v2/securitycenters', form_data, config)
-                .then(function(form_data, status, headers, config) {
-                    deferred.resolve(form_data);
+            // using 3rd party module
+            // https://github.com/danialfarid/ng-file-upload
+            Upload.upload({
+                url: 'https://10.11.1.239:8444/api/v2/securitycenters'
+                , data: form_data
+                , method: 'POST'
+            })
+            .then(
+                  function(response) {
+                    deferred.resolve(response.data.response);
                 }
-                , function(data, status, headers, config) {
-                    deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
-                })
-            ;
+                , function(response) {
+                    deferred.resolve(response.data.response);
+                }
+            );
             return deferred.promise;
         }
 

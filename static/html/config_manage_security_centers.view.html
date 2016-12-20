@@ -22,11 +22,10 @@
             <input type="submit" name="submit_insert" value="Insert" class="btn btn-default"> <input type="reset" class="btn btn-default">
         </div>
     </div>
+    <div class="{{form_data.status_class}}" style="padding-top: 10px; padding-bottom: 10px;">
+        {{form_data.status}}
+    </div>
 </form>
-
-<div>
-    {{form_data}}
-</div>
 
 <span ng-repeat="sc in sc_list">
     <form enctype='multipart/form-data'>
@@ -51,32 +50,11 @@
             </div>
             <div class="col-md-1">
                 <button class="btn btn-default" ng-click="submit_sc_update($index)">Update</button>
-            </form>
                 <button class="btn btn-default" ng-click="delete_sc(sc.id)">Delete</button>
             </div>
         </div>
         <div class="{{sc.status_class}}" style="padding-top: 10px; padding-bottom: 10px;">
             {{sc.status}}
         </div>
-</span>
-
-
-<span ng-repeat="sc in sc_list">
-    <div>{{$index}}</div>
-    <div>{{sc}}</div>
-</span>
-
-<div ng-repeat="row in rows">
-
-    <form enctype='multipart/form-data' ng-submit="uploadFile($index)">
-      <input type="text" ng-model="row.user"><br />
-      <input type="file" file-model="row._keyFile"/>
-      <input type="submit" value="click me">
     </form>
-[{{$index}}] [{{row._keyFile}}]
-  </div>
-
-
-<div>
-    {{rows}}
-</div>
+</span>
