@@ -5,11 +5,11 @@
         .module('app')
         .factory('SecurityCentersService', Service);
 
-    function Service($http, $q) {
+    function Service($http, $q, Upload) {
         var factory = {
               _get_scs: get_scs
             , _get_sc: get_sc
-            , _create_sc: create_sc
+            , _insert_sc: insert_sc
             , _update_sc: update_sc
             , _delete_sc: delete_sc
         };
@@ -67,7 +67,7 @@
             return deferred.promise;
         }
 
-        function create_sc(form_data) {
+        function insert_sc(form_data) {
             var deferred = $q.defer();
             var config = {
                 headers : {
@@ -76,10 +76,10 @@
             }
 
             $http.post('https://10.11.1.239:8444/api/v2/securitycenters', form_data, config)
-                .success(function(form_data, status, headers, config) {
+                .then(function(form_data, status, headers, config) {
                     deferred.resolve(form_data);
-                })
-                .error(function(data, status, headers, config) {
+                }
+                , function(data, status, headers, config) {
                     deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
                 })
             ;
@@ -88,28 +88,26 @@
 
         function update_sc(id, form_data) {
             var deferred = $q.defer();
-            var config = {
-                headers : {
-                    'Content-Type': 'application/json;charset=utf-8;'
+
+            // using 3rd party module
+            // https://github.com/danialfarid/ng-file-upload
+            Upload.upload({
+                url: 'https://10.11.1.239:8444/api/v2/securitycenter/' + id
+                , data: form_data
+                , method: 'PUT'
+            })
+            .then(
+                  function(response) {
+                    deferred.resolve(response.data.response);
                 }
-            };
-            console.log('[mistuser.service:95] id: ' + id);
-            console.log(form_data);
-
-
-            $http.put('https://10.11.1.239:8444/api/v2/securitycenter/' + id, form_data, config)
-                .success(function(form_data, status, headers, config) {
-                    deferred.resolve(form_data);
-                })
-                .error(function(data, status, headers, config) {
-                    deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
-                })
-            ;
+                , function(response) {
+                    deferred.resolve(response.data.response);
+                }
+            );
             return deferred.promise;
         }
 
         function delete_sc(id) {
-            console.log('[mistuser.service:94] delete: ' + id);
             var deferred = $q.defer();
             var config = {
                 headers : {
@@ -117,17 +115,14 @@
                 }
             };
 
-            console.log('[mistuser.service:102] before delete');
             $http.delete('https://10.11.1.239:8444/api/v2/securitycenter/' + id)
-                .success(function(data, status, headers) {
-                    console.log('[mistuser.service:105] delete success');
+                .then(function(data, status, headers) {
                     deferred.resolve(data);
-                })
-                .error(function(data, status, header, config) {
-                    console.log('[mistuser.service:109] delete error');
+                }
+                , function(data, status, header, config) {
                     deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
-                })
-            ;
+                }
+            );
             return deferred.promise;
         }
     }
