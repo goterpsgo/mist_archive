@@ -15,8 +15,8 @@
             <input type="text" class="form-control" name="pw" ng-model="form_data.pw" size="10" placeholder="Password" title="Password">
         </div>
         <div class="col-md-3">
-            <input type="file" class="form-control" name="certificateFile" ng-model="form_data.certificateFile" placeholder="Certificate File" title="Certificate File">
-            <input type="file" class="form-control" name="keyFile" ng-model="form_data.keyFile" placeholder="Key File" title="Key File">
+            <input type="file" class="form-control" name="certificateFile" ng-model="form_data.certificateFile" ngf-select placeholder="Certificate File" title="Certificate File">
+            <input type="file" class="form-control" name="keyFile" ng-model="form_data.keyFile" ngf-select placeholder="Key File" title="Key File">
         </div>
         <div class="col-md-1">
             <input type="submit" name="submit_insert" value="Insert" class="btn btn-default"> <input type="reset" class="btn btn-default">
@@ -46,17 +46,17 @@
                 <input type="text" class="form-control" name="pw" ng-model="sc.pw" size="10" placeholder="Update value for update." title="Update value for update.">
             </div>
             <div class="col-md-3">
-                <input type="file" class="form-control" name="certificateFile" ng-model="sc.certificateFile" placeholder="Update certificate file." title="Update certificate file.">
-                <input type="file" class="form-control" name="keyFile" ng-model="sc.keyFile" placeholder="Update key file." title="Update key file.">
+                <input type="file" class="form-control" name="certificateFile" ng-model="sc.certificateFile" ngf-select placeholder="Update certificate file." title="Update certificate file.">
+                <input type="file" class="form-control" name="keyFile" ng-model="sc.keyFile" ngf-select placeholder="Update key file." title="Update key file.">
             </div>
             <div class="col-md-1">
                 <button class="btn btn-default" ng-click="submit_sc_update($index)">Update</button>
             </form>
-                <button class="btn btn-default" ng-click="delete_sc($index)">Delete</button>
+                <button class="btn btn-default" ng-click="delete_sc(sc.id)">Delete</button>
             </div>
         </div>
-        <div class="row row-hover" style="padding-top: 10px; padding-bottom: 10px;">
-            {{$index}}
+        <div class="{{sc.status_class}}" style="padding-top: 10px; padding-bottom: 10px;">
+            {{sc.status}}
         </div>
 </span>
 
