@@ -5,7 +5,7 @@
         .module('app')
         .controller('Config.IndexController', Controller);
 
-    function Controller($scope, $state, SecurityCentersService, $timeout) {
+    function Controller($scope, $state, SecurityCentersService, $timeout, Upload) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
@@ -25,7 +25,9 @@
 
         function initController() {
             $scope._task = obj_tasks[$state.current.name];
-            load_sc_data();
+            if ($state.current.name == 'config.manage_security_centers') {
+                load_sc_data();
+            }
         }
         
         $scope.select_task = function(_task) {
@@ -58,14 +60,25 @@
         };
 
         $scope.submit_sc_update = function(index) {
-            console.log('[54] Got here update');
-            console.log($scope.sc_list[index]);
+            var _id = $scope.sc_list[index]['id'];
+
+            SecurityCentersService._update_sc(_id, $scope.sc_list[index])
+                .then(function(result) {
+                    // display a status message to user
+                    $scope.sc_list[index]['status'] = result.message;
+                    $scope.sc_list[index]['status_class'] = result.class;
+                })
+                .then(function() {
+                    // clear status message after five seconds
+                    $timeout(function() {
+                        $scope.sc_list[index]['status'] = '';
+                        $scope.sc_list[index]['status_class'] = '';
+                    }, 5000);
+                })
+
         };
 
-        $scope.delete_sc = function(index) {
-            console.log('[59] Got here delete');
-            console.log($scope.sc_list[index]);
-            var _id = $scope.sc_list[index]['id'];
+        $scope.delete_sc = function(_id) {
             SecurityCentersService._delete_sc(_id)
                 .then(
                       function() {
@@ -74,12 +87,12 @@
                     , function(err) {
                         $scope.status = 'Error deleting data: ' + err.message;
                       }
+                )
+                .then(
+                    function() {
+                        load_sc_data();
+                    }
                 );
-
-            // Delay get_users() by 1ms to not overwhelm the database (unless there's a better solution - JWT 6 Dec 2016)
-            $timeout(function() {
-                load_sc_data();
-            }, 1);
         };
     }
 })();
