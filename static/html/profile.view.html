@@ -1,4 +1,57 @@
-<div class="col-md-12 col-md-offset-0">
-    <h1>Home</h1>
-    <p>Profile page</p>
+<br />
+<br />
+<div class="col-md-8 col-md-offset-0">
+    <h3 class="row">
+        User Profile [{{profile.id}}]
+    </h3>
+    <form ng-submit="update_user_profile(profile.id)">
+        <div class="row">
+            <input type="submit" value="Save Update" class="btn btn-default" />
+        </div>
+        <div class="row">
+            &nbsp;
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="col-md-10">
+                    <tr>
+                        <td><h4>User Info</h4></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" class="form-control" id="firstname0" ng-model="profile.first_name" required placeholder="Enter first name" title="Enter first name"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" class="form-control" id="lastname0" ng-model="profile.last_name" required placeholder="Enter last name" title="Enter last name"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" class="form-control" id="organization0" ng-model="profile.organization" required placeholder="Enter organization" title="Enter organization"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="password" class="form-control" id="password0" ng-model="profile.password" placeholder="Enter password" title="Enter password"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="password" class="form-control" id="password1" ng-model="profile.password1" placeholder="Enter password again" title="Enter password again"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="col-md-10">
+                    <tr>
+                        <td><h4>Repos</h4></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select multiple class="select2-search" ng-model="profile.assign_repos" ng-options="_repo as _repo.server_name+' / '+_repo.repo_name for _repo in repos track by _repo.repo_id+','+_repo.sc_id" size="10"></select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row {{status_class}}">
+            {{status}}
+        </div>
+        <div class="row">
+            {{profile}}
+        </div>
+    </form>
 </div>
