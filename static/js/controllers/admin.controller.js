@@ -31,7 +31,7 @@
             $scope._form_fields.id = arr_user[0];
             $scope._form_fields.username = arr_user[1];
             $scope._form_fields.permission = arr_user[2];
-            $scope._form_fields.assign_submit = true;
+            $scope._form_fields.assign_submit = $localStorage.user.permission;  // whether or not user who submits form is user (0,1) or admin (2,3)
             delete $scope._form_fields['assign_user'];
 
             MistUsersService
