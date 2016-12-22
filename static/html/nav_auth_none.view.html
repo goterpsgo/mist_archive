@@ -1,10 +1,13 @@
 <ul class="nav nav-tabs" style="padding-top: 32px;">
     <form class="navbar-form navbar-right" role="search" name="form" ng-submit="vm.login()" novalidate>
-        <div class="form-group">
-            <input type="text" name="username" class="form-control" ng-model="vm.username" required />
+        <div class="form-group" style="color:red">
+            {{vm.error}}
         </div>
         <div class="form-group">
-            <input type="password" name="password" class="form-control" ng-model="vm.password" required />
+            <input type="text" name="username" class="form-control" ng-model="vm.username" placeholder="Username" required />
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" class="form-control" ng-model="vm.password" placeholder="Password" required />
         </div>
         <button type="submit" ng-disabled="vm.loading" class="btn btn-primary">Login</button>
     </form>
