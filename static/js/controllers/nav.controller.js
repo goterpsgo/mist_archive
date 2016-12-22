@@ -28,7 +28,6 @@
                     MistUsersService._get_user(username)
                         .then(
                               function(user) {
-                                  console.log(user.users_list[0]);
                                   $localStorage.user = user.users_list[0];
                                   $scope.user = user.users_list[0];
                               }
@@ -39,7 +38,7 @@
                 }
 
                 // populate $scope.user to provide user status and state to be used in the nav view.
-                $scope.user = $localStorage.user;
+                // $scope.user = $localStorage.user;
             }
         };
 
