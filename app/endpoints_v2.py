@@ -332,8 +332,25 @@ class Users(Resource):
             # Note whether or not data was from form submission (eg <form> in admin.view.html vs JSON data params)
             assign_submit = None
             if ("assign_submit" in form_fields):
-                assign_submit = True
+                assign_submit = form_fields["assign_submit"]
                 form_fields.pop('assign_submit')
+
+            # May want to refactor form_fields element names to match table column names - JWT 22 Dec 2016
+            if ("first_name" in form_fields):
+                form_fields["firstName"] = form_fields.pop("first_name")
+            if ("last_name" in form_fields):
+                form_fields["lastName"] = form_fields.pop("last_name")
+            if ("subject_dn" in form_fields):
+                form_fields["subjectDN"] = form_fields.pop("subject_dn")
+            if ("subject_dn" in form_fields):
+                form_fields["subjectDN"] = form_fields.pop("subject_dn")
+            if ("permission_id_new" in form_fields):
+                form_fields["permission_id"] = form_fields.pop("permission_id_new")
+                del form_fields["permission_name"]
+            if ("subject_dn" in form_fields):
+                form_fields["subjectDN"] = form_fields.pop("subject_dn")
+            if ("repos" in form_fields):
+                del form_fields["repos"]
 
             # ==================================================
             # Set aside any non-MistUser-specific values
@@ -355,12 +372,17 @@ class Users(Resource):
             # ==================================================
             # POST MULTIPLE REPOS/USER ASSIGNMENTS
 
-            if (assign_submit): # run if action from form submit
-                # Remove all entries from userAccess table containing matched userID value
-                userAccessEntry = main.session.query(main.UserAccess) \
-                    .filter(main.UserAccess.userID == form_fields['id'])
-
-                userAccessEntry.delete()
+            if (assign_submit is not None): # run if action from form submit
+                if (assign_submit >= 2):
+                    # Remove all entries from userAccess table containing matched userID value
+                    userAccessEntry = main.session.query(main.UserAccess) \
+                        .filter(main.UserAccess.userID == form_fields['id'])
+                    userAccessEntry.delete()
+                else:
+                    # Remove all entries from requestUserAccess table containing matched userID value
+                    requestUserAccessEntry = main.session.query(main.requestUserAccess) \
+                        .filter(main.requestUserAccess.userID == form_fields['id'])
+                    requestUserAccessEntry.delete()
                 main.session.begin_nested()
 
                 # Set permission to zero if not an admin
@@ -375,13 +397,22 @@ class Users(Resource):
                 if ("assign_repos" in form_fields):
                     for assign_repo in form_fields['assign_repos']:
                         repo_id, sc_id = assign_repo.split(',')
+                        new_repo_assignment = None
 
-                        new_repo_assignment = main.UserAccess(
-                              userID=form_fields['id']
-                            , scID=sc_id
-                            , repoID=repo_id
-                            , userName=form_fields['username']
-                        )
+                        if (assign_submit >= 2):    # if update submitter is an admin then add to UserAccess
+                            new_repo_assignment = main.UserAccess(
+                                  userID=form_fields['id']
+                                , scID=sc_id
+                                , repoID=repo_id
+                                , userName=form_fields['username']
+                            )
+                        else:   # if update submitter is an admin then add to requestUserAccess
+                            new_repo_assignment = main.requestUserAccess(
+                                  userID=form_fields['id']
+                                , scID=sc_id
+                                , repoID=repo_id
+                                , userName=form_fields['username']
+                            )
                         main.session.add(new_repo_assignment)
                         main.session.begin_nested()
 
@@ -412,7 +443,19 @@ class Users(Resource):
             # Pass _user value to get mistUser object and update with values in form_fields
             # pdb.set_trace()
             if ("password" in form_fields):
+                # If passwords do not match...
+                if (('password1' not in form_fields) or (form_fields['password'] != form_fields['password1'])):
+                    raise ValueError("Password error: passwords do not match.")
+
+                # If password does not fulfill complexity criteria...
+                pw_complexity = PasswordCheck(form_fields['password'])
+                error = pw_complexity.check_password()
+                if error:
+                    raise ValueError("Password error: " + error)
+
                 form_fields["password"] = hashlib.sha256(form_fields["password"]).hexdigest()
+                form_fields.pop("password1")
+
             if (any(form_fields)):
                 this_user.update(form_fields)
                 db_fields = {}
@@ -504,6 +547,10 @@ class Users(Resource):
 
             return {'response': {'method': 'PUT', 'result': 'success', 'message': 'User successfully updated.', 'class': 'alert alert-success', 'user_id': int(_user)}}
 
+        except (ValueError) as e:
+            print ("[ValueError] PUT /api/v2/user/%s / %s" % (_user,e))
+            main.session.rollback()
+            return {'response': {'method': 'PUT', 'result': 'AttributeError', 'message': str(e), 'class': 'alert alert-danger'}}
         except (AttributeError) as e:
             print ("[AttributeError] PUT /api/v2/user/%s / %s" % (_user,e))
             main.session.rollback()
