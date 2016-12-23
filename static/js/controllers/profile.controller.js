@@ -50,6 +50,18 @@
                 .then(
                       function(repos) {
                           $scope.repos = repos.repos_list;
+
+                          if (repos.response !== undefined) {
+                              // display a status message to user
+                              $scope.status = '[get_repos()] ' + repos.response.message;
+                              $scope.status_class = repos.response.class;
+
+                              // clear status message after five seconds
+                              $timeout(function() {
+                                  $scope.status = '';
+                                  $scope.status_class = '';
+                              }, 5000);
+                          }
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
