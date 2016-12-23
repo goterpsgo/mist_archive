@@ -2,8 +2,6 @@ from flask import Blueprint, jsonify, request, render_template, current_app, mak
 from flask_restful import Resource, Api, reqparse, abort
 from flask_jwt import JWT, jwt_required, current_identity
 from mist_main import return_app
-import sqlalchemy
-from sqlalchemy.orm import scoped_session
 from common.models import main, base_model
 from common.db_helpers import PasswordCheck
 import re
@@ -40,6 +38,9 @@ def rs_repos():
 
 def rs_security_centers():
     return main.session.query(main.SecurityCenter)
+
+def rs_banner_text():
+    return main.session.query(main.BannerText)
 
 # http://stackoverflow.com/a/1960546/6554056
 def row_to_dict(row):
@@ -860,9 +861,59 @@ class SecurityCenter(Resource):
         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'SecurityCenter successfully deleted.', 'class': 'alert alert-success', 'id': _id}}
 
 
+class BannerText(Resource):
+    @jwt_required()
+    def get(self, _id=None):
+        try:
+            rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
+            rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+
+            rs_banner_text_handle = rs_banner_text().first()
+
+            rs_dict['banner_text'] = rs_banner_text_handle.BannerText   # add users_list[] to rs_dict
+
+            return jsonify(rs_dict) # return rs_dict
+
+        except (main.NoResultFound) as e:
+            print ("[NoResultFound] GET /api/v2/bannertext %s" % e)
+            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+
+    @jwt_required()
+    def post(self):
+        try:
+            form_fields = request.get_json(force=True)
+
+            new_banner_text = main.BannerText(
+                  BannerText = form_fields['banner_text']
+            )
+
+            main.session.add(new_banner_text)
+            main.session.commit()
+            main.session.flush()
+
+            return {'response': {'method': 'POST', 'result': 'success', 'message': 'New Banner Text entry submitted.', 'class': 'alert alert-success'}}
+
+        except (main.IntegrityError) as e:
+            print ("[IntegrityError] POST /api/v2/bannertext / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+
+    def put(self, _user=None):
+        # TODO: will use for updating existing repo entries
+        return {'response': {'method': 'PUT', 'result': 'success', 'message': 'No PUT method for this endpoint.', 'class': 'alert alert-warning'}}
+
+    @jwt_required()
+    def delete(self):
+        main.session.query(main.BannerText).delete()
+        main.session.commit()
+        main.session.flush()
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Banner Text successfully deleted.', 'class': 'alert alert-success'}}
+
+
 api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(Signup, '/user/signup')
 api.add_resource(Repos, '/repos')
 api.add_resource(SecurityCenter, '/securitycenters', '/securitycenter/<int:_id>')
+api.add_resource(BannerText, '/bannertext')
