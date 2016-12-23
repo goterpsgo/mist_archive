@@ -276,6 +276,9 @@ class Users(Resource):
         except (main.ResourceClosedError) as e:
             print ("[ResourceClosedError] GET /api/v2/user %s" % e)
             return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        except (main.NoSuchColumnError) as e:
+            print ("[NoSuchColumnError] GET /api/v2/repos / %s" % str(e))
+            return {'response': {'method': 'GET', 'result': 'NoSuchColumnError', 'message': str(e), 'class': 'alert alert-danger'}}
 
     @jwt_required()
     # 1. Inserts new user into mistUsers table and returns user id
@@ -691,6 +694,10 @@ class Repos(Resource):
         except (main.StatementError) as e:
             print ("[StatementError] GET /api/v2/repos / %s" % str(e))
             return {'response': {'method': 'GET', 'result': 'StatementError', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (main.NoSuchColumnError) as e:
+            print ("[NoSuchColumnError] GET /api/v2/repos / %s" % str(e))
+            return {'response': {'method': 'GET', 'result': 'NoSuchColumnError', 'message': str(e), 'class': 'alert alert-danger'}}
+
 
     def post(self):
         # TODO: will use for inserting new repo entries
