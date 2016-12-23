@@ -263,7 +263,7 @@ class Users(Resource):
             return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
         except (main.ProgrammingError) as e:
             print ("[ProgrammingError] GET /api/v2/user %s" % e)
-            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+            return {'response': {'method': 'GET', 'result': 'error', 'message': str(e), 'class': 'alert alert-warning'}}
         except (main.StatementError) as e:
             print ("[StatementError] GET /api/v2/user %s" % e)
             return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
@@ -677,11 +677,20 @@ class Repos(Resource):
             print ("[AttributeError] GET /api/v2/repos / %s" % e)
             return {'response': {'method': 'GET', 'result': 'AttributeError', 'message': str(e), 'class': 'alert alert-danger'}}
         except (main.ResourceClosedError) as e:
-            print ("[ResourceClosedError] GET /api/v2/repos / %s" % e)
+            print ("[ResourceClosedError] GET /api/v2/repos / %s" % str(e))
             return {'response': {'method': 'GET', 'result': 'ResourceClosedError', 'message': str(e), 'class': 'alert alert-danger'}}
         except (main.ProgrammingError) as e:
             print ("[ProgrammingError] GET /api/v2/repos / %s" % e)
             return {'response': {'method': 'GET', 'result': 'ProgrammingError', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (main.OperationalError) as e:
+            print ("[OperationalError] GET /api/v2/repos / %s" % str(e))
+            return {'response': {'method': 'GET', 'result': 'OperationalError', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (TypeError) as e:
+            print ("[TypeError] GET /api/v2/repos / %s" % e)
+            return {'response': {'method': 'GET', 'result': 'TypeError', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (main.StatementError) as e:
+            print ("[StatementError] GET /api/v2/repos / %s" % str(e))
+            return {'response': {'method': 'GET', 'result': 'StatementError', 'message': str(e), 'class': 'alert alert-danger'}}
 
     def post(self):
         # TODO: will use for inserting new repo entries
