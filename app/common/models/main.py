@@ -66,6 +66,11 @@ class SecurityCenter(Base.Model):
     certificateFile = Column(String(512), nullable=True)
     keyFile = Column(String(512), nullable=True)
 
+class BannerText(Base.Model):
+    __tablename__ = "bannerText"
+    index = Column(Integer, primary_key=True)
+    BannerText = Column(String(256))
+
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
                     'key': '/opt/mist_base/certificates/mist-interface.key',
