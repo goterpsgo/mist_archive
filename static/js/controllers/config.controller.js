@@ -5,7 +5,7 @@
         .module('app')
         .controller('Config.IndexController', Controller);
 
-    function Controller($scope, $state, SecurityCentersService, $timeout, Upload) {
+    function Controller($scope, $state, SecurityCentersService, BannerTextService, $timeout, Upload) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
@@ -20,6 +20,7 @@
         $scope.form_data = {
               'version': 5    // check version 5 as default version for new entries
         };
+        $scope.banner_text = {};
 
         initController();
 
@@ -28,11 +29,14 @@
             if ($state.current.name == 'config.manage_security_centers') {
                 load_sc_data();
             }
+            if ($state.current.name == 'config.set_banner_text') {
+                load_banner_text();
+            }
         }
         
         $scope.select_task = function(_task) {
             $scope._task = _task;
-        }
+        };
 
         function load_sc_data() {
             SecurityCentersService
@@ -45,7 +49,21 @@
                         $scope.status = 'Error loading data: ' + err.message;
                       }
                 );
-        };
+        }
+
+        function load_banner_text() {
+            BannerTextService
+                ._get_bannertext()
+                .then(
+                      function(banner_text) {
+                          $scope.banner_text['banner_text'] = banner_text.banner_text;
+
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
 
         $scope.submit_sc_insert = function() {
             console.log('[49] Got here insert');
