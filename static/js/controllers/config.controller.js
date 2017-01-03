@@ -66,7 +66,6 @@
         }
 
         $scope.submit_sc_insert = function() {
-            console.log('[49] Got here insert');
             console.log($scope.form_data);
 
             return SecurityCentersService._insert_sc($scope.form_data).then()
@@ -91,6 +90,33 @@
                         $scope.form_data['status_class'] = '';
                     }, 5000);
                 });
+        };
+
+        $scope.submit_banner_text= function() {
+            console.log('[96] Got here insert');
+            console.log($scope.banner_text);
+
+            BannerTextService._delete_bannertext()
+                .then(function() {
+                    return BannerTextService._insert_bannertext($scope.banner_text)
+                        .then(function(result) {
+                            $scope.banner_text['status'] = result.data.response.message;
+                            $scope.banner_text['status_class'] = result.data.response.class;
+                            console.log('[105] Got here');
+                        })
+                        .then(function() {
+                            load_banner_text();
+                        })
+                        .then(function() {
+                            // clear status message after five seconds
+                            $timeout(function() {
+                                $scope.banner_text['status'] = '';
+                                $scope.banner_text['status_class'] = '';
+                            }, 5000);
+                        }
+                    );
+                }
+            );
         };
 
         $scope.submit_sc_update = function(index) {

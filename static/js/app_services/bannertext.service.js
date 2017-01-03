@@ -33,10 +33,7 @@
                 }
             }
 
-            // since values from pulldown is in comma delimited list, list is converted in to obj
-            form_data.repos = serial_to_obj(form_data.repos);   // converting delimited strings into JSON objects
-
-            $http.post('https://10.11.1.239:8444/api/v2/user/bannertext', form_data, config)
+            $http.post('https://10.11.1.239:8444/api/v2/bannertext', form_data, config)
                 .then(function(form_data, status, headers, config) {
                     deferred.resolve(form_data);
                 }
@@ -55,7 +52,7 @@
                 }
             };
 
-            $http.delete('https://10.11.1.239:8444/api/v2/securitycenter/' + id)
+            $http.delete('https://10.11.1.239:8444/api/v2/bannertext')
                 .then(function(data, status, headers) {
                     deferred.resolve(data);
                 }

@@ -862,21 +862,17 @@ class SecurityCenter(Resource):
 
 
 class BannerText(Resource):
-    @jwt_required()
     def get(self, _id=None):
-        try:
-            rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-            rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
 
-            rs_banner_text_handle = rs_banner_text().first()
+        rs_banner_text_handle = rs_banner_text().first()
 
-            rs_dict['banner_text'] = rs_banner_text_handle.BannerText   # add users_list[] to rs_dict
+        if (rs_banner_text_handle is None):
+            rs_dict['banner_text'] = {"banner_text": ""}
+        else:
+            rs_dict['banner_text'] = rs_banner_text_handle.BannerText  # add users_list[] to rs_dict
 
-            return jsonify(rs_dict) # return rs_dict
-
-        except (main.NoResultFound) as e:
-            print ("[NoResultFound] GET /api/v2/bannertext %s" % e)
-            return {'response': {'method': 'GET', 'result': 'error', 'message': e, 'class': 'alert alert-warning'}}
+        return jsonify(rs_dict) # return rs_dict
 
     @jwt_required()
     def post(self):
