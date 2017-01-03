@@ -71,6 +71,14 @@ class BannerText(Base.Model):
     index = Column(Integer, primary_key=True)
     BannerText = Column(String(256))
 
+class Classifications(Base.Model):
+    __tablename__ = "classifications"
+    index = Column(Integer, primary_key=True)
+    level = Column(String(45))
+    color = Column(String(45))
+    selected = Column(String(1), default="N")
+    display = Column(String(100))
+
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
                     'key': '/opt/mist_base/certificates/mist-interface.key',

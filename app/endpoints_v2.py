@@ -42,6 +42,9 @@ def rs_security_centers():
 def rs_banner_text():
     return main.session.query(main.BannerText)
 
+def rs_classification():
+    return main.session.query(main.Classifications)
+
 # http://stackoverflow.com/a/1960546/6554056
 def row_to_dict(row):
     d = {}
@@ -862,7 +865,7 @@ class SecurityCenter(Resource):
 
 
 class BannerText(Resource):
-    def get(self, _id=None):
+    def get(self):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
 
         rs_banner_text_handle = rs_banner_text().first()
@@ -906,6 +909,61 @@ class BannerText(Resource):
         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Banner Text successfully deleted.', 'class': 'alert alert-success'}}
 
 
+class Classification(Resource):
+    def get(self, _current=None):
+        rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
+
+        rs_classification_handle = rs_classification().order_by(main.Classifications.index)
+        r_single_classification = None
+        if _current is not None:
+            r_single_classification = rs_classification_handle.filter(
+                main.Classifications.selected == "Y"
+            ).first()
+
+        # add results to classifications_list
+        classifications_list = []
+        if _current is None:
+            for r_classification in rs_classification_handle:
+                classifications_list.append(row_to_dict(r_classification))
+        else:
+            classifications_list.append(row_to_dict(r_single_classification))
+
+        rs_dict['classifications_list'] = classifications_list  # add users_list[] to rs_dict
+
+        return jsonify(rs_dict)  # return rs_dict
+
+    @jwt_required()
+    def post(self):
+        try:
+            form_fields = request.get_json(force=True)
+
+            new_banner_text = main.BannerText(
+                  BannerText = form_fields['banner_text']
+            )
+
+            main.session.add(new_banner_text)
+            main.session.commit()
+            main.session.flush()
+
+            return {'response': {'method': 'POST', 'result': 'success', 'message': 'New Banner Text entry submitted.', 'class': 'alert alert-success'}}
+
+        except (main.IntegrityError) as e:
+            print ("[IntegrityError] POST /api/v2/bannertext / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+
+    def put(self, _user=None):
+        # TODO: will use for updating existing repo entries
+        return {'response': {'method': 'PUT', 'result': 'success', 'message': 'No PUT method for this endpoint.', 'class': 'alert alert-warning'}}
+
+    @jwt_required()
+    def delete(self):
+        main.session.query(main.BannerText).delete()
+        main.session.commit()
+        main.session.flush()
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Banner Text successfully deleted.', 'class': 'alert alert-success'}}
+
+
 api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Users, '/users', '/user/<string:_user>')
@@ -913,3 +971,4 @@ api.add_resource(Signup, '/user/signup')
 api.add_resource(Repos, '/repos')
 api.add_resource(SecurityCenter, '/securitycenters', '/securitycenter/<int:_id>')
 api.add_resource(BannerText, '/bannertext')
+api.add_resource(Classification, '/classifications', '/classification/<string:_current>')
