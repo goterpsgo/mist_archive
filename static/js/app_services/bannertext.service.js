@@ -14,9 +14,9 @@
 
         return factory;
 
-        function get_bannertext() {
+        function get_bannertext(_env) {
             var deferred = $q.defer();
-            $http.get('https://10.11.1.239:8444/api/v2/bannertext')
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/bannertext')
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
@@ -33,7 +33,7 @@
                 }
             }
 
-            $http.post('https://10.11.1.239:8444/api/v2/bannertext', form_data, config)
+            $http.post(__env.api_url + ':' + __env.port + '/api/v2/bannertext', form_data, config)
                 .then(function(form_data, status, headers, config) {
                     deferred.resolve(form_data);
                 }
@@ -52,7 +52,7 @@
                 }
             };
 
-            $http.delete('https://10.11.1.239:8444/api/v2/bannertext')
+            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/bannertext')
                 .then(function(data, status, headers) {
                     deferred.resolve(data);
                 }

@@ -1,9 +1,16 @@
 (function () {
     'use strict';
 
+    var env = {};
+
+    if (window) {
+        Object.assign(env, window.__env);
+    }
+
     angular
         .module('app', ['ui.router', 'ngMessages', 'ngStorage', 'ngAnimate', 'ngTouch', 'ui.bootstrap', 'satellizer', 'ngFileUpload'])
         .config(config)
+        .constant('__env', env)
         .run(run);
 
     // all providers need to be defined in config()

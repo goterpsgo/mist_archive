@@ -38,7 +38,7 @@
 
         function get_users() {
             var deferred = $q.defer();
-            $http.get('https://10.11.1.239:8443/api/v2/users')
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/users')
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
@@ -49,7 +49,7 @@
 
         function get_user(id) {
             var deferred = $q.defer();
-            $http.get('https://10.11.1.239:8443/api/v2/user/' + id)
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/user/' + id)
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
@@ -74,11 +74,11 @@
             // since values from pulldown is in comma delimited list, list is converted in to obj
             form_data.repos = serial_to_obj(form_data.repos);   // converting delimited strings into JSON objects
 
-            $http.post('https://10.11.1.239:8443/api/v2/user/signup', form_data, config)
-                .success(function(form_data, status, headers, config) {
+            $http.post(__env.api_url + ':' + __env.port + '/api/v2/user/signup', form_data, config)
+                .then(function(form_data, status, headers, config) {
                     deferred.resolve(form_data);
-                })
-                .error(function(data, status, headers, config) {
+                }
+                , function(data, status, headers, config) {
                     deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
                 })
             ;
@@ -92,15 +92,14 @@
                     'Content-Type': 'application/json;charset=utf-8;'
                 }
             };
-            console.log('[mistuser.service:95] id: ' + id);
             console.log(form_data);
 
 
-            $http.put('https://10.11.1.239:8443/api/v2/user/' + id, form_data, config)
-                .success(function(form_data, status, headers, config) {
+            $http.put(__env.api_url + ':' + __env.port + '/api/v2/user/' + id, form_data, config)
+                .then(function(form_data, status, headers, config) {
                     deferred.resolve(form_data);
-                })
-                .error(function(data, status, headers, config) {
+                }
+                , function(data, status, headers, config) {
                     deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
                 })
             ;
@@ -108,7 +107,6 @@
         }
 
         function delete_user(id) {
-            console.log('[mistuser.service:94] delete: ' + id);
             var deferred = $q.defer();
             var config = {
                 headers : {
@@ -116,14 +114,11 @@
                 }
             };
 
-            console.log('[mistuser.service:102] before delete');
-            $http.delete('https://10.11.1.239:8443/api/v2/user/' + id)
-                .success(function(data, status, headers) {
-                    console.log('[mistuser.service:105] delete success');
+            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/user/' + id)
+                .then(function(data, status, headers) {
                     deferred.resolve(data);
-                })
-                .error(function(data, status, header, config) {
-                    console.log('[mistuser.service:109] delete error');
+                }
+                , function(data, status, header, config) {
                     deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
                 })
             ;

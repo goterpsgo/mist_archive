@@ -37,7 +37,7 @@
 
         function get_scs() {
             var deferred = $q.defer();
-            $http.get('https://10.11.1.239:8444/api/v2/securitycenters')
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/securitycenters')
                 .then(
                     function(response) {
                         // Replace "None" with empty string
@@ -58,7 +58,7 @@
 
         function get_sc(id) {
             var deferred = $q.defer();
-            $http.get('https://10.11.1.239:8444/api/v2/securitycenter/' + id)
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/securitycenter/' + id)
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
@@ -73,7 +73,7 @@
             // using 3rd party module
             // https://github.com/danialfarid/ng-file-upload
             Upload.upload({
-                url: 'https://10.11.1.239:8444/api/v2/securitycenters'
+                url: __env.api_url + ':' + __env.port + '/api/v2/securitycenters'
                 , data: form_data
                 , method: 'POST'
             })
@@ -94,7 +94,7 @@
             // using 3rd party module
             // https://github.com/danialfarid/ng-file-upload
             Upload.upload({
-                url: 'https://10.11.1.239:8444/api/v2/securitycenter/' + id
+                url: __env.api_url + ':' + __env.port + '/api/v2/securitycenter/' + id
                 , data: form_data
                 , method: 'PUT'
             })
@@ -117,7 +117,7 @@
                 }
             };
 
-            $http.delete('https://10.11.1.239:8444/api/v2/securitycenter/' + id)
+            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/securitycenter/' + id)
                 .then(function(data, status, headers) {
                     deferred.resolve(data);
                 }
