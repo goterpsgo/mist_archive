@@ -910,19 +910,19 @@ class BannerText(Resource):
 
 
 class Classification(Resource):
-    def get(self, _current=None):
+    def get(self, _id=None):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
 
         rs_classification_handle = rs_classification().order_by(main.Classifications.index)
         r_single_classification = None
-        if _current is not None:
+        if _id is not None:
             r_single_classification = rs_classification_handle.filter(
                 main.Classifications.selected == "Y"
             ).first()
 
         # add results to classifications_list
         classifications_list = []
-        if _current is None:
+        if _id is None:
             for r_classification in rs_classification_handle:
                 classifications_list.append(row_to_dict(r_classification))
         else:
@@ -932,36 +932,39 @@ class Classification(Resource):
 
         return jsonify(rs_dict)  # return rs_dict
 
-    @jwt_required()
     def post(self):
+        return {'response': {'method': 'POST', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
+
+    # @jwt_required()
+    def put(self, _id=None):
         try:
-            form_fields = request.get_json(force=True)
+            # update all "selected" values as N
+            upd_form = {}
+            upd_form["selected"] = "N"
+            # pdb.set_trace()
 
-            new_banner_text = main.BannerText(
-                  BannerText = form_fields['banner_text']
-            )
+            classification_selected = rs_classification().filter(main.Classifications.selected == 'Y')
+            classification_selected.update(upd_form)
 
-            main.session.add(new_banner_text)
             main.session.commit()
             main.session.flush()
 
-            return {'response': {'method': 'POST', 'result': 'success', 'message': 'New Banner Text entry submitted.', 'class': 'alert alert-success'}}
+            # update "selected" as Y where index = _id
+            upd_form["selected"] = "Y"
+            classification_selected = rs_classification().filter(main.Classifications.index == _id)
+            classification_selected.update(upd_form)
+            main.session.commit()
+            main.session.flush()
 
-        except (main.IntegrityError) as e:
-            print ("[IntegrityError] POST /api/v2/bannertext / %s" % e)
+            return {'response': {'method': 'PUT', 'result': 'success', 'message': 'Classification successfully updated.', 'class': 'alert alert-success', '_id': int(_id)}}
+
+        except (main.ProgrammingError) as e:
+            print ("[ProgrammingError] PUT /api/v2/securitycenter/%s / %s" % (_id,e))
             main.session.rollback()
-            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+            return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
 
-    def put(self, _user=None):
-        # TODO: will use for updating existing repo entries
-        return {'response': {'method': 'PUT', 'result': 'success', 'message': 'No PUT method for this endpoint.', 'class': 'alert alert-warning'}}
-
-    @jwt_required()
     def delete(self):
-        main.session.query(main.BannerText).delete()
-        main.session.commit()
-        main.session.flush()
-        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Banner Text successfully deleted.', 'class': 'alert alert-success'}}
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'No DELETE method for this endpoint.', 'class': 'alert alert-warning'}}
 
 
 api.add_resource(TodoItem, '/todos/<int:id>')
@@ -971,4 +974,4 @@ api.add_resource(Signup, '/user/signup')
 api.add_resource(Repos, '/repos')
 api.add_resource(SecurityCenter, '/securitycenters', '/securitycenter/<int:_id>')
 api.add_resource(BannerText, '/bannertext')
-api.add_resource(Classification, '/classifications', '/classification/<string:_current>')
+api.add_resource(Classification, '/classifications', '/classification/<string:_id>')
