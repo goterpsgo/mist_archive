@@ -56,7 +56,7 @@ start() {
 		if [ "$?" = 0 ] ; then
 			echo "$UWSGI_NAME (pid `pidof $UWSGI_NAME`) already running."
         else
-            $UWSGI_BIN --py-autoreload 1 --master --socket=/tmp/mist_app.sock --pidfile=/tmp/mist_app.pid --module=wsgi --honour-stdin --chdir=$APP_HOME --threads=5 --virtualenv=$ENV_HOME --die-on-term --logto=/opt/mist_base/log/mist_app.log --uid $USER --gid $USER > /dev/null 2>&1 &
+            $UWSGI_BIN --py-autoreload 1 --master --socket=/tmp/mist_app.sock --pidfile=/tmp/mist_app.pid --module=wsgi --honour-stdin --chdir=$APP_HOME --threads=1 --virtualenv=$ENV_HOME --die-on-term --uid $USER --gid $USER --logto=/opt/mist_base/log/mist_app.log > /dev/null 2>&1 &
 		fi
 
 		if [ "$?" != 0 ] ; then
