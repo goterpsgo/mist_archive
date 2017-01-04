@@ -1,1 +1,5 @@
-Set Classification Level
+<table>
+    <tr ng-repeat="type in classifications">
+        <td class="{{type.class}}" style="padding: 10px;" ng-click="update_classification(type.index)">{{type.display}}</td>
+    </tr>
+</table>

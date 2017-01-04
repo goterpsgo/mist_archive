@@ -7,13 +7,6 @@
 
     function Controller($scope, $state, ClassificationService, $timeout, Upload) {
         var vm = this;
-        var classes = [];
-        classes['None'] = '';
-        classes['Unclassified'] = 'bg-unclassified';
-        classes['Confidential'] = 'bg-confidential';
-        classes['Secret'] = 'bg-secret';
-        classes['Top Secret'] = 'bg-top-secret';
-        classes['Top Secret - No Foreign'] = 'bg-tssci';
         $scope.classification = {};
 
         initController();
@@ -31,9 +24,7 @@
                 ._load_classification()
                 .then(
                       function(classification) {
-                          $scope.classification['classification'] = classification.classifications_list[0];
-                          $scope.classification['class'] = classes[classification.classifications_list[0]['level']];
-                          console.log('[37] Got here: ' + classification.classifications_list[0]['level']);
+                          $scope.classification = classification.classifications_list[0];
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;

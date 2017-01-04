@@ -5,7 +5,7 @@
         .module('app')
         .controller('Config.IndexController', Controller);
 
-    function Controller($scope, $state, SecurityCentersService, BannerTextService, $timeout, Upload) {
+    function Controller($scope, $state, SecurityCentersService, BannerTextService, ClassificationService, $timeout, Upload) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
@@ -20,6 +20,8 @@
         $scope.form_data = {
               'version': 5    // check version 5 as default version for new entries
         };
+        $scope.classifications = [];
+        $scope.classification = {};
         $scope.banner_text = {};
 
         initController();
@@ -31,6 +33,9 @@
             }
             if ($state.current.name == 'config.set_banner_text') {
                 load_banner_text();
+            }
+            if ($state.current.name == 'config.set_classification_level') {
+                load_classifications();
             }
         }
         
@@ -154,5 +159,44 @@
                         load_sc_data();
                 });
         };
+
+        function load_classification() {
+            ClassificationService
+                ._load_classification()
+                .then(
+                      function(classification) {
+                          $scope.classification = classification.classifications_list[0];
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
+
+        function load_classifications() {
+            ClassificationService
+                ._load_classifications()
+                .then(
+                      function(classifications) {
+                          $scope.classifications = classifications.classifications_list;
+                      }
+                    , function(err) {
+                          $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
+
+        $scope.update_classification = function(id) {
+            ClassificationService
+                ._update_classification(id)
+                .then(
+                      function(classifications) {
+                          load_classification();
+                      }
+                    , function(err) {
+                          $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
     }
 })();

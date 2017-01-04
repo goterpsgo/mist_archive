@@ -6,6 +6,14 @@
         .factory('ClassificationService', Service);
 
     function Service($http, $q, __env) {
+        var classes = [];
+        classes['None'] = '';
+        classes['Unclassified'] = 'bg-unclassified';
+        classes['Confidential'] = 'bg-confidential';
+        classes['Secret'] = 'bg-secret';
+        classes['Top Secret'] = 'bg-top-secret';
+        classes['Top Secret - No Foreign'] = 'bg-tssci';
+
         var factory = {
               _load_classifications: load_classifications
             , _load_classification: load_classification
@@ -20,6 +28,9 @@
             $http.get(__env.api_url + ':' + __env.port + '/api/v2/classifications')
                 .then(
                     function(response) {
+                        for (var i in response.data.classifications_list) {
+                            response.data.classifications_list[i].class = classes[response.data.classifications_list[i].level];
+                        }
                         deferred.resolve(response.data);
                     }
                 );
@@ -33,6 +44,7 @@
             $http.get(__env.api_url + ':' + __env.port + '/api/v2/classification/1')
                 .then(
                     function(response) {
+                        response.data.classifications_list[0].class = classes[response.data.classifications_list[0].level];
                         deferred.resolve(response.data);
                     }
                 );

@@ -6,7 +6,7 @@
   window.__env.api_url = 'https://10.11.1.239';
 
   // Port
-  window.__env.port = '8443';
+  window.__env.port = '8444';
 
   // Base url
   window.__env.base_url = '/';
