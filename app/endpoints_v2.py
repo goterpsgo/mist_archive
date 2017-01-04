@@ -935,7 +935,7 @@ class Classification(Resource):
     def post(self):
         return {'response': {'method': 'POST', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
 
-    # @jwt_required()
+    @jwt_required()
     def put(self, _id=None):
         try:
             # update all "selected" values as N

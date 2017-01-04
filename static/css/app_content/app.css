@@ -7,27 +7,22 @@
 }
 
 .bg-confidential, .bg-blue {
-    background-color: blue;
+    background-color: #0055FF;
 }
 
 .bg-secret, .bg-red {
     background-color: red;
 }
 
-.bg-top-secret, .bg-orange {
+.bg-top-secret, .bg-tssci, .bg-orange {
     background-color: orange;
-}
-
-.bg-tssci, .bg-yellow {
-    background-color: yellow;
 }
 
 .text-white
 , .bg-unclassified, .bg-green
 , .bg-confidential, .bg-blue
 , .bg-secret, .bg-red
-, .bg-top-secret, .bg-orange
-, .bg-tssci, .bg-yellow
+, .bg-top-secret, .bg-tssci, .bg-orange
 {
     color: white;
 }

@@ -33,6 +33,11 @@
                     controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('login', {
@@ -46,6 +51,11 @@
                 , '_nav' : {
                   templateUrl: 'static/html/nav_auth_none.view.html',
                     controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -63,6 +73,11 @@
                     controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('repostag', {
@@ -76,6 +91,11 @@
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
                     controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -93,6 +113,11 @@
                     controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('publish', {
@@ -106,6 +131,11 @@
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
                     controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -123,6 +153,11 @@
                     controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('admin', {
@@ -136,6 +171,11 @@
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
                     controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
                     controllerAs: 'vm'
                   }
               }
@@ -154,6 +194,11 @@
                     controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             // Start config nested states
@@ -168,6 +213,11 @@
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
                     controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
                     controllerAs: 'vm'
                   }
                 , '_main@config' : {
@@ -190,6 +240,11 @@
                     controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
                 , '_main@config' : {
                   templateUrl: 'static/html/config_set_banner_text.view.html',
                     controller: 'Config.IndexController',
@@ -208,6 +263,11 @@
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
                     controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
                     controllerAs: 'vm'
                   }
                 , '_main@config' : {
@@ -230,6 +290,11 @@
                     controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
                 , '_main@config' : {
                   templateUrl: 'static/html/config_manage_security_centers.view.html',
                     controller: 'Config.IndexController',
@@ -248,6 +313,11 @@
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
                     controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
                     controllerAs: 'vm'
                   }
                 , '_main@config' : {
@@ -270,6 +340,11 @@
                     controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
                 , '_main@config' : {
                   templateUrl: 'static/html/config_remove_tag_definitions.view.html',
                     controller: 'Config.IndexController',
@@ -290,6 +365,11 @@
                     controller: 'Nav.IndexController',
                     controllerAs: 'vm'
                   }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
               }
             })
             .state('locallogs', {
@@ -303,6 +383,11 @@
                 , '_nav' : {
                   templateUrl: 'static/html/nav.view.html',
                     controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
                     controllerAs: 'vm'
                   }
               }

@@ -5,7 +5,7 @@
         .module('app')
         .factory('ReposService', Service);
 
-    function Service($http, $q) {
+    function Service($http, $q, __env) {
         var factory = {
               _get_repos: get_repos
             , _create_repo: create_repo

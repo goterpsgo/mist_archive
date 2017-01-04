@@ -5,7 +5,7 @@
         .module('app')
         .factory('SecurityCentersService', Service);
 
-    function Service($http, $q, Upload) {
+    function Service($http, $q, Upload, __env) {
         var factory = {
               _get_scs: get_scs
             , _get_sc: get_sc

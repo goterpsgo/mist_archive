@@ -5,7 +5,7 @@
         .module('app')
         .factory('MistUsersService', Service);
 
-    function Service($http, $q) {
+    function Service($http, $q, __env) {
         var factory = {
               _get_users: get_users
             , _get_user: get_user

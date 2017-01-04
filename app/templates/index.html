@@ -28,6 +28,7 @@
     <script src="static/js/app.js"></script>
 
     <!-- services -->
+    <script src="static/js/app_services/classification.service.js"></script>
     <script src="static/js/app_services/authentication.service.js"></script>
     <script src="static/js/app_services/mistuser.service.js"></script>
     <script src="static/js/app_services/repos.service.js"></script>
@@ -36,6 +37,7 @@
 
     <!-- application scripts -->
     <script src="static/js/controllers/home.controller.js"></script>
+    <script src="static/js/controllers/classification.controller.js"></script>
     <script src="static/js/controllers/login.controller.js"></script>
     <script src="static/js/controllers/nav.controller.js"></script>
     <script src="static/js/controllers/admin.controller.js"></script>
@@ -53,11 +55,7 @@
 
     <!--<nav class="navbar navbar-inverse navbar-fixed-top">-->
     <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="row bg-green text-white">
-            <div class="col-md-12">
-                Status
-            </div>
-        </div>
+        <div ui-view="_classification"></div>
         <div class="container-fluid" style="height: 80px; font-size: 20px;">
             <div class="navbar-header">
                 <a class="navbar-brand" href="/"><img src="/static/img/mist-PNG_small_dark.png"></a>
@@ -82,11 +80,7 @@
 
 
     <nav class="navbar navbar-default navbar-fixed-bottom">
-        <div class="row bg-green text-white">
-            <div class="col-md-12 ">
-                Status
-            </div>
-        </div>
+        <div ui-view="_classification"></div>
     </nav>
 </body>
 </html>

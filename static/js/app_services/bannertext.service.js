@@ -5,7 +5,7 @@
         .module('app')
         .factory('BannerTextService', Service);
 
-    function Service($http, $q, Upload) {
+    function Service($http, $q, __env) {
         var factory = {
               _get_bannertext: get_bannertext
             , _insert_bannertext: insert_bannertext
@@ -14,7 +14,7 @@
 
         return factory;
 
-        function get_bannertext(_env) {
+        function get_bannertext() {
             var deferred = $q.defer();
             $http.get(__env.api_url + ':' + __env.port + '/api/v2/bannertext')
                 .then(
