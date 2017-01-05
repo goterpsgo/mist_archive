@@ -967,6 +967,65 @@ class Classification(Resource):
         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'No DELETE method for this endpoint.', 'class': 'alert alert-warning'}}
 
 
+class MistParams(Resource):
+    # @jwt_required()
+    def get(self):
+        rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
+
+        rs_classification_handle = rs_classification().order_by(main.Classifications.index)
+        r_single_classification = None
+        if _id is not None:
+            r_single_classification = rs_classification_handle.filter(
+                main.Classifications.selected == "Y"
+            ).first()
+
+        # add results to classifications_list
+        classifications_list = []
+        if _id is None:
+            for r_classification in rs_classification_handle:
+                classifications_list.append(row_to_dict(r_classification))
+        else:
+            classifications_list.append(row_to_dict(r_single_classification))
+
+        rs_dict['classifications_list'] = classifications_list  # add users_list[] to rs_dict
+
+        return jsonify(rs_dict)  # return rs_dict
+
+    def post(self):
+        return {'response': {'method': 'POST', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
+
+    # @jwt_required()
+    def put(self, _field_name, _value):
+        try:
+            # update all "selected" values as N
+            upd_form = {}
+            upd_form["selected"] = "N"
+            # pdb.set_trace()
+
+            classification_selected = rs_classification().filter(main.Classifications.selected == 'Y')
+            classification_selected.update(upd_form)
+
+            main.session.commit()
+            main.session.flush()
+
+            # update "selected" as Y where index = _id
+            upd_form["selected"] = "Y"
+            classification_selected = rs_classification().filter(main.Classifications.index == _id)
+            classification_selected.update(upd_form)
+            main.session.commit()
+            main.session.flush()
+
+            return {'response': {'method': 'PUT', 'result': 'success', 'message': 'Classification successfully updated.', 'class': 'alert alert-success', '_id': int(_id)}}
+
+        except (main.ProgrammingError) as e:
+            print ("[ProgrammingError] PUT /api/v2/securitycenter/%s / %s" % (_id,e))
+            main.session.rollback()
+            return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
+
+    def delete(self):
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'No DELETE method for this endpoint.', 'class': 'alert alert-warning'}}
+
+
 api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Users, '/users', '/user/<string:_user>')
@@ -975,3 +1034,4 @@ api.add_resource(Repos, '/repos')
 api.add_resource(SecurityCenter, '/securitycenters', '/securitycenter/<int:_id>')
 api.add_resource(BannerText, '/bannertext')
 api.add_resource(Classification, '/classifications', '/classification/<string:_id>')
+api.add_resource(MistParams, '/params', '/params/<string:_field_name>/<int:_value>')

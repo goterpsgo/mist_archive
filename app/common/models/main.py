@@ -79,6 +79,14 @@ class Classifications(Base.Model):
     selected = Column(String(1), default="N")
     display = Column(String(100))
 
+class MistParams(Base.Model):
+    __tablename__ = "mistParams"
+    id = Column(Integer, primary_key=True)
+    chunkSize = Column(Integer, default=2000)   # in KB
+    scPullFreq = Column(Integer, default=24)    # in hours
+    logsRollOverPeriod = Column(Integer, default=30)    # in days
+    pubsRollOverPeriod = Column(Integer, default=30)    # in days
+
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
                     'key': '/opt/mist_base/certificates/mist-interface.key',
