@@ -1,5 +1,5 @@
-<table>
-    <tr ng-repeat="type in classifications">
-        <td class="{{type.class}}" style="padding: 10px;" ng-click="update_classification(type.index)">{{type.display}}</td>
+<table class="checkbox-inline">
+    <tr ng-repeat="type in _classifications">
+        <td class="{{type.class}}" style="padding: 10px;" ng-click="update_classification(type.index)"><h4>{{type.display}}</h4></td>
     </tr>
 </table>

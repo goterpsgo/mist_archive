@@ -5,13 +5,13 @@
         .module('app')
         .controller('Config.IndexController', Controller);
 
-    function Controller($scope, $state, SecurityCentersService, BannerTextService, ClassificationService, $timeout, Upload) {
+    function Controller($scope, $rootScope, $state, SecurityCentersService, BannerTextService, ClassificationService, $timeout, Upload) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
         obj_tasks['config.global_parameters'] = 'Global Parameters';
         obj_tasks['config.set_banner_text'] = 'Set Banner Text';
-        obj_tasks['config.set_classification_level'] = 'Set Classification Level';
+        obj_tasks['config.set_classification_level'] = 'Click Below to Set Classification Level';
         obj_tasks['config.manage_security_centers'] = 'Manage Security Centers';
         obj_tasks['config.manage_publishing_sites'] = 'Manage Publishing Sites';
         obj_tasks['config.remove_tag_definitions'] = 'Remove Tag Definitions';
@@ -20,7 +20,7 @@
         $scope.form_data = {
               'version': 5    // check version 5 as default version for new entries
         };
-        $scope.classifications = [];
+        $scope._classifications = [];
         $scope.classification = {};
         $scope.banner_text = {};
 
@@ -178,10 +178,23 @@
                 ._load_classifications()
                 .then(
                       function(classifications) {
-                          $scope.classifications = classifications.classifications_list;
+                          $scope._classifications = classifications.classifications_list;
                       }
                     , function(err) {
                           $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
+
+        function refresh_classifications() {
+            ClassificationService
+                ._load_classification()
+                .then(
+                      function(classification) {
+                          $rootScope.classification = classification.classifications_list[0];
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
                       }
                 );
         }
@@ -191,7 +204,7 @@
                 ._update_classification(id)
                 .then(
                       function(classifications) {
-                          load_classification();
+                          refresh_classifications();
                       }
                     , function(err) {
                           $scope.status = 'Error loading data: ' + err.message;
