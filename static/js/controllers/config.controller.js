@@ -191,6 +191,9 @@
                 ._load_classification()
                 .then(
                       function(classification) {
+                          if (classification.classifications_list[0].display == 'None') {
+                              classification.classifications_list[0].display = '';
+                          }
                           $rootScope.classification = classification.classifications_list[0];
                       }
                     , function(err) {
