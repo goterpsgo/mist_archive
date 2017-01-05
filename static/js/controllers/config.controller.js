@@ -5,7 +5,7 @@
         .module('app')
         .controller('Config.IndexController', Controller);
 
-    function Controller($scope, $rootScope, $state, SecurityCentersService, BannerTextService, ClassificationService, $timeout, Upload) {
+    function Controller($scope, $rootScope, $state, SecurityCentersService, BannerTextService, ClassificationService, MistParamsService, $timeout, Upload) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
@@ -23,11 +23,15 @@
         $scope._classifications = [];
         $scope.classification = {};
         $scope.banner_text = {};
+        $scope._mist_params = {};
 
         initController();
 
         function initController() {
             $scope._task = obj_tasks[$state.current.name];
+            if ($state.current.name == 'config.global_parameters') {
+                load_mist_params();
+            }
             if ($state.current.name == 'config.manage_security_centers') {
                 load_sc_data();
             }
@@ -208,6 +212,32 @@
                 .then(
                       function(classifications) {
                           refresh_classifications();
+                      }
+                    , function(err) {
+                          $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
+
+        function load_mist_params() {
+            MistParamsService
+                ._load_mist_params()
+                .then(
+                      function(results) {
+                          $scope._mist_params = results.mist_params_list[0];
+                      }
+                    , function(err) {
+                          $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
+
+        function update_mist_params(_field_name, _value) {
+            MistParamsService
+                ._update_mist_param(_field_name, _value)
+                .then(
+                      function(results) {
+                          // no results shown back to user unless we figure out otherwise
                       }
                     , function(err) {
                           $scope.status = 'Error loading data: ' + err.message;
