@@ -24,6 +24,7 @@
         $scope.classification = {};
         $scope.banner_text = {};
         $scope._mist_params = {};
+        $scope._mist_params_assigned = {};
 
         initController();
 
@@ -223,8 +224,13 @@
             MistParamsService
                 ._load_mist_params()
                 .then(
-                      function(results) {
-                          $scope._mist_params = results.mist_params_list[0];
+                    function(results) {
+                        var _mist_params = results.mist_params_list[0];
+                        // $scope._mist_params = _mist_params;
+                        $scope.assign_chunk_size = _mist_params.chunkSize;
+                        $scope.assign_log_rollover = _mist_params.logsRollOverPeriod;
+                        $scope.assign_pub_rollover = _mist_params.pubsRollOverPeriod;
+                        $scope.assign_assets_refresh = _mist_params.scPullFreq;
                       }
                     , function(err) {
                           $scope.status = 'Error loading data: ' + err.message;
