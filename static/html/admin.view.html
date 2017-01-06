@@ -51,7 +51,7 @@
                             <td>
                                 <span ng-init="cnt_repos = 0"></span>
                                 <input ng-model="_form_fields.assign_user" type="radio" name="user" value="{{user.id}},{{user.username}},{{user.permission}}" class="custom-control custom-checkbox" title="Click to select user and one or more repos in left pane.">
-                                <span ng-click="delete_user(user.id)" class="checkbox-inline">[X]</span>
+                                <span ng-click="delete_user(user.id)" class="checkbox-inline glyphicon glyphicon-remove text-danger" title="Delete User {{user.username}}"></span>
                                 <span ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline" ng-init="value = (user.permission >= 2 ? 'Admin' : 'User')" ng-switch="value">
                                     [{{value}} {{user.permission}}]
                                 </span>
