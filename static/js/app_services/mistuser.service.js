@@ -15,6 +15,9 @@
             , _signup_user: signup_user
         };
 
+        var _status = ['Disabled', 'User', 'Admin'];
+        var _status_class = ['btn btn-danger', 'btn btn-info', 'btn btn-primary'];
+
         return factory;
 
         function serial_to_obj(rows, delim) {
@@ -41,6 +44,10 @@
             $http.get(__env.api_url + ':' + __env.port + '/api/v2/users')
                 .then(
                     function(response) {
+                        for (var _cnt in response.data.users_list) {
+                            response.data.users_list[_cnt]['status'] = _status[response.data.users_list[_cnt].permission];
+                            response.data.users_list[_cnt]['status_class'] = _status_class[response.data.users_list[_cnt].permission];
+                        }
                         deferred.resolve(response.data);
                     }
                 );
@@ -52,6 +59,8 @@
             $http.get(__env.api_url + ':' + __env.port + '/api/v2/user/' + id)
                 .then(
                     function(response) {
+                        response.data.users_list[0]['status'] = _status[response.data.users_list[0].permission];
+                        response.data.users_list[0]['status_class'] = _status_class[response.data.users_list[0].permission];
                         deferred.resolve(response.data);
                     }
                 );
