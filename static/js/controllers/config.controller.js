@@ -250,5 +250,22 @@
                       }
                 );
         }
+
+        $scope.update_param_value = function (_field_name) {
+            switch(_field_name) {
+                case 'assign_chunk_size':
+                    update_mist_params('chunkSize', $scope.assign_chunk_size);
+                    break;
+                case 'assign_log_rollover':
+                    update_mist_params('logsRollOverPeriod', $scope.assign_log_rollover);
+                    break;
+                case 'assign_pub_rollover':
+                    update_mist_params('pubsRollOverPeriod', $scope.assign_pub_rollover);
+                    break;
+                case 'assign_assets_refresh':
+                    update_mist_params('scPullFreq', $scope.assign_assets_refresh);
+                    break;
+            }
+        }
     }
 })();
