@@ -28,7 +28,7 @@
 
         function update_mist_param(field_name, value) {
             var deferred = $q.defer();
-            $http.put(__env.api_url + ':' + __env.port + '/api/v2/param/' + field_name + '/' + id)
+            $http.put(__env.api_url + ':' + __env.port + '/api/v2/param/' + field_name + '/' + value)
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
