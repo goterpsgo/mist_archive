@@ -11,7 +11,7 @@
     </div>
     <br />
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
@@ -20,7 +20,7 @@
                 </div>
                 <div class="panel-body">
                     <span ng-if="user.repos !== undefined">
-                        <select ng-model="_form_fields.assign_repos" multiple>
+                        <select ng-model="_form_fields.assign_repos" multiple size="20" style="width: 350px;">
                             <option ng-repeat="_repo in assign_repos" value="{{_repo.repo_id}},{{_repo.sc_id}}">{{_repo.server_name}} {{_repo.repo_name}}</option>
                         </select>
                     </span>
@@ -33,7 +33,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-9">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
@@ -51,11 +51,13 @@
                             <td>
                                 <span ng-init="cnt_repos = 0"></span>
                                 <input ng-model="_form_fields.assign_user" type="radio" name="user" value="{{user.id}},{{user.username}},{{user.permission}}" class="custom-control custom-checkbox" title="Click to select user and one or more repos in left pane.">
-                                <span ng-click="delete_user(user.id)" class="checkbox-inline glyphicon glyphicon-remove text-danger" title="Delete User {{user.username}}"></span>
-                                <span ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline" ng-init="value = (user.permission >= 2 ? 'Admin' : 'User')" ng-switch="value">
-                                    [{{value}} {{user.permission}}]
+                                <span ng-click="delete_user(user.id)" class="checkbox-inline glyphicon glyphicon-trash text-danger" title="Delete User {{user.username}}"></span>
+                                <!--<span ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline" ng-init="value = (user.permission >= 2 ? 'Admin' : 'User')" ng-switch="value">-->
+                                    <!--[{{value}}] [{{user.permission}}]-->
+                                    <button title="Press button to toggle user state." class="{{user.status_class}}" style="width: 100px;" ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline">{{user.status}}</button>
                                 </span>
-                                {{user.first_name}} {{user.last_name}} ({{user.username}})</td>
+                                &nbsp;<strong>{{user.first_name}} {{user.last_name}} (<em>{{user.username}}</em>)</strong>
+                            </td>
                             <td>
                                 <span ng-if="user.repos !== undefined">
                                     <div ng-repeat="repo in user.repos">

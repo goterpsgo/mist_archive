@@ -30,3 +30,7 @@
 .row-hover:hover {
     background-color: #EEEEEE;
 }
+
+.glyphicon {
+    font-size: 30px;
+}
