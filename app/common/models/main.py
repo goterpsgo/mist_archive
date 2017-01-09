@@ -1,5 +1,5 @@
 import base64
-from sqlalchemy import Column, DateTime, String, Integer, func, ForeignKey, create_engine, join, and_, distinct
+from sqlalchemy import Column, Enum, DateTime, String, Integer, func, ForeignKey, create_engine, join, and_, distinct
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import select
@@ -86,6 +86,21 @@ class MistParams(Base.Model):
     scPullFreq = Column(Integer, default=24)    # in hours
     logsRollOverPeriod = Column(Integer, default=30)    # in days
     pubsRollOverPeriod = Column(Integer, default=30)    # in days
+
+class TagDefinitions(Base.Model):
+    __tablename__ = "tagDefinition"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(150))
+    title = Column(String(200))
+    description = Column(String(1500))
+    required = Column(Enum("Y", "N"))
+    defaultValue = Column(String(25))
+    type = Column(String(100))
+    cardinality = Column(Integer)
+    version = Column(String(25))
+    rollup = Column(String(250))
+    category = Column(String(150))
+    timestamp = Column(TIMESTAMP)
 
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
