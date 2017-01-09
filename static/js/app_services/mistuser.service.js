@@ -50,6 +50,10 @@
                         }
                         deferred.resolve(response.data);
                     }
+                    , function(data, status, headers, config) {
+                        // deferred.resolve(response.data.response);
+                        deferred.resolve(JSON.parse('{"response": {"method": "GET", "result": "error", "status": "' + status + '"}}'));
+                    }
                 );
             return deferred.promise;
         }
@@ -62,6 +66,10 @@
                         response.data.users_list[0]['status'] = _status[response.data.users_list[0].permission];
                         response.data.users_list[0]['status_class'] = _status_class[response.data.users_list[0].permission];
                         deferred.resolve(response.data);
+                    }
+                    , function(data, status, headers, config) {
+                        // deferred.resolve(response.data.response);
+                        deferred.resolve(JSON.parse('{"response": {"method": "GET", "result": "error", "status": "' + status + '"}}'));
                     }
                 );
             return deferred.promise;
@@ -88,9 +96,9 @@
                     deferred.resolve(form_data);
                 }
                 , function(data, status, headers, config) {
+                    // deferred.resolve(response.data.response);
                     deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
-                })
-            ;
+                });
             return deferred.promise;
         }
 
@@ -109,7 +117,7 @@
                     deferred.resolve(form_data);
                 }
                 , function(data, status, headers, config) {
-                    deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
+                    deferred.resolve(JSON.parse('{"response": {"method": "PUT", "result": "error", "status": "' + status + '"}}'));
                 })
             ;
             return deferred.promise;
@@ -128,7 +136,7 @@
                     deferred.resolve(data);
                 }
                 , function(data, status, header, config) {
-                    deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
+                    deferred.resolve(JSON.parse('{"response": {"method": "DELETE", "result": "error", "status": "' + status + '"}}'));
                 })
             ;
             return deferred.promise;

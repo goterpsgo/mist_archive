@@ -22,6 +22,10 @@
                     function(response) {
                         deferred.resolve(response.data);
                     }
+                    , function(data, status, headers, config) {
+                        // deferred.resolve(response.data.response);
+                        deferred.resolve(JSON.parse('{"response": {"method": "GET", "result": "error", "status": "' + status + '"}}'));
+                    }
                 );
             return deferred.promise;
         }
@@ -32,6 +36,10 @@
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
+                    }
+                    , function(data, status, headers, config) {
+                        // deferred.resolve(response.data.response);
+                        deferred.resolve(JSON.parse('{"response": {"method": "PUT", "result": "error", "status": "' + status + '"}}'));
                     }
                 );
             return deferred.promise;

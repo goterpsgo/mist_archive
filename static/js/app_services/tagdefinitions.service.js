@@ -3,51 +3,32 @@
 
     angular
         .module('app')
-        .factory('BannerTextService', Service);
+        .factory('TagDefinitionsService', Service);
 
     function Service($http, $q, __env) {
         var factory = {
-              _get_bannertext: get_bannertext
-            , _insert_bannertext: insert_bannertext
-            , _delete_bannertext: delete_bannertext
+              _get_tagdefinitions: get_tagdefinitions
+            , _delete_tagdefinitions: delete_tagdefinitions
         };
 
         return factory;
 
-        function get_bannertext() {
+        function get_tagdefinitions() {
             var deferred = $q.defer();
-            $http.get(__env.api_url + ':' + __env.port + '/api/v2/bannertext')
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/tagdefinitions')
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
                     }
                     , function(data, status, headers, config) {
+                        // deferred.resolve(response.data.response);
                         deferred.resolve(JSON.parse('{"response": {"method": "GET", "result": "error", "status": "' + status + '"}}'));
                     }
                 );
             return deferred.promise;
         }
 
-        function insert_bannertext(form_data) {
-            var deferred = $q.defer();
-            var config = {
-                headers : {
-                    'Content-Type': 'application/json;charset=utf-8;'
-                }
-            }
-
-            $http.post(__env.api_url + ':' + __env.port + '/api/v2/bannertext', form_data, config)
-                .then(function(form_data, status, headers, config) {
-                    deferred.resolve(form_data);
-                }
-                , function(data, status, headers, config) {
-                    deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
-                })
-            ;
-            return deferred.promise;
-        }
-
-        function delete_bannertext() {
+        function delete_tagdefinitions(id) {
             var deferred = $q.defer();
             var config = {
                 headers : {
@@ -55,7 +36,7 @@
                 }
             };
 
-            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/bannertext')
+            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/tagdefinition/' + id)
                 .then(function(data, status, headers) {
                     deferred.resolve(data);
                 }
