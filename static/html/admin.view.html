@@ -6,8 +6,8 @@
     <br />
     <div class="row">
         <div class="col-md-12">
-            <input type="submit" class="btn btn-primary" title="Check off at least one or more repos and a radio button for one user.">
             <input type="reset" class="btn btn-primary" ng-click="_form_fields = {}">
+            <input type="submit" class="btn btn-primary" style="width: 300px;" title="Check off at least one or more repos and a radio button for one user.">
         </div>
     </div>
     <br />
@@ -61,8 +61,9 @@
                             </td>
                             <td>
                                 <span ng-if="user.repos !== undefined">
-                                    <div ng-repeat="repo in user.repos">
-                                        <span ng-click="repo_assign(user.id,repo.repo_data,user.permission,user.cnt_repos)" class="{{repo.class}}">{{repo.server_name}} {{repo.repo_name}}<br/></span>
+                                    <div ng-repeat="repo in user.repos" style="padding: 2px;">
+                                        <span ng-click="repo_assign(user.id,repo.repo_data,user.permission,user.cnt_repos)" class="{{repo.class_glyph}}" title="{{repo.title}}"></span>
+                                        <span ng-click="repo_assign(user.id,repo.repo_data,user.permission,user.cnt_repos)" class="{{repo.class}}" title="{{repo.title}}">{{repo.server_name}} {{repo.repo_name}}<br/></span>
                                     </div>
                                 </span>
                                 <span ng-if="user.repos == undefined">

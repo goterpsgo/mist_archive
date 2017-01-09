@@ -167,7 +167,7 @@ def create_user_dict(obj_user):
         if int(obj_repos.count()) != 0:
             # Create user['repos'] if needed
             for obj_repo in obj_repos:
-                identifier = obj_repo.serverName + "," + obj_repo.repoName + "," + str(obj_requested_repo_access.repoID) + "," + str(obj_requested_repo_access.scID)
+                identifier = obj_repo.serverName + "," + obj_repo.repoName + "," + str(obj_requested_repo_access.repoID) + "," + str(obj_requested_repo_access.scID)    # create a unique identifier string
                 repo_data = str(obj_user.id) + "," + str(obj_requested_repo_access.scID) + "," + str(obj_requested_repo_access.repoID) + "," + obj_user.username # used to populate UserAccess and requestUserAccess tables
                 # NOTE: Bootstrap default CSS checkbox-inline used for "cursor: pointer" to indicate clickable resource
 
@@ -180,6 +180,8 @@ def create_user_dict(obj_user):
                     , 'identifier': identifier
                     , 'repo_data': repo_data
                     , 'class': 'checkbox-inline text-primary'
+                    , 'class_glyph': 'checkbox-inline glyphicon glyphicon-plus-sign text-primary'
+                    , 'title': 'Requested repo; click to assign to user.'
                 }
                 user['repos'][identifier] = repo
 
@@ -207,6 +209,8 @@ def create_user_dict(obj_user):
                     , 'identifier': identifier
                     , 'repo_data': repo_data
                     , 'class': 'checkbox-inline'
+                    , 'class_glyph': 'checkbox-inline glyphicon glyphicon-ok-sign text-success'
+                    , 'title': 'Assigned repo; click to unassign.'
                 }
                 # Add repo if key doesn't yet exist in users['repos'] dict
                 if ("identifier" not in user['repos']):
