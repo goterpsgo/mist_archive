@@ -48,6 +48,9 @@ def rs_classification():
 def rs_mist_params():
     return main.session.query(main.MistParams)
 
+def rs_tag_definitions():
+    return main.session.query(main.TagDefinitions)
+
 # http://stackoverflow.com/a/1960546/6554056
 def row_to_dict(row):
     d = {}
@@ -1012,6 +1015,33 @@ class MistParams(Resource):
         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'No DELETE method for this endpoint.', 'class': 'alert alert-warning'}}
 
 
+class TagDefinitions(Resource):
+    # @jwt_required()
+    def get(self):
+        rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
+        # rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+
+        tag_definitions_list = []
+
+        for r_tag_definition in rs_tag_definitions():
+            tag_definitions_list.append(row_to_dict(r_tag_definition))
+        rs_dict['tag_definitions'] = tag_definitions_list
+        return jsonify(rs_dict)  # return rs_dict
+
+    def post(self):
+        return {'response': {'method': 'POST', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
+
+    # @jwt_required()
+    def put(self, _field_name, _value):
+        return {'response': {'method': 'PUT', 'result': 'success', 'message': 'No PUT method for this endpoint.', 'class': 'alert alert-warning'}}
+
+    def delete(self, _id):
+        main.session.query(main.TagDefinitions).filter(main.TagDefinitions.id == _id).delete()
+        main.session.commit()
+        main.session.flush()
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Tag definition successfully deleted.', 'class': 'alert alert-success', 'id': _id}}
+
+
 api.add_resource(TodoItem, '/todos/<int:id>')
 api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Users, '/users', '/user/<string:_user>')
@@ -1021,3 +1051,4 @@ api.add_resource(SecurityCenter, '/securitycenters', '/securitycenter/<int:_id>'
 api.add_resource(BannerText, '/bannertext')
 api.add_resource(Classification, '/classifications', '/classification/<string:_id>')
 api.add_resource(MistParams, '/params', '/param/<string:_field_name>/<int:_value>')
+api.add_resource(TagDefinitions, '/tagdefinitions', '/tagdefinition/<int:_id>')
