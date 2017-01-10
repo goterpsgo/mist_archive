@@ -9,7 +9,6 @@
         var factory = {
               _get_users: get_users
             , _get_user: get_user
-            , _create_user: create_user
             , _update_user: update_user
             , _delete_user: delete_user
             , _signup_user: signup_user
@@ -75,11 +74,6 @@
             return deferred.promise;
         }
 
-        function create_user() {
-            var deferred = $q.defer();
-            return deferred.promise;
-        }
-
         function signup_user(form_data) {
             var deferred = $q.defer();
             var config = {
@@ -109,8 +103,6 @@
                     'Content-Type': 'application/json;charset=utf-8;'
                 }
             };
-            console.log(form_data);
-
 
             $http.put(__env.api_url + ':' + __env.port + '/api/v2/user/' + id, form_data, config)
                 .then(function(form_data, status, headers, config) {

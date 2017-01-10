@@ -15,15 +15,15 @@
         classes['Top Secret - No Foreign'] = 'bg-tssci';
 
         var factory = {
-              _load_classifications: load_classifications
-            , _load_classification: load_classification
+              _get_classifications: get_classifications
+            , _get_classification: get_classification
             , _update_classification: update_classification
         };
 
         return factory;
 
         // returns list of classifications
-        function load_classifications() {
+        function get_classifications() {
             var deferred = $q.defer();
             $http.get(__env.api_url + ':' + __env.port + '/api/v2/classifications')
                 .then(
@@ -42,7 +42,7 @@
 
         // returns only the currently active classification
         // NOTE: the 1 isn't requesting for record #1 - it means asking for the one selected record
-        function load_classification() {
+        function get_classification() {
             var deferred = $q.defer();
             $http.get(__env.api_url + ':' + __env.port + '/api/v2/classification/1')
                 .then(

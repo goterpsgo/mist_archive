@@ -8,14 +8,14 @@
     function Service($http, $q, __env) {
 
         var factory = {
-              _load_mist_params: load_mist_params
+              _get_mist_params: get_mist_params
             , _update_mist_param: update_mist_param
         };
 
         return factory;
 
         // returns list of classifications
-        function load_mist_params() {
+        function get_mist_params() {
             var deferred = $q.defer();
             $http.get(__env.api_url + ':' + __env.port + '/api/v2/params')
                 .then(
