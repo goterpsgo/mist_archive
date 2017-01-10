@@ -9,6 +9,7 @@ import hashlib
 from werkzeug.utils import secure_filename
 import base64
 import os
+from datetime import datetime
 import config
 import json
 import requests
@@ -1028,8 +1029,43 @@ class TagDefinitions(Resource):
         rs_dict['tag_definitions'] = tag_definitions_list
         return jsonify(rs_dict)  # return rs_dict
 
+    @jwt_required()
     def post(self):
-        return {'response': {'method': 'POST', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
+        try:
+            form_fields = request.get_json(force=True)
+
+            new_td = main.TagDefinitions(
+                  name = form_fields['name']
+                , title = form_fields['title']
+                , description = form_fields['description'] if ("description" in form_fields) else "TBD"
+                , required = form_fields['required']
+                , defaultValue = form_fields['defaultValue'] if ("defaultValue" in form_fields) else None
+                , type = form_fields['type'] if ("type" in form_fields) else "plaintext"
+                , cardinality = form_fields['cardinality'] if ("cardinality" in form_fields) else 1
+                , version = form_fields['version'] if ("version" in form_fields) else "1.0"
+                , rollup = form_fields['rollup']
+                , category = form_fields['category']
+                , timestamp = datetime.now()
+            )
+
+            main.session.add(new_td)
+            main.session.commit()
+            main.session.flush()
+
+            return {'response': {'method': 'POST', 'result': 'success', 'message': 'New tag definition entry submitted.', 'class': 'alert alert-success', 'id': int(new_td.id)}}
+
+        except (TypeError) as e:
+            print ("[TypeError] POST /api/v2/tagdefinitions / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (ValueError) as e:
+            print ("[ValueError] POST /api/v2/tagdefinitions / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (main.IntegrityError) as e:
+            print ("[IntegrityError] POST /api/v2/tagdefinitions / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-danger'}}
 
     # @jwt_required()
     def put(self, _field_name, _value):
