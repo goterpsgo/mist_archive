@@ -20,15 +20,17 @@
         };
 
         function load_banner_text() {
+            vm.loading = true;
             BannerTextService
                 ._get_bannertext()
                 .then(
                       function(banner_text) {
                           $scope.banner_text['banner_text'] = banner_text.banner_text;
-
+                          vm.loading = false;
                       }
                     , function(err) {
-                        $scope.status = 'Error loading data: ' + err.message;
+                          $scope.status = 'Error loading data: ' + err.message;
+                          vm.loading = false;
                       }
                 );
         }

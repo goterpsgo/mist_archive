@@ -5,7 +5,7 @@
         .module('app')
         .controller('Config.IndexController', Controller);
 
-    function Controller($scope, $rootScope, $state, SecurityCentersService, BannerTextService, ClassificationService, MistParamsService, $timeout, Upload) {
+    function Controller($scope, $rootScope, $state, SecurityCentersService, BannerTextService, ClassificationService, MistParamsService, TagDefinitionsService, $timeout, Upload) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
@@ -25,6 +25,11 @@
         $scope.banner_text = {};
         $scope._mist_params = {};
         $scope._mist_params_assigned = {};
+        $scope.tag_definitions = [];
+        $scope.new_td = {
+              'cardinality': 1
+            , 'required': 'N'
+        }
 
         initController();
 
@@ -41,6 +46,9 @@
             }
             if ($state.current.name == 'config.set_classification_level') {
                 load_classifications();
+            }
+            if ($state.current.name == 'config.remove_tag_definitions') {
+                load_tag_definitions();
             }
         }
         
@@ -167,7 +175,7 @@
 
         function load_classification() {
             ClassificationService
-                ._load_classification()
+                ._get_classification()
                 .then(
                       function(classification) {
                           $scope.classification = classification.classifications_list[0];
@@ -180,7 +188,7 @@
 
         function load_classifications() {
             ClassificationService
-                ._load_classifications()
+                ._get_classifications()
                 .then(
                       function(classifications) {
                           $scope._classifications = classifications.classifications_list;
@@ -193,7 +201,7 @@
 
         function refresh_classifications() {
             ClassificationService
-                ._load_classification()
+                ._get_classification()
                 .then(
                       function(classification) {
                           if (classification.classifications_list[0].display == 'None') {
@@ -218,11 +226,11 @@
                           $scope.status = 'Error loading data: ' + err.message;
                       }
                 );
-        }
+        };
 
         function load_mist_params() {
             MistParamsService
-                ._load_mist_params()
+                ._get_mist_params()
                 .then(
                     function(results) {
                         var _mist_params = results.mist_params_list[0];
@@ -266,6 +274,52 @@
                     update_mist_params('scPullFreq', $scope.assign_assets_refresh);
                     break;
             }
+        };
+
+        function load_tag_definitions() {
+            vm.loading = true;
+            TagDefinitionsService
+                ._get_tagdefinitions()
+                .then(
+                    function(results) {
+                        var data = results.tag_definitions;
+                        // var columnDefs = [
+                        //       {headerName: 'Title', field: 'title', width: 100}
+                        //     , {headerName: 'Category', field: 'category', width: 100}
+                        //     , {headerName: 'Rollup', field: 'rollup', width: 100}
+                        //     , {headerName: 'Cardinality', field: 'cardinality', width: 100}
+                        //     , {headerName: 'Required?', field: 'required', width: 100}
+                        //     , {headerName: '', width: 100}
+                        // ];
+                        //
+                        // // initialization of grid options
+                        // $scope.gridOptions = {
+                        //     columnDefs: columnDefs,
+                        //     rowData: data,
+                        //     angularCompileRows: true
+                        // };
+
+                        $scope.tag_definitions = results.tag_definitions;
+                        vm.loading = false;
+                      }
+                    , function(err) {
+                          $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
+
+        $scope.update_td_param_value = function(_id, _name, _value) {
+            var upd_form = '{"' + _name + '": "' + _value + '"}';
+            TagDefinitionsService
+                ._update_td_param(_id, upd_form)
+                .then(
+                      function(users) {
+                          load_tag_definitions();
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
         }
     }
 })();

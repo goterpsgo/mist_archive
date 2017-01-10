@@ -17,7 +17,7 @@
 
         function load_classification() {
             ClassificationService
-                ._load_classification()
+                ._get_classification()
                 .then(
                       function(classification) {
                           if (classification.classifications_list[0].display == 'None') {

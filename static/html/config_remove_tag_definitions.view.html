@@ -1,1 +1,56 @@
-Remove Tag Definitions
+<style>
+    th, td {
+        padding: 5px;
+    }
+</style>
+
+<form ng-submit="add_new_td()">
+    <table>
+        <thead>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Rollup</th>
+            <th>Cardinality</th>
+            <th>Required?</th>
+            <th><img ng-if="vm.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />&nbsp;</th>
+        </thead>
+        <tr>
+            <td>
+                <input type="text" style="width: 400px;" ng-model="new_td.name" />
+            </td>
+            <td>
+                <input type="text" style="width: 150px;" ng-model="new_td.category" />
+            </td>
+            <td>
+                <input type="text" style="width: 200px;" ng-model="new_td.rollup" />
+            </td>
+            <td style="text-align: center;">
+                <input type="text" style="width: 40px;" ng-model="new_td.cardinality" />
+            </td>
+            <td style="text-align: center;">
+                <input type="text" style="width: 20px;" ng-model="new_td.required" />
+            </td>
+            <td>
+                <input type="submit" class="btn btn-primary" value="Add New" style="width: 200px;" />
+            </td>
+        </tr>
+        <tr ng-repeat="row in tag_definitions">
+            <td>
+                <input type="text" style="width: 400px;" title="{{row.name}}" ng-model="row.name" ng-blur="update_td_param_value(row.id, 'name', row.name)" />
+            </td>
+            <td>
+                <input type="text" style="width: 150px;" title="{{row.category}}" ng-model="row.category" ng-blur="update_td_param_value(row.id, 'category', row.category)" />
+            </td>
+            <td>
+                <input type="text" style="width: 200px;" title="{{row.rollup}}" ng-model="row.rollup" ng-blur="update_td_param_value(row.id, 'rollup', row.rollup)" />
+            </td>
+            <td style="text-align: center;">
+                <input type="text" style="width: 40px;" title="{{row.cardinality}}" ng-model="row.cardinality" ng-blur="update_td_param_value(row.id, 'cardinality', row.cardinality)" size="3" />
+            </td>
+            <td style="text-align: center;">
+                <input type="text" style="width: 20px;" title="{{row.required}}" ng-model="row.required" ng-blur="update_td_param_value(row.id, 'required', row.required)" size="1" />
+            </td>
+            <td><button ng-click="delete_tag_definition(row.id)" class="btn btn-danger glyphicon glyphicon-trash" title="Delete Entry {{row.id}}"></button></td>
+        </tr>
+    </table>
+</form>

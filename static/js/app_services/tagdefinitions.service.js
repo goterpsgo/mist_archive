@@ -9,6 +9,7 @@
         var factory = {
               _get_tagdefinitions: get_tagdefinitions
             , _delete_tagdefinitions: delete_tagdefinitions
+            , _update_td_param: update_td_param
         };
 
         return factory;
@@ -23,6 +24,26 @@
                     , function(data, status, headers, config) {
                         // deferred.resolve(response.data.response);
                         deferred.resolve(JSON.parse('{"response": {"method": "GET", "result": "error", "status": "' + status + '"}}'));
+                    }
+                );
+            return deferred.promise;
+        }
+
+        function update_td_param(id, form_data) {
+            var deferred = $q.defer();
+            var config = {
+                headers : {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+            };
+            $http.put(__env.api_url + ':' + __env.port + '/api/v2/tagdefinition/' + id, form_data, config)
+                .then(
+                      function(form_data, status, headers, config) {
+                        deferred.resolve(form_data);
+                    }
+                    , function(data, status, headers, config) {
+                        // deferred.resolve(response.data.response);
+                        deferred.resolve(JSON.parse('{"response": {"method": "PUT", "result": "error", "status": "' + status + '"}}'));
                     }
                 );
             return deferred.promise;
