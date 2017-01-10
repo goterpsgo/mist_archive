@@ -1017,10 +1017,10 @@ class MistParams(Resource):
 
 
 class TagDefinitions(Resource):
-    # @jwt_required()
+    @jwt_required()
     def get(self):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        # rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         tag_definitions_list = []
 
