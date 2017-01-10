@@ -994,7 +994,7 @@ class MistParams(Resource):
     def post(self):
         return {'response': {'method': 'POST', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
 
-    # @jwt_required()
+    @jwt_required()
     def put(self, _field_name, _value):
         try:
             upd_form = {}
@@ -1065,17 +1065,30 @@ class TagDefinitions(Resource):
         except (main.IntegrityError) as e:
             print ("[IntegrityError] POST /api/v2/tagdefinitions / %s" % e)
             main.session.rollback()
-            return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted username already exists.', 'class': 'alert alert-danger'}}
+            return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted tag definition already exists.', 'class': 'alert alert-danger'}}
 
     # @jwt_required()
-    def put(self, _field_name, _value):
-        return {'response': {'method': 'PUT', 'result': 'success', 'message': 'No PUT method for this endpoint.', 'class': 'alert alert-warning'}}
+    def put(self, _id):
+        try:
+            upd_form = request.get_json(force=True)
+
+            rs_tag_definitions().filter(main.TagDefinitions.id == _id).update(upd_form)
+
+            main.session.commit()
+            main.session.flush()
+
+            return {'response': {'method': 'PUT', 'result': 'success', 'message': 'Tag definition value successfully updated.', 'class': 'alert alert-success', '_id': _id}}
+
+        except (main.ProgrammingError) as e:
+            print ("[ProgrammingError] PUT /api/v2/securitycenter/%s / %s" % (_id,e))
+            main.session.rollback()
+            return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
 
     def delete(self, _id):
         main.session.query(main.TagDefinitions).filter(main.TagDefinitions.id == _id).delete()
         main.session.commit()
         main.session.flush()
-        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Tag definition successfully deleted.', 'class': 'alert alert-success', 'id': _id}}
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Tag definition successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
 
 
 api.add_resource(TodoItem, '/todos/<int:id>')
