@@ -391,17 +391,18 @@ class Users(Resource):
             # POST MULTIPLE REPOS/USER ASSIGNMENTS
 
             if (assign_submit is not None): # run if action from form submit
-                if (assign_submit >= 2):
-                    # Remove all entries from userAccess table containing matched userID value
-                    userAccessEntry = main.session.query(main.UserAccess) \
-                        .filter(main.UserAccess.userID == form_fields['id'])
-                    userAccessEntry.delete()
-                else:
-                    # Remove all entries from requestUserAccess table containing matched userID value
-                    requestUserAccessEntry = main.session.query(main.requestUserAccess) \
-                        .filter(main.requestUserAccess.userID == form_fields['id'])
-                    requestUserAccessEntry.delete()
-                main.session.begin_nested()
+                # NOTE: section below is commented out because when user profile was being updated with multiple repos, previously approved repo assignments were being reset to requested - JWT 11 Jan 2017
+                # if (assign_submit >= 2):
+                #     # Remove all entries from userAccess table containing matched userID value
+                #     userAccessEntry = main.session.query(main.UserAccess) \
+                #         .filter(main.UserAccess.userID == form_fields['id'])
+                #     userAccessEntry.delete()
+                # else:
+                #     # Remove all entries from requestUserAccess table containing matched userID value
+                #     requestUserAccessEntry = main.session.query(main.requestUserAccess) \
+                #         .filter(main.requestUserAccess.userID == form_fields['id'])
+                #     requestUserAccessEntry.delete()
+                # main.session.begin_nested()
 
                 # Set permission to zero if not an admin
                 if (permission < 2):
@@ -482,7 +483,6 @@ class Users(Resource):
             # ==================================================
             # TOGGLE USER ADMIN ASSIGNMENTS
             if (user_admin_toggle is not None):
-
                 upd_form = {}
                 if (user_admin_toggle > 0):
                     upd_form = {
