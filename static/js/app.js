@@ -327,8 +327,8 @@
                   }
               }
             })
-            .state('config.remove_tag_definitions', {
-              url: '/config.remove_tag_definitions',
+            .state('config.manage_tag_definitions', {
+              url: '/config.manage_tag_definitions',
               views : {
                 '_main' : {
                   templateUrl: 'static/html/config.view.html',
@@ -346,7 +346,7 @@
                     controllerAs: 'vm'
                   }
                 , '_main@config' : {
-                  templateUrl: 'static/html/config_remove_tag_definitions.view.html',
+                  templateUrl: 'static/html/config_manage_tag_definitions.view.html',
                     controller: 'Config.IndexController',
                     controllerAs: 'vm'
                   }

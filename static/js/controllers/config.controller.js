@@ -14,7 +14,7 @@
         obj_tasks['config.set_classification_level'] = 'Click Below to Set Classification Level';
         obj_tasks['config.manage_security_centers'] = 'Manage Security Centers';
         obj_tasks['config.manage_publishing_sites'] = 'Manage Publishing Sites';
-        obj_tasks['config.remove_tag_definitions'] = 'Remove Tag Definitions';
+        obj_tasks['config.manage_tag_definitions'] = 'Manage Tag Definitions';
         $scope.sc_list = []; // used for binding forms for updating existing SC entries
         // use for binding form for inserting new SC entry
         $scope.form_data = {
@@ -47,7 +47,7 @@
             if ($state.current.name == 'config.set_classification_level') {
                 load_classifications();
             }
-            if ($state.current.name == 'config.remove_tag_definitions') {
+            if ($state.current.name == 'config.manage_tag_definitions') {
                 load_tag_definitions();
             }
         }
@@ -57,14 +57,17 @@
         };
 
         function load_sc_data() {
+            vm.loading = true;
             SecurityCentersService
                 ._get_scs()
                 .then(
                       function(security_centers) {
                         $scope.sc_list = security_centers.sc_list;
+                        vm.loading = false;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
+                        vm.loading = false;
                       }
                 );
         }
@@ -282,36 +285,45 @@
                 ._get_tagdefinitions()
                 .then(
                     function(results) {
-                        var data = results.tag_definitions;
-                        // var columnDefs = [
-                        //       {headerName: 'Title', field: 'title', width: 100}
-                        //     , {headerName: 'Category', field: 'category', width: 100}
-                        //     , {headerName: 'Rollup', field: 'rollup', width: 100}
-                        //     , {headerName: 'Cardinality', field: 'cardinality', width: 100}
-                        //     , {headerName: 'Required?', field: 'required', width: 100}
-                        //     , {headerName: '', width: 100}
-                        // ];
-                        //
-                        // // initialization of grid options
-                        // $scope.gridOptions = {
-                        //     columnDefs: columnDefs,
-                        //     rowData: data,
-                        //     angularCompileRows: true
-                        // };
-
                         $scope.tag_definitions = results.tag_definitions;
                         vm.loading = false;
                       }
                     , function(err) {
-                          $scope.status = 'Error loading data: ' + err.message;
+                        $scope.status = 'Error loading data: ' + err.message;
+                        vm.loading = false;
                       }
                 );
         }
+
+        $scope.add_new_td = function() {
+            console.log('[299] Got here');
+            return TagDefinitionsService._insert_tagdefinition($scope.new_td)
+                .then(function() {
+                    load_tag_definitions();
+                    $scope.new_td = {
+                          'cardinality': 1
+                        , 'required': 'N'
+                    }
+                });
+        };
 
         $scope.update_td_param_value = function(_id, _name, _value) {
             var upd_form = '{"' + _name + '": "' + _value + '"}';
             TagDefinitionsService
                 ._update_td_param(_id, upd_form)
+                .then(
+                      function(users) {
+                          load_tag_definitions();
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
+
+        $scope.delete_td = function(_id) {
+            TagDefinitionsService
+                ._delete_tagdefinition(_id)
                 .then(
                       function(users) {
                           load_tag_definitions();

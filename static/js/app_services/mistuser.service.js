@@ -117,11 +117,6 @@
 
         function delete_user(id) {
             var deferred = $q.defer();
-            var config = {
-                headers : {
-                    'Content-Type': 'application/json;charset=utf-8;'
-                }
-            };
 
             $http.delete(__env.api_url + ':' + __env.port + '/api/v2/user/' + id)
                 .then(function(data, status, headers) {

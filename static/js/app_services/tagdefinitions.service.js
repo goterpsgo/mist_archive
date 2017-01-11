@@ -8,8 +8,9 @@
     function Service($http, $q, __env) {
         var factory = {
               _get_tagdefinitions: get_tagdefinitions
-            , _delete_tagdefinitions: delete_tagdefinitions
+            , _delete_tagdefinition: delete_tagdefinition
             , _update_td_param: update_td_param
+            , _insert_tagdefinition: insert_tagdefinition
         };
 
         return factory;
@@ -26,6 +27,25 @@
                         deferred.resolve(JSON.parse('{"response": {"method": "GET", "result": "error", "status": "' + status + '"}}'));
                     }
                 );
+            return deferred.promise;
+        }
+
+        function insert_tagdefinition(form_data) {
+            var deferred = $q.defer();
+            var config = {
+                headers : {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+            }
+
+            $http.post(__env.api_url + ':' + __env.port + '/api/v2/tagdefinitions', form_data, config)
+                .then(function(form_data, status, headers, config) {
+                    deferred.resolve(form_data);
+                }
+                , function(data, status, headers, config) {
+                    // deferred.resolve(response.data.response);
+                    deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
+                });
             return deferred.promise;
         }
 
@@ -49,13 +69,8 @@
             return deferred.promise;
         }
 
-        function delete_tagdefinitions(id) {
+        function delete_tagdefinition(id) {
             var deferred = $q.defer();
-            var config = {
-                headers : {
-                    'Content-Type': 'application/json;charset=utf-8;'
-                }
-            };
 
             $http.delete(__env.api_url + ':' + __env.port + '/api/v2/tagdefinition/' + id)
                 .then(function(data, status, headers) {
