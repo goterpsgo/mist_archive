@@ -1024,7 +1024,7 @@ class TagDefinitions(Resource):
 
         tag_definitions_list = []
 
-        for r_tag_definition in rs_tag_definitions():
+        for r_tag_definition in rs_tag_definitions().order_by(main.TagDefinitions.id):
             tag_definitions_list.append(row_to_dict(r_tag_definition))
         rs_dict['tag_definitions'] = tag_definitions_list
         return jsonify(rs_dict)  # return rs_dict
@@ -1067,7 +1067,7 @@ class TagDefinitions(Resource):
             main.session.rollback()
             return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted tag definition already exists.', 'class': 'alert alert-danger'}}
 
-    # @jwt_required()
+    @jwt_required()
     def put(self, _id):
         try:
             upd_form = request.get_json(force=True)
@@ -1084,6 +1084,7 @@ class TagDefinitions(Resource):
             main.session.rollback()
             return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
 
+    @jwt_required()
     def delete(self, _id):
         main.session.query(main.TagDefinitions).filter(main.TagDefinitions.id == _id).delete()
         main.session.commit()
