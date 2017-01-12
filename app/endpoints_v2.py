@@ -1158,7 +1158,7 @@ class PublishSites(Resource):
                              'class': 'alert alert-success', '_id': _id}}
 
         except (main.ProgrammingError) as e:
-            print ("[ProgrammingError] PUT /api/v2/securitycenter/%s / %s" % (_id, e))
+            print ("[ProgrammingError] PUT /api/v2/publishsite/%s / %s" % (_id, e))
             main.session.rollback()
             return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e,
                                  'class': 'alert alert-danger'}}
@@ -1233,7 +1233,7 @@ class PublishSites(Resource):
 #             return {'response': {'method': 'PUT', 'result': 'success', 'message': 'Some value successfully updated.', 'class': 'alert alert-success', '_id': _id}}
 #
 #         except (main.ProgrammingError) as e:
-#             print ("[ProgrammingError] PUT /api/v2/securitycenter/%s / %s" % (_id,e))
+#             print ("[ProgrammingError] PUT /api/v2/someclass/%s / %s" % (_id,e))
 #             main.session.rollback()
 #             return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
 #
