@@ -102,6 +102,12 @@ class TagDefinitions(Base.Model):
     category = Column(String(150))
     timestamp = Column(TIMESTAMP)
 
+class PublishSites(Base.Model):
+    __tablename__ = "publishSites"
+    id = Column(Integer, primary_key=True)
+    location = Column(String(500))
+    name = Column(String(50))
+
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
                     'key': '/opt/mist_base/certificates/mist-interface.key',
