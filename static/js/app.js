@@ -302,8 +302,8 @@
                   }
               }
             })
-            .state('config.manage_publishing_sites', {
-              url: '/config.manage_publishing_sites',
+            .state('config.manage_publish_sites', {
+              url: '/config.manage_publish_sites',
               views : {
                 '_main' : {
                   templateUrl: 'static/html/config.view.html',
@@ -321,7 +321,7 @@
                     controllerAs: 'vm'
                   }
                 , '_main@config' : {
-                  templateUrl: 'static/html/config_manage_publishing_sites.view.html',
+                  templateUrl: 'static/html/config_manage_publish_sites.view.html',
                     controller: 'Config.IndexController',
                     controllerAs: 'vm'
                   }

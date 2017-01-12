@@ -5,7 +5,7 @@
         .module('app')
         .controller('Config.IndexController', Controller);
 
-    function Controller($scope, $rootScope, $state, SecurityCentersService, BannerTextService, ClassificationService, MistParamsService, TagDefinitionsService, $timeout, Upload) {
+    function Controller($scope, $rootScope, $state, SecurityCentersService, BannerTextService, ClassificationService, MistParamsService, TagDefinitionsService, PublishSitesService, $timeout, Upload) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
@@ -13,7 +13,7 @@
         obj_tasks['config.set_banner_text'] = 'Set Banner Text';
         obj_tasks['config.set_classification_level'] = 'Click Below to Set Classification Level';
         obj_tasks['config.manage_security_centers'] = 'Manage Security Centers';
-        obj_tasks['config.manage_publishing_sites'] = 'Manage Publishing Sites';
+        obj_tasks['config.manage_publish_sites'] = 'Manage Publishing Sites';
         obj_tasks['config.manage_tag_definitions'] = 'Manage Tag Definitions';
         $scope.sc_list = []; // used for binding forms for updating existing SC entries
         // use for binding form for inserting new SC entry
@@ -26,10 +26,12 @@
         $scope._mist_params = {};
         $scope._mist_params_assigned = {};
         $scope.tag_definitions = [];
+        $scope.publish_sites_list = [];
         $scope.new_td = {
               'cardinality': 1
             , 'required': 'N'
-        }
+        };
+        $scope.new_ps = {};
 
         initController();
 
@@ -46,6 +48,9 @@
             }
             if ($state.current.name == 'config.set_classification_level') {
                 load_classifications();
+            }
+            if ($state.current.name == 'config.manage_publish_sites') {
+                load_publish_sites();
             }
             if ($state.current.name == 'config.manage_tag_definitions') {
                 load_tag_definitions();
@@ -296,14 +301,13 @@
         }
 
         $scope.add_new_td = function() {
-            console.log('[299] Got here');
             return TagDefinitionsService._insert_tagdefinition($scope.new_td)
                 .then(function() {
                     load_tag_definitions();
                     $scope.new_td = {
                           'cardinality': 1
                         , 'required': 'N'
-                    }
+                    };
                 });
         };
 
@@ -327,6 +331,59 @@
                 .then(
                       function(users) {
                           load_tag_definitions();
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
+
+
+        function load_publish_sites() {
+            vm.loading = true;
+            PublishSitesService
+                ._get_publishsites()
+                .then(
+                    function(results) {
+                        $scope.publish_sites_list = results.publish_sites_list;
+                        vm.loading = false;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                        vm.loading = false;
+                      }
+                );
+        }
+
+        $scope.add_new_ps = function() {
+            return PublishSitesService
+                ._insert_publishsite($scope.new_ps)
+                .then(function() {
+                    load_publish_sites();
+                    $scope.new_ps = {};
+                });
+        };
+
+        $scope.update_ps_param_value = function(_id, _name, _value) {
+            var upd_form = '{"' + _name + '": "' + _value + '"}';
+            PublishSitesService
+                ._update_ps_param(_id, upd_form)
+                .then(
+                      function(users) {
+                          load_publish_sites();
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
+
+        $scope.delete_ps = function(_id) {
+            PublishSitesService
+                ._delete_publishsite(_id)
+                .then(
+                      function(users) {
+                          load_publish_sites();
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;

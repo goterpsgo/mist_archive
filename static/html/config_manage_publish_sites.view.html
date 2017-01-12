@@ -1,0 +1,29 @@
+<table class="table table-hover">
+    <thead>
+        <th>Location</th>
+        <th>Name</th>
+        <th><img ng-if="vm.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />&nbsp;</th>
+    </thead>
+    <form>
+    <tr style="background-color: #E4F5FF;">
+        <td>
+            <input type="text" style="width: 200px;" ng-model="new_ps.location" />
+        </td>
+        <td>
+            <input type="text" style="width: 300px;" ng-model="new_ps.name" />
+        </td>
+        <td>
+            <input type="submit" class="btn btn-primary" value="Add New" style="width: 200px;" ng-click="add_new_ps()" />
+        </td>
+    </tr>
+    </form>
+    <tr ng-repeat="row in publish_sites_list">
+        <td>
+            <input type="text" style="width: 200px;" title="{{row.location}}" ng-model="row.location" ng-blur="update_ps_param_value(row.id, 'location', row.location)" />
+        </td>
+        <td>
+            <input type="text" style="width: 300px;" title="{{row.name}}" ng-model="row.name" ng-blur="update_ps_param_value(row.id, 'name', row.name)" />
+        </td>
+        <td><button ng-click="delete_ps(row.id)" class="btn btn-danger glyphicon glyphicon-trash" title="Delete Entry {{row.id}}"></button></td>
+    </tr>
+</table>
