@@ -7,10 +7,10 @@
     <form>
     <tr style="background-color: #E4F5FF;">
         <td>
-            <input type="text" style="width: 200px;" ng-model="new_ps.location" />
+            <input class="form-control" type="text" style="width: 200px;" ng-model="new_ps.location" />
         </td>
         <td>
-            <input type="text" style="width: 300px;" ng-model="new_ps.name" />
+            <input class="form-control" type="text" style="width: 300px;" ng-model="new_ps.name" />
         </td>
         <td>
             <input type="submit" class="btn btn-primary" value="Add New" style="width: 200px;" ng-click="add_new_ps()" />
@@ -19,10 +19,10 @@
     </form>
     <tr ng-repeat="row in publish_sites_list">
         <td>
-            <input type="text" style="width: 200px;" title="{{row.location}}" ng-model="row.location" ng-blur="update_ps_param_value(row.id, 'location', row.location)" />
+            <input class="form-control" type="text" style="width: 200px;" title="{{row.location}}" ng-model="row.location" ng-blur="update_ps_param_value(row.id, 'location', row.location)" />
         </td>
         <td>
-            <input type="text" style="width: 300px;" title="{{row.name}}" ng-model="row.name" ng-blur="update_ps_param_value(row.id, 'name', row.name)" />
+            <input class="form-control" type="text" style="width: 300px;" title="{{row.name}}" ng-model="row.name" ng-blur="update_ps_param_value(row.id, 'name', row.name)" />
         </td>
         <td><button ng-click="delete_ps(row.id)" class="btn btn-danger glyphicon glyphicon-trash" title="Delete Entry {{row.id}}"></button></td>
     </tr>
