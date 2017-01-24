@@ -35,6 +35,14 @@ alter table securityCenters add UNIQUE (fqdn_IP, serverName);
 
 alter table userAccess add is_assigned timestamp;
 
+# Add tag_definition_id to Tags table
+# http://stackoverflow.com/a/15333484/6554056
+alter table Tags add tag_definition_id INT;
+update Tags t
+  inner join tagDefinition td on t.rollup = td.rollup
+set t.tag_definition_id = td.id;
+alter table Tags add constraint foreign key (tag_definition_id) references tagDefinition(id);
+
 
 # # NAME: sp_get_user
 # # INPUT: mistUser id (INT) or username value (VARCHAR) or null
