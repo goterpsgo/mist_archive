@@ -1195,7 +1195,7 @@ class CategorizedTags(Resource):
 
         for key in tags.iterkeys():
             if tags[key]['parentID'] == "Top":
-                rs_dict['Tags'] = tags[key]
+                rs_dict['tags'] = tags[key]
 
         return jsonify(rs_dict)  # return rs_dict
 
