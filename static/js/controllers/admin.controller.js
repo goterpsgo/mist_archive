@@ -72,7 +72,6 @@
         };
 
         $scope.user_admin_toggle = function(user, permission, cnt_repos) {
-            console.log('[admin.controller:39] user_admin_toggle()');
             var form_data = {'user_admin_toggle': cnt_repos, 'permission': permission};
             MistUsersService._update_user(user, form_data)
                 .then(
