@@ -1,11 +1,11 @@
 <br />
 <br />
 <br />
-<div class="col-md-8 col-md-offset-0">
+<div class="col-md-8 col-md-offset-0" onload="doOnLoad()">
     <h3 class="row">
-        User Profile
+        Auto Tagging
     </h3>
-    <form ng-submit="">
+    <form ng-submit="submit_auto_tag()">
         <div class="row">
             <input type="submit" value="Save Update" class="btn btn-primary" style="width: 300px;" />
         </div>
@@ -27,6 +27,18 @@
             </div>
         </div>
         <div class="row {{status_class}}">
+            <dhx-tree
+              dhx-tree="dhxTree"
+              dhx-enable-check-boxes="true"
+              dhx-enable-tree-images="true"
+              dhx-enable-highlighting="true"
+              dhx-json-data="treeData"
+              dhx-on-data-loaded="treeDataLoaded"
+              dhx-handlers="treeHandlers"
+              dhx-context-menu="contextMenu"
+              ></dhx-tree>
+        </div>
+        <div class="row {{status_class}}">
             {{status}}
         </div>
     </form>
@@ -35,3 +47,4 @@
         {{categorized_tags}}
     </h3>
 </div>
+

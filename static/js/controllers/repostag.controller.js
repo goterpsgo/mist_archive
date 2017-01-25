@@ -10,12 +10,39 @@
         $scope.tag_definitions = {};
         $scope.assigned_tag_definition = {"value": 23};
         $scope.categorized_tags = {};
+        $scope.treeData = {
+          "id": 0,
+          "item": [
+            {
+              "id": "dataCmps",
+              "text": "Data",
+              "item": [
+                {
+                  "id": "Grid",
+                  "text": "Grid"
+                },
+                {
+                  "id": "Tree",
+                  "text": "Tree"
+                }
+              ]
+            },
+            {
+              "id": "Windows",
+              "text": "Windows"
+            },
+            {
+              "id": "Layout",
+              "text": "Layout"
+            }
+          ]
+        };
 
         initController();
 
         function initController() {
             load_tag_definitions();
-            // load_categorized_tags(23);
+            load_categorized_tags(23);
         }
 
         function load_tag_definitions() {
@@ -54,5 +81,24 @@
         $scope.load_tags = function() {
             load_categorized_tags($scope.assigned_tag_definition.id);
         }
+
+        $scope.submit_auto_tag = function() {
+            console.log('[59] Got here');
+        }
+
+        $scope.treeDataLoaded = function (tree) {
+          console.log('Data has been loaded!');
+        };
+
+        $scope.treeHandlers = [
+          {
+            type: "onClick",
+            handler: function (id) {
+              console.log('You have clicked \'' + id + '\'');
+            }
+          }
+        ];
+
+        $scope.contextMenu = {};
     }
 })();
