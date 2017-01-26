@@ -1181,21 +1181,28 @@ class CategorizedTags(Resource):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
         rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
+        _top = {"treeData": {"id": 0, "item": []}}
         raw_tags_list = []
 
         for r_tag in rs_tags().filter(main.Tags.tag_definition_id == _td_id):
-            raw_tags_list.append(row_to_dict(r_tag))
+            _this_tag = row_to_dict(r_tag)
+            _this_tag["text"] = _this_tag["dname"]
+            print ("_this_tag: %r" % json.dumps(_this_tag))
+            raw_tags_list.append(_this_tag)
 
         tags = dict((elem["nameID"], elem) for elem in raw_tags_list)
         for elem in raw_tags_list:
             if (elem["parentID"] != "Top"):
-                if ("children" not in tags[elem["parentID"]]):
-                    tags[elem["parentID"]]['children'] = []
-                tags[elem["parentID"]]['children'].append(tags[elem["nameID"]])
+                if ("item" not in tags[elem["parentID"]]):
+                    tags[elem["parentID"]]['item'] = []
+                tags[elem["parentID"]]['item'].append(tags[elem["nameID"]])
 
         for key in tags.iterkeys():
             if tags[key]['parentID'] == "Top":
-                rs_dict['tags'] = tags[key]
+                _top['treeData']['item'].append(tags[key])
+                # rs_dict['tags'] = tags[key]
+
+        rs_dict['tags'] = _top
 
         return jsonify(rs_dict)  # return rs_dict
 

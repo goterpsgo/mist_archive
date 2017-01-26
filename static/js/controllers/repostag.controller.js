@@ -10,33 +10,7 @@
         $scope.tag_definitions = {};
         $scope.assigned_tag_definition = {"value": 23};
         $scope.categorized_tags = {};
-        $scope.treeData = {
-          "id": 0,
-          "item": [
-            {
-              "id": "dataCmps",
-              "text": "Data",
-              "item": [
-                {
-                  "id": "Grid",
-                  "text": "Grid"
-                },
-                {
-                  "id": "Tree",
-                  "text": "Tree"
-                }
-              ]
-            },
-            {
-              "id": "Windows",
-              "text": "Windows"
-            },
-            {
-              "id": "Layout",
-              "text": "Layout"
-            }
-          ]
-        };
+        $scope.treeData = {};
 
         initController();
 
@@ -51,8 +25,6 @@
                 ._get_tagdefinitions()
                 .then(
                     function(results) {
-                        console.log('[25] Got here:');
-                        console.log(results.tag_definitions);
                         $scope.tag_definitions = results.tag_definitions;
                         vm.loading = false;
                       }
@@ -69,7 +41,7 @@
                 ._get_categorizedtags(_id)
                 .then(
                       function(results) {
-                        $scope.categorized_tags = results;
+                        $scope.treeData = results.treeData;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;

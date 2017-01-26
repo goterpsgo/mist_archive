@@ -72,14 +72,6 @@
                   }
                 );
 
-                scope.$watch(
-                    "dhxJsonData",
-                    function handle(newValue) {
-                        tree.parse(newValue, "json");
-                        tree.refreshItem(0);    // refresh entire tree after new data is loaded
-                    }
-                );
-
                 // Additional optional configuration
                 tree.enableCheckBoxes(scope.dhxEnableCheckBoxes);
                 tree.enableRadioButtons(scope.dhxEnableRadioButtons);
@@ -94,10 +86,8 @@
                 if (scope.dhxConfigureFunc) {
                   scope.dhxConfigureFunc(tree);
                 }
-
                 // Finally parsing data
-                // NOTE: tree.parse method moved into scope.$watch so it will always run on bound data update - JWT 26 Jan 2017
-                // tree.parse(scope.dhxJsonData, "json");
+                tree.parse(scope.dhxJsonData, "json");
 
                 // Letting controller do data manipulation after data has been loaded
 
