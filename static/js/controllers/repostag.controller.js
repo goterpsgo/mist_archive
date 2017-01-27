@@ -16,7 +16,8 @@
 
         function initController() {
             load_tag_definitions();
-            load_categorized_tags(23);
+            load_categorized_tags(26);
+            $scope.assigned_tag_definition = 26;
         }
 
         function load_tag_definitions() {
@@ -36,15 +37,17 @@
         }
 
         function load_categorized_tags(_id) {
-            console.log('[40] ID: ' + _id);
+            vm.loading = true;
             CategorizedTagsService
                 ._get_categorizedtags(_id)
                 .then(
                       function(results) {
                         $scope.treeData = results.treeData;
+                        vm.loading = false;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
+                        vm.loading = false;
                       }
                 )
             ;
