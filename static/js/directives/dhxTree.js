@@ -75,8 +75,8 @@
                 scope.$watch(
                     "dhxJsonData",
                     function handle(newValue) {
+                        tree.deleteChildItems(0);
                         tree.parse(newValue, "json");
-                        tree.refreshItem(0);    // refresh entire tree after new data is loaded
                     }
                 );
 
