@@ -10,7 +10,7 @@
         $scope.tag_definitions = {};
         $scope.assigned_tag_definition = {"value": 23};
         $scope.categorized_tags = {};
-        $scope.treeData = {};
+        $scope.treeData = {"value": "Loading..."};
 
         initController();
 

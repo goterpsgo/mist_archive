@@ -24,19 +24,16 @@
                 </tr>
             </table>
         </div>
-        <div class="row {{status_class}}">
-            <dhx-tree
-              dhx-tree="dhxTree"
-              dhx-enable-check-boxes="false"
-              dhx-enable-radio-buttons="true"
-              dhx-enable-tree-images="true"
-              dhx-enable-highlighting="true"
-              dhx-json-data="treeData"
-              dhx-on-data-loaded="treeDataLoaded"
-              dhx-handlers="treeHandlers"
-              dhx-context-menu="contextMenu"
-              ></dhx-tree>
-        </div>
+        <div webix-ui
+             id="tags_tree"
+             webix-event="onItemClick = do_this()"
+             view="tree"
+             webix-data="treeData"
+             type="lineTree"
+             width="600"
+             height="500"
+             select="multiselect"
+        ></div>
         <div class="row {{status_class}}">
             {{status}}
         </div>
