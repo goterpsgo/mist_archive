@@ -11,6 +11,7 @@
         $scope.assigned_tag_definition = {"value": 23};
         $scope.categorized_tags = {};
         $scope.treeData = {"value": "Loading..."};
+        $scope.tags_tree = null;
 
         initController();
 
@@ -18,6 +19,9 @@
             load_tag_definitions();
             load_categorized_tags(26);
             $scope.assigned_tag_definition = 26;
+            // $scope.tags_tree = $$("tags_tree");
+            console.log('[23] initController()');
+            // console.log($scope.tags_tree);
         }
 
         function load_tag_definitions() {
@@ -61,19 +65,9 @@
             console.log('[59] Got here');
         }
 
-        $scope.treeDataLoaded = function (tree) {
-          console.log('Data has been loaded!');
-        };
-
-        $scope.treeHandlers = [
-          {
-            type: "onClick",
-            handler: function (id) {
-              console.log('You have clicked \'' + id + '\'');
-            }
-          }
-        ];
-
-        $scope.contextMenu = {};
+        $scope.do_this = function(id, details) {
+            console.log('[65] do_this(): ');
+            console.log($$("tags_tree").getSelectedId());
+        }
     }
 })();
