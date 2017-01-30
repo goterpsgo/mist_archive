@@ -1032,6 +1032,13 @@ class TagDefinitions(Resource):
 
         for r_tag_definition in rs_tag_definitions().order_by(main.TagDefinitions.id):
             tag_definitions_list.append(row_to_dict(r_tag_definition))
+
+        # convert certain values from string to integer
+        for _index, row in enumerate(tag_definitions_list):
+            for key, value in row.iteritems():
+                if ((key == "id" or key == "defaultValue") and (value != "") and (value != "None")):
+                    tag_definitions_list[_index][key] = int(value)
+
         rs_dict['tag_definitions'] = tag_definitions_list
         return jsonify(rs_dict)  # return rs_dict
 
@@ -1181,26 +1188,24 @@ class CategorizedTags(Resource):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
         rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
-        _top = {"treeData": {"id": 0, "item": []}}
+        _top = {"treeData": {"id": 0, "data": []}}
         raw_tags_list = []
 
-        for r_tag in rs_tags().filter(main.Tags.tag_definition_id == _td_id):
+        for r_tag in rs_tags().filter(main.Tags.tag_definition_id == _td_id).order_by(main.Tags.dname):
             _this_tag = row_to_dict(r_tag)
-            _this_tag["text"] = _this_tag["dname"]
-            print ("_this_tag: %r" % json.dumps(_this_tag))
+            _this_tag["value"] = _this_tag["dname"]
             raw_tags_list.append(_this_tag)
 
         tags = dict((elem["nameID"], elem) for elem in raw_tags_list)
         for elem in raw_tags_list:
-            if (elem["parentID"] != "Top"):
-                if ("item" not in tags[elem["parentID"]]):
-                    tags[elem["parentID"]]['item'] = []
-                tags[elem["parentID"]]['item'].append(tags[elem["nameID"]])
+            if elem["parentID"] != "Top":
+                if "data" not in tags[elem["parentID"]]:
+                    tags[elem["parentID"]]['data'] = []
+                tags[elem["parentID"]]['data'].append(tags[elem["nameID"]])
 
         for key in tags.iterkeys():
             if tags[key]['parentID'] == "Top":
-                _top['treeData']['item'].append(tags[key])
-                # rs_dict['tags'] = tags[key]
+                _top['treeData']['data'].append(tags[key])
 
         rs_dict['tags'] = _top
 
