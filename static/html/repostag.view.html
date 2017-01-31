@@ -1,7 +1,7 @@
 <br />
 <br />
 <br />
-<div class="col-md-8 col-md-offset-0" onload="doOnLoad()">
+<div class="col-md-12 col-md-offset-0">
     <h3 class="row">
         Auto Tagging
     </h3>
@@ -13,28 +13,69 @@
             &nbsp;
         </div>
         <div class="row">
-            <table class="col-md-10">
-                <tr>
-                    <td><span style="font-size: 20px;">Titles</span> <img ng-if="vm.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" /></td>
-                </tr>
-                <tr>
-                    <td>
-                        <select class="select2-search" ng-model="assigned_tag_definition" ng-options="_def as _def.title for _def in tag_definitions track by _def.id" size="1" ng-change="load_tags()"></select>
-                    </td>
-                </tr>
-            </table>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span style="font-size: 20px;">Titles</span> <img ng-if="vm.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="col-md-10">
+                            <tr>
+                                <td>
+                                    <select class="select2-search" ng-model="assigned_tag_definition" ng-options="_def as _def.title for _def in tag_definitions track by _def.id" size="1" ng-change="load_tags()"></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div webix-ui
+                                         id="tags_tree"
+                                         webix-event="onSelectChange = do_this(id, details)"
+                                         view="tree"
+                                         webix-data="treeData"
+                                         type="lineTree"
+                                         width="430"
+                                         height="500"
+                                         select="multiselect"
+                                    ></div>
+                                    <!--<div webix-ui-->
+                                         <!--id="tags_tree"-->
+                                         <!--webix-event="onSelectChange = do_this(id, details)"-->
+                                         <!--view="tree"-->
+                                         <!--webix-data="treeData"-->
+                                         <!--type="lineTree"-->
+                                         <!--width="430"-->
+                                         <!--height="500"-->
+                                         <!--select="multiselect"-->
+                                         <!--template="{common.icon()} {common.checkbox()} {common.folder()} <span>#value#</span>"-->
+                                    <!--&gt;</div>-->
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="panel-footer">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span style="font-size: 20px;">Repositories</span>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+
+                    </div>
+                    <div class="panel-footer">
+
+                    </div>
+                </div>
+            </div>
+            </div>
         </div>
-        <div webix-ui
-             id="tags_tree"
-             webix-event="onSelectChange = do_this(id, details)"
-             view="tree"
-             webix-data="treeData"
-             type="lineTree"
-             width="500"
-             height="500"
-             select="multiselect"
-             template="{common.icon()} {common.checkbox()} {common.folder()} <span>#value#</span>"
-        ></div>
         <div class="row {{status_class}}">
             {{status}}
         </div>
