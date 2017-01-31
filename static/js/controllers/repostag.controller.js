@@ -5,7 +5,7 @@
         .module('app')
         .controller('Repostag.IndexController', Controller);
 
-    function Controller($scope, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService) {
+    function Controller($scope, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, ReposService) {
         var vm = this;
         $scope.tag_definitions = {};
         $scope.assigned_tag_definition = {"value": 23};
@@ -14,6 +14,7 @@
         $scope.tags_tree = null;
         $scope.profile = {};
         $scope.cardinality = {};
+        $scope.assign_repos = [];
 
         initController();
 
@@ -21,10 +22,8 @@
             load_tag_definitions();
             load_categorized_tags(26);
             $scope.assigned_tag_definition = 26;
-            // $scope.tags_tree = $$("tags_tree");
-            console.log('[23] initController()');
-            // console.log($scope.tags_tree);
             get_this_user();
+            get_repos();
         }
 
         function load_tag_definitions() {
@@ -37,8 +36,6 @@
                         for (var _cnt = 0; _cnt < $scope.tag_definitions.length; _cnt++) {
                             $scope.cardinality[$scope.tag_definitions[_cnt]['id']] = $scope.tag_definitions[_cnt]['cardinality'];
                         }
-                        console.log('[36] $scope.cardinality: ');
-                        console.log($scope.cardinality);
                         vm.loading = false;
                       }
                     , function(err) {
@@ -68,6 +65,20 @@
             ;
         }
 
+        function load_user_assigned_repos() {
+            // Add additional information from assign_repos to profile.assign_repos
+            for (var _cnt = 0; _cnt < $scope.profile.assign_repos.length; _cnt++) {
+                for (var _cnt2 = 0; _cnt2 < $scope.assign_repos.length; _cnt2++) {
+                    if (($scope.profile.assign_repos[_cnt]['repo_id'] == $scope.assign_repos[_cnt2]['repo_id'])
+                        && ($scope.profile.assign_repos[_cnt]['sc_id'] == $scope.assign_repos[_cnt2]['sc_id'])) {
+                        $scope.profile.assign_repos[_cnt]['repo_name'] = $scope.assign_repos[_cnt2]['repo_name'];
+                        $scope.profile.assign_repos[_cnt]['server_name'] = $scope.assign_repos[_cnt2]['server_name'];
+                        break;
+                    }
+                }
+            }
+        }
+
         function get_repos() {
             ReposService._get_repos()
                 .then(
@@ -77,7 +88,10 @@
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
                       }
-                );
+                )
+                .then(function() {
+                    load_user_assigned_repos();
+                });
         }
 
         function get_this_user() {
