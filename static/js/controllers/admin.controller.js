@@ -142,7 +142,7 @@
                         $scope.status = 'Error loading data: ' + err.message;
                       }
                 );
-        };
+        }
 
         function get_repos() {
             ReposService._get_repos()
@@ -154,7 +154,7 @@
                         $scope.status = 'Error loading data: ' + err.message;
                       }
                 );
-        };
+        }
 
         $scope.check_all_repos = function() {
             $scope.check_all_repos_state = (($scope.check_all_repos_state) ? false : true);
