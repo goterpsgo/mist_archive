@@ -30,9 +30,10 @@
              view="tree"
              webix-data="treeData"
              type="lineTree"
-             width="600"
+             width="500"
              height="500"
              select="multiselect"
+             template="{common.icon()} {common.checkbox()} {common.folder()} <span>#value#</span>"
         ></div>
         <div class="row {{status_class}}">
             {{status}}

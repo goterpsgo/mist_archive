@@ -67,7 +67,8 @@
 
         $scope.do_this = function(id, details) {
             console.log('[65] do_this(): ');
-            console.log($$("tags_tree").getSelectedId());
+            // console.log($$("tags_tree").getSelectedId());
+            console.log($$("tags_tree").getChecked());
         }
     }
 })();
