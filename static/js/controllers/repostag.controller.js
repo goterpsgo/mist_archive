@@ -42,6 +42,7 @@
 
         function load_categorized_tags(_id) {
             vm.loading = true;
+            $scope.treeData = {"value": "Loading..."};
             CategorizedTagsService
                 ._get_categorizedtags(_id)
                 .then(
