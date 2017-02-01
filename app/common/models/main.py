@@ -27,6 +27,8 @@ class MistUser(Base.Model):
 
     permission_id = Column(Integer, ForeignKey('userPermissions.id'))
     permissions = relationship("UserPermission", backref="mistUser")
+    # user_accesses = relationship('UserAccess', backref="mistUser", cascade="all, delete-orphan", lazy="dynamic", single_parent=True)
+    # request_user_accesses = relationship('RequestUserAccess', backref="mistUser", cascade="all, delete-orphan", lazy="dynamic", single_parent=True)
     # permissions = relationship("UserPermission", backref="mistUser", cascade="all, delete-orphan", lazy='dynamic', single_parent=True)
 
 class Repos(Base.Model):
@@ -41,8 +43,8 @@ class Repos(Base.Model):
 class UserAccess(Base.Model):
     __tablename__ = "userAccess"
     id = Column(Integer, primary_key=True)
-    repoID = Column(Integer)
-    userID = Column(Integer)
+    repoID = Column(Integer, ForeignKey('Repos.id'))
+    userID = Column(Integer, ForeignKey('mistUsers.id'))
     scID = Column(String(150))
     userName = Column(String(45), ForeignKey('mistUsers.username'))
     is_assigned = Column(TIMESTAMP)
@@ -50,8 +52,8 @@ class UserAccess(Base.Model):
 class requestUserAccess(Base.Model):
     __tablename__ = "requestUserAccess"
     id = Column(Integer, primary_key=True)
-    repoID = Column(Integer)
-    userID = Column(Integer)
+    repoID = Column(Integer, ForeignKey('Repos.id'))
+    userID = Column(Integer, ForeignKey('mistUsers.id'))
     scID = Column(String(150))
     userName = Column(String(45), ForeignKey('mistUsers.username'))
 
@@ -87,6 +89,12 @@ class MistParams(Base.Model):
     logsRollOverPeriod = Column(Integer, default=30)    # in days
     pubsRollOverPeriod = Column(Integer, default=30)    # in days
 
+class PublishSites(Base.Model):
+    __tablename__ = "publishSites"
+    id = Column(Integer, primary_key=True)
+    location = Column(String(500))
+    name = Column(String(50))
+
 class TagDefinitions(Base.Model):
     __tablename__ = "tagDefinition"
     id = Column(Integer, primary_key=True)
@@ -101,12 +109,33 @@ class TagDefinitions(Base.Model):
     rollup = Column(String(250))
     category = Column(String(150))
     timestamp = Column(TIMESTAMP)
+    tags = relationship('Tags', backref="tagDefinition", cascade="all, delete-orphan", lazy="dynamic", single_parent=True)
 
-class PublishSites(Base.Model):
-    __tablename__ = "publishSites"
+class Tags(Base.Model):
+    __tablename__ = "Tags"
     id = Column(Integer, primary_key=True)
-    location = Column(String(500))
-    name = Column(String(50))
+    nameID = Column(String(20))
+    category = Column(String(50), ForeignKey('tagDefinition.category'))
+    rollup = Column(String(300))
+    tag_definition_id = Column(Integer)
+    parentID = Column(String(20), default="Top")
+    hname = Column(String(1000))
+    dname = Column(String(1000))
+    tagType = Column(String(1), default="L")
+    depth = Column(Integer, default=1)
+
+class TaggedRepos(Base.Model):
+    __tablename__ = "taggedRepos"
+    id = Column(Integer, primary_key=True)
+    repoID = Column(Integer)
+    scID = Column(String(150))
+    tagID = Column(String(20))
+    rollup = Column(String(300), ForeignKey('tagDefinition.rollup'))
+    category = Column(String(50))
+    timestamp = Column(TIMESTAMP)
+    status = Column(String(5))
+    taggedBy = Column(String(200))
+
 
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
