@@ -31,7 +31,6 @@
                                 <td>
                                     <div webix-ui
                                          id="tags_tree"
-                                         webix-event="onSelectChange = do_this(id, details)"
                                          view="tree"
                                          webix-data="treeData"
                                          type="lineTree"
@@ -67,13 +66,14 @@
                         </h3>
                     </div>
                     <div class="panel-body">
-
+                        <div ng-repeat="assign_repo in profile.assign_repos track by $index">
+                            &nbsp;<h4><input ng-model="assign_repo.is_checked" type="checkbox"> {{assign_repo.server_name}} - {{assign_repo.repo_name}}</h4>
+                        </div>
                     </div>
                     <div class="panel-footer">
 
                     </div>
                 </div>
-            </div>
             </div>
         </div>
         <div class="row {{status_class}}">
