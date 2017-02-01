@@ -15,14 +15,15 @@
         $scope.profile = {};
         $scope.cardinality = {};
         $scope.assign_repos = [];
+        $scope.form_fields = {};
 
         initController();
 
         function initController() {
+            get_this_user();
             load_tag_definitions();
             load_categorized_tags(26);
             $scope.assigned_tag_definition = 26;
-            get_this_user();
             get_repos();
         }
 
@@ -105,7 +106,7 @@
                           if (Object.keys($scope.profile.repos).length > 0) {
                               $scope.profile.assign_repos = [];
                               angular.forEach($scope.profile.repos, function(repo, key) {
-                                  var selected_repo_entry = {'repo_id': repo.repoID, 'sc_id': repo.scID};
+                                  var selected_repo_entry = {'repo_id': repo.repoID, 'sc_id': repo.scID, 'is_checked': false};
                                   $scope.profile.assign_repos.push(selected_repo_entry);
                               })
                           }
@@ -121,11 +122,24 @@
         }
 
         $scope.submit_auto_tag = function() {
-            console.log('[59] Got here');
-        }
+            $scope.form_fields['tree_nodes'] = [];
+            if ($$("tags_tree").getSelectedId() instanceof Array) {
+                $scope.form_fields['tree_nodes'] = $$("tags_tree").getSelectedId();
+            }
+            else {
+                $scope.form_fields['tree_nodes'].push($$("tags_tree").getSelectedId());
+            }
 
-        $scope.do_this = function(id, details) {
-            console.log('[65] do_this(): ');
+            for (var _cnt = 0; _cnt < $scope.profile.assign_repos.length; _cnt++) {
+                if ($scope.profile.assign_repos[_cnt].is_checked == true) {
+                    if (typeof($scope.form_fields['selected_repos']) === 'undefined') {
+                        $scope.form_fields['selected_repos'] = [];
+                    }
+                    $scope.form_fields['selected_repos'].push(
+                        {'sc_id': $scope.profile.assign_repos[_cnt].sc_id, 'repo_id': $scope.profile.assign_repos[_cnt].repo_id}
+                    );
+                }
+            }
             console.log($$("tags_tree").getSelectedId());
             // console.log($$("tags_tree").getChecked());
         }
