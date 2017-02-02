@@ -249,7 +249,8 @@ def create_user_dict(obj_user):
                         if int(obj_tags.count()) != 0:
                             for obj_tag in obj_tags:
                                 tag = {
-                                    'dname': obj_tag.dname
+                                      'dname': obj_tag.dname
+                                    , 'id': obj_tag.id
                                 }
                                 user['repos'][identifier]['tags'].append(tag)
 
@@ -1239,26 +1240,39 @@ class CategorizedTags(Resource):
 
         return jsonify(rs_dict)  # return rs_dict
 
-    # @jwt_required()
+    @jwt_required()
     def post(self):
         try:
             form_fields = request.get_json(force=True)
+            username = form_fields['username']
+            tree_nodes = form_fields['tree_nodes']
+            selected_repos = form_fields['selected_repos']
 
-            print "[1219] form_fields: %r" % form_fields
+            for _index_node, _id in enumerate(tree_nodes):
+                for r_tag in rs_tags().filter(main.Tags.id == int(_id)):
+                    _this_tag = row_to_dict(r_tag)
+                    for _index_repo, _repo in enumerate(selected_repos):
+                        # _this_repo = row_to_dict(_repo)
 
-        #     new_entry = main.SomeModel(
-        #           name = form_fields['name']
-        #         , description = form_fields['description'] if ("description" in form_fields) else "TBD"
-        #         , defaultValue = form_fields['defaultValue'] if ("defaultValue" in form_fields) else None
-        #         , type = form_fields['type'] if ("type" in form_fields) else "plaintext"
-        #         , cardinality = form_fields['cardinality'] if ("cardinality" in form_fields) else 1
-        #         , timestamp = datetime.now()
-        #     )
-        #
-        #     main.session.add(new_entry)
-        #     main.session.commit()
-        #     main.session.flush()
-        #
+                        new_tagged_repo = main.TaggedRepos(
+                              repoID = _repo['repo_id']
+                            , scID = _repo['sc_id']
+                            , tagID = _this_tag['nameID']
+                            , rollup = _this_tag['rollup']
+                            , category = _this_tag['category']
+                            , timestamp = datetime.now()
+                            , status = "True"
+                            , taggedBy = username
+                        )
+
+                        main.session.add(new_tagged_repo)
+                        main.session.begin_nested()
+
+            main.session.commit()
+            main.session.flush()
+
+            # print "[1259] form_fields: %r" % json.dumps(form_fields)
+
             # return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': int(new_entry.id)}}
             return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': 0}}
 
