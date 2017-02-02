@@ -145,11 +145,8 @@
                 }
             }
             $scope.form_fields['username'] = $scope.profile.username;
-            console.log($$("tags_tree").getSelectedId());
+            // console.log($$("tags_tree").getSelectedId());
             // console.log($$("tags_tree").getChecked());
-
-            console.log('[152] form_fields: ');
-            console.log($scope.form_fields);
 
             CategorizedTagsService
                 ._insert_categorizedtags($scope.form_fields)
