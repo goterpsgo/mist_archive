@@ -5,7 +5,7 @@
         .module('app')
         .controller('Repostag.IndexController', Controller);
 
-    function Controller($scope, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, ReposService) {
+    function Controller($scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, ReposService) {
         var vm = this;
         $scope.tag_definitions = {};
         $scope.assigned_tag_definition = {"value": 23};
@@ -151,12 +151,20 @@
             CategorizedTagsService
                 ._insert_categorizedtags($scope.form_fields)
                 .then(
-                      function() {
-
+                      function(result) {
+                        $scope.status = result.data.response;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
                       }
+                )
+                .then(
+                    function() {
+                        // clear status message after five seconds
+                        $timeout(function() {
+                            $scope.status = '';
+                        }, 5000);
+                    }
                 );
         }
     }
