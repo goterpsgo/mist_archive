@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import select
 from sqlalchemy.sql.functions import current_timestamp
 from sqlalchemy.exc import IntegrityError, ProgrammingError, StatementError, OperationalError, InvalidRequestError, ResourceClosedError, NoSuchColumnError
-from sqlalchemy.dialects.mysql import TIMESTAMP
+from sqlalchemy.dialects.mysql import TIMESTAMP, CHAR
 from base_model import Base
 
 class UserPermission(Base.Model):
@@ -136,6 +136,21 @@ class TaggedRepos(Base.Model):
     status = Column(String(5))
     taggedBy = Column(String(200))
 
+class Assets(Base.Model):
+    __tablename__ = "Assets"
+    assetID = Column(Integer, primary_key=True)
+    biosGUID = Column(String(50))
+    macAddress = Column(String(17))
+    ip = Column(String(39))
+    lastUnauthRun = Column(Integer)
+    lastAuthRun = Column(Integer)
+    netbiosName = Column(String(100))
+    osCPE = Column(String(200))
+    dnsName = Column(String(200))
+    mcafeeGUID = Column(String(100))
+    state = Column(CHAR(1))
+    published = Column(CHAR(1))
+    purged = Column(CHAR(1))
 
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
