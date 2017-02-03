@@ -152,6 +152,18 @@ class Assets(Base.Model):
     published = Column(CHAR(1))
     purged = Column(CHAR(1))
 
+class TaggedAssets(Base.Model):
+    __tablename__ = "taggedAssets"
+    id = Column(Integer, primary_key=True)
+    assetID = Column(Integer)
+    tagID = Column(String(20))
+    rollup = Column(String(300))
+    category = Column(String(50))
+    taggedBy = Column(String(200))
+    timestamp = Column(TIMESTAMP)
+    status = Column(String(5))
+    tagMode = Column(String(45))
+
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
                     'key': '/opt/mist_base/certificates/mist-interface.key',
