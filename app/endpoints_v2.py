@@ -61,6 +61,9 @@ def rs_tags():
 def rs_tagged_repos():
     return main.session.query(main.TaggedRepos)
 
+def rs_assets():
+    return main.session.query(main.Assets)
+
 # http://stackoverflow.com/a/1960546/6554056
 def row_to_dict(row):
     d = {}
@@ -1246,12 +1249,14 @@ class CategorizedTags(Resource):
             form_fields = request.get_json(force=True)
             username = form_fields['username']
             tree_nodes = form_fields['tree_nodes']
+            tagMode = form_fields['tagMode']
             selected_repos = form_fields['selected_repos']
+            right_now = datetime.now()
 
-            for _index_node, _id in enumerate(tree_nodes):
+            for _index_node, _id in enumerate(tree_nodes):  # loop through checked tree nodes
                 for r_tag in rs_tags().filter(main.Tags.id == int(_id)):
                     _this_tag = row_to_dict(r_tag)
-                    for _index_repo, _repo in enumerate(selected_repos):
+                    for _index_repo, _repo in enumerate(selected_repos):    # loop through checked repos
                         # _this_repo = row_to_dict(_repo)
 
                         new_tagged_repo = main.TaggedRepos(
@@ -1260,13 +1265,28 @@ class CategorizedTags(Resource):
                             , tagID = _this_tag['nameID']
                             , rollup = _this_tag['rollup']
                             , category = _this_tag['category']
-                            , timestamp = datetime.now()
+                            , timestamp = right_now
                             , status = "True"
                             , taggedBy = username
                         )
-
                         main.session.add(new_tagged_repo)
                         main.session.begin_nested()
+
+                        for r_repo in rs_repos().filter(main.Repos.repoID == _repo['repo_id']):
+                            _this_repo = row_to_dict(r_repo)
+                            print "[1274] _this_repo: %r" % _this_repo
+                            print "[1275] _this_repo['assetID']: %r" % _this_repo['assetID']
+
+                            new_tagged_asset = main.TaggedAssets(
+                                  assetID = _this_repo['assetID']
+                                , tagID = _this_tag['nameID']
+                                , rollup = _this_tag['rollup']
+                                , category = _this_tag['category']
+                                , taggedBy = username
+                                , timestamp = right_now
+                                , status = "True"
+                                , tagMode = tagMode
+                            )
 
             main.session.commit()
             main.session.flush()
@@ -1274,16 +1294,16 @@ class CategorizedTags(Resource):
             # print "[1259] form_fields: %r" % json.dumps(form_fields)
 
             # return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': int(new_entry.id)}}
-            return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': 0}}
+            return {'response': {'method': 'POST', 'result': 'success', 'message': 'New tags applied.', 'class': 'alert alert-success', 'id': 0}}
 
         except (TypeError) as e:
             print ("[TypeError] POST /api/v2/someclass / %s" % e)
             main.session.rollback()
             return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
-        # except (ValueError) as e:
-        #     print ("[ValueError] POST /api/v2/someclass / %s" % e)
-        #     main.session.rollback()
-        #     return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (ValueError) as e:
+            print ("[ValueError] POST /api/v2/someclass / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
         # except (main.IntegrityError) as e:
         #     print ("[IntegrityError] POST /api/v2/someclass / %s" % e)
         #     main.session.rollback()
