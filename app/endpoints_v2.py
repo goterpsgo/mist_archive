@@ -64,6 +64,9 @@ def rs_tagged_repos():
 def rs_assets():
     return main.session.query(main.Assets)
 
+def rs_tagged_assets():
+    return main.session.query(main.TaggedAssets)
+
 # http://stackoverflow.com/a/1960546/6554056
 def row_to_dict(row):
     d = {}
@@ -1251,14 +1254,43 @@ class CategorizedTags(Resource):
             tree_nodes = form_fields['tree_nodes']
             tagMode = form_fields['tagMode']
             selected_repos = form_fields['selected_repos']
+            cardinality = int(form_fields['cardinality'])
             right_now = datetime.now()
 
             for _index_node, _id in enumerate(tree_nodes):  # loop through checked tree nodes
                 for r_tag in rs_tags().filter(main.Tags.id == int(_id)):
                     _this_tag = row_to_dict(r_tag)
-                    for _index_repo, _repo in enumerate(selected_repos):    # loop through checked repos
-                        # _this_repo = row_to_dict(_repo)
 
+                    for _index_repo, _repo in enumerate(selected_repos):    # loop through checked repos
+                        # 1. create tagged_repos handle for further use
+                        handle_tagged_repos = rs_tagged_repos()\
+                            .filter(main.and_
+                                (
+                                      main.TaggedRepos.status == 'True'
+                                    , main.TaggedRepos.repoID == _repo['repo_id']
+                                    , main.TaggedRepos.scID == _repo['sc_id']
+                                    , main.TaggedRepos.category == _this_tag['category']
+                                )
+                            )
+
+                        # 2. Delete tagged assets based on selected repoID, tagID(nameID), and category
+                        for _tagged_repo in handle_tagged_repos:
+                            # pdb.set_trace()
+                            rs_tagged_assets().filter(main.and_
+                                (
+                                      main.TaggedAssets.status == 'True'
+                                    , main.TaggedAssets.tagID == _tagged_repo.tagID
+                                    , main.TaggedAssets.rollup == _tagged_repo.rollup
+                                    , main.TaggedAssets.category == _tagged_repo.category
+                                )
+                            ).delete()
+                            main.session.begin_nested()
+
+                        # once delete is called transaction must actually be run before anything additional can be done
+                        main.session.commit()
+                        main.session.flush()
+
+                        # 3. Insert new tagged repo
                         new_tagged_repo = main.TaggedRepos(
                               repoID = _repo['repo_id']
                             , scID = _repo['sc_id']
@@ -1270,12 +1302,36 @@ class CategorizedTags(Resource):
                             , taggedBy = username
                         )
                         main.session.add(new_tagged_repo)
-                        main.session.begin_nested()
+                        main.session.commit()
+                        main.session.flush()
+
+                        # 4. Delete extra tagged repos
+                        # select earliest set of IDs to be filtered out
+                        # NOTE: .slice() acts as "limit (recordset size) offset cardinality"
+
+                        # used for SQL limit value
+                        num_of_tagged_repos = int(handle_tagged_repos.count())
+
+                        if (num_of_tagged_repos > cardinality):
+                            # Extract IDs of tagged repos to be deleted
+                            tagged_repo_ids = []
+                            for _tagged_repo in handle_tagged_repos\
+                                .order_by(main.TaggedRepos.timestamp.desc())\
+                                .slice(cardinality, num_of_tagged_repos):
+                                tagged_repo_ids.append(int(_tagged_repo.id))
+
+                            # Need to use "synchronize_session='fetch'" when deleting after a "fetch" command
+                            # http://docs.sqlalchemy.org/en/latest/orm/query.html#sqlalchemy.orm.query.Query.delete
+                            handle_tagged_repos.filter(main.TaggedRepos.id.in_(tagged_repo_ids))\
+                                .delete(synchronize_session='fetch')
+
+                            # once delete is called transaction must actually be run before anything additional can be done
+                            main.session.commit()
+                            main.session.flush()
+
 
                         for r_repo in rs_repos().filter(main.Repos.repoID == _repo['repo_id']):
                             _this_repo = row_to_dict(r_repo)
-                            print "[1274] _this_repo: %r" % _this_repo
-                            print "[1275] _this_repo['assetID']: %r" % _this_repo['assetID']
 
                             new_tagged_asset = main.TaggedAssets(
                                   assetID = _this_repo['assetID']
@@ -1287,6 +1343,8 @@ class CategorizedTags(Resource):
                                 , status = "True"
                                 , tagMode = tagMode
                             )
+                            main.session.add(new_tagged_asset)
+                            main.session.begin_nested()
 
             main.session.commit()
             main.session.flush()
