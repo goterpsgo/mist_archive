@@ -5,7 +5,7 @@
         .module('app')
         .controller('Repostag.IndexController', Controller);
 
-    function Controller($scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, ReposService) {
+    function Controller($scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, TaggedReposService, ReposService) {
         var vm = this;
         $scope.tag_definitions = {};
         $scope.assigned_tag_definition = {"value": 23};
@@ -15,16 +15,16 @@
         $scope.profile = {};
         $scope.cardinality = {};
         $scope.assign_repos = [];
-        $scope.form_fields = {'tagMode': 'Repo'};
+        $scope.form_fields = {'tagMode': 'Repo', 'cardinality': 1};
 
         initController();
 
         function initController() {
             get_this_user();
+            get_repos();
             load_tag_definitions();
             load_categorized_tags(26);
             $scope.assigned_tag_definition = 26;
-            get_repos();
         }
 
         function load_tag_definitions() {
@@ -66,6 +66,7 @@
             ;
         }
 
+        // add user-readable names to assigned repos list
         function load_user_assigned_repos() {
             // Add additional information from assign_repos to profile.assign_repos
             for (var _cnt = 0; _cnt < $scope.profile.assign_repos.length; _cnt++) {
@@ -109,7 +110,11 @@
                                   repo.tags['is_checked'] = false;
                                   var selected_repo_entry = {'repo_id': repo.repoID, 'sc_id': repo.scID, 'is_checked': false, 'tags': repo.tags};
                                   $scope.profile.assign_repos.push(selected_repo_entry);
+                                  console.log('[113] tags:');
+                                  console.log(repo.tags);
                               })
+                              console.log('[113] $scope.profile.assign_repos:');
+                              console.log($scope.profile.assign_repos);
                           }
                       }
                     , function(err) {
@@ -122,9 +127,27 @@
             load_categorized_tags($scope.assigned_tag_definition.id);
         }
 
-        $scope.delete_tagging = function(_id) {
-            console.log('[126] id: ' + _id);
-            // get_this_user();
+        $scope.delete_tagging = function(_tagged_repos_id) {
+            TaggedReposService
+                ._delete_taggedrepos(_tagged_repos_id)
+                .then(
+                      function(result) {
+                        $scope.status = result.response;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                )
+                .then(
+                    function() {
+                        get_this_user();    // reload list of user-assigned repos and tags
+                        get_repos();
+                        // clear status message after five seconds
+                        $timeout(function() {
+                            $scope.status = '';
+                        }, 5000);
+                    }
+                );
         }
 
         $scope.submit_auto_tag = function() {
@@ -145,11 +168,14 @@
                 }
             }
             $scope.form_fields['username'] = $scope.profile.username;
+            $scope.form_fields['cardinality'] = $scope.cardinality[$scope.assigned_tag_definition.id];
+
+            console.log($scope.form_fields)
             // console.log($$("tags_tree").getSelectedId());
             // console.log($$("tags_tree").getChecked());
 
-            CategorizedTagsService
-                ._insert_categorizedtags($scope.form_fields)
+            TaggedReposService
+                ._insert_taggedrepos($scope.form_fields)
                 .then(
                       function(result) {
                         $scope.status = result.data.response;
@@ -160,6 +186,8 @@
                 )
                 .then(
                     function() {
+                        get_this_user();    // reload list of user-assigned repos and tags
+                        get_repos();
                         // clear status message after five seconds
                         $timeout(function() {
                             $scope.status = '';
