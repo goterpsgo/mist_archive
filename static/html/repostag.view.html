@@ -7,10 +7,10 @@
     </h3>
     <form ng-submit="submit_auto_tag()">
         <div class="row">
-            <input type="submit" value="Save Update" class="btn btn-primary" style="width: 300px;" /> <span class="{{status.class}}">{{status.result}}: {{status.message}}</span>
+            <input type="submit" value="Save Update" class="btn btn-primary" style="width: 300px; font-size: 18px;" /> <span class="{{status.class}}">{{status.result}}: {{status.message}}</span>
         </div>
         <div class="row">
-            &nbsp;
+
         </div>
         <div class="row">
             <div class="col-md-4">
@@ -38,17 +38,6 @@
                                          height="500"
                                          select="multiselect"
                                     ></div>
-                                    <!--<div webix-ui-->
-                                         <!--id="tags_tree"-->
-                                         <!--webix-event="onSelectChange = do_this(id, details)"-->
-                                         <!--view="tree"-->
-                                         <!--webix-data="treeData"-->
-                                         <!--type="lineTree"-->
-                                         <!--width="430"-->
-                                         <!--height="500"-->
-                                         <!--select="multiselect"-->
-                                         <!--template="{common.icon()} {common.checkbox()} {common.folder()} <span>#value#</span>"-->
-                                    <!--&gt;</div>-->
                                 </td>
                             </tr>
                         </table>
@@ -69,7 +58,7 @@
                         <div ng-repeat="assign_repo in profile.assign_repos track by $index">
                             &nbsp;<h4><input ng-model="assign_repo.is_checked" type="checkbox"> {{assign_repo.server_name}} - {{assign_repo.repo_name}}</h4>
                             <div ng-repeat="tag in assign_repo.tags">
-                                &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger glyphicon glyphicon-trash" ng-click="delete_tagging(tag.id)"></button> {{tag.dname}}
+                                &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger glyphicon glyphicon-trash" ng-click="delete_tagging(tag.tagged_repos_id)"></button> {{tag.dname}}
                             </div>
                         </div>
                     </div>
