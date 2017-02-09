@@ -257,6 +257,7 @@ def create_user_dict(obj_user):
                                 tag = {
                                       'dname': obj_tag.dname
                                     , 'id': obj_tag.id
+                                    , 'tagged_repos_id': obj_tagged_repo.id
                                 }
                                 user['repos'][identifier]['tags'].append(tag)
 
@@ -271,17 +272,6 @@ def create_repo_dict(obj_repo):
         , 'server_name': obj_repo.serverName
     }
     return repo
-
-
-class TodoItem(Resource):
-    def get(self, id):
-        return {'task': 'Say "Hello, World!!!"'}
-
-
-class SecureMe(Resource):
-    @jwt_required()
-    def get(self, id):
-        return {'message': 'You are looking at /secureme: ' + str(id)}
 
 
 # Base class for handling MIST users
@@ -1246,6 +1236,24 @@ class CategorizedTags(Resource):
 
         return jsonify(rs_dict)  # return rs_dict
 
+    # @jwt_required()
+    def post(self):
+        return {'response': {'method': 'POST', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
+
+    # @jwt_required()
+    def put(self, _id):
+        return {'response': {'method': 'PUT', 'result': 'success', 'message': 'No PUT method for this endpoint.', 'class': 'alert alert-warning'}}
+
+    # @jwt_required()
+    def delete(self, _id):
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
+
+
+class TaggedRepos(Resource):
+    # @jwt_required()
+    def get(self, _td_id):
+        return {'response': {'method': 'GET', 'result': 'success', 'message': 'No GET method for this endpoint.', 'class': 'alert alert-warning'}}
+
     @jwt_required()
     def post(self):
         try:
@@ -1261,30 +1269,17 @@ class CategorizedTags(Resource):
                 for r_tag in rs_tags().filter(main.Tags.id == int(_id)):
                     _this_tag = row_to_dict(r_tag)
 
-                    for _index_repo, _repo in enumerate(selected_repos):    # loop through checked repos
+                    for _index_repo, _repo in enumerate(selected_repos):  # loop through checked repos
                         # 1. create tagged_repos handle for further use
-                        handle_tagged_repos = rs_tagged_repos()\
+                        handle_tagged_repos = rs_tagged_repos() \
                             .filter(main.and_
-                                (
-                                      main.TaggedRepos.status == 'True'
-                                    , main.TaggedRepos.repoID == _repo['repo_id']
-                                    , main.TaggedRepos.scID == _repo['sc_id']
-                                    , main.TaggedRepos.category == _this_tag['category']
-                                )
+                            (
+                                  main.TaggedRepos.status == 'True'
+                                , main.TaggedRepos.repoID == _repo['repo_id']
+                                , main.TaggedRepos.scID == _repo['sc_id']
+                                , main.TaggedRepos.category == _this_tag['category']
                             )
-
-                        # 2. Delete tagged assets based on selected repoID, tagID(nameID), and category
-                        for _tagged_repo in handle_tagged_repos:
-                            # pdb.set_trace()
-                            rs_tagged_assets().filter(main.and_
-                                (
-                                      main.TaggedAssets.status == 'True'
-                                    , main.TaggedAssets.tagID == _tagged_repo.tagID
-                                    , main.TaggedAssets.rollup == _tagged_repo.rollup
-                                    , main.TaggedAssets.category == _tagged_repo.category
-                                )
-                            ).delete()
-                            main.session.begin_nested()
+                        )
 
                         # once delete is called transaction must actually be run before anything additional can be done
                         main.session.commit()
@@ -1292,14 +1287,14 @@ class CategorizedTags(Resource):
 
                         # 3. Insert new tagged repo
                         new_tagged_repo = main.TaggedRepos(
-                              repoID = _repo['repo_id']
-                            , scID = _repo['sc_id']
-                            , tagID = _this_tag['nameID']
-                            , rollup = _this_tag['rollup']
-                            , category = _this_tag['category']
-                            , timestamp = right_now
-                            , status = "True"
-                            , taggedBy = username
+                            repoID=_repo['repo_id']
+                            , scID=_repo['sc_id']
+                            , tagID=_this_tag['nameID']
+                            , rollup=_this_tag['rollup']
+                            , category=_this_tag['category']
+                            , timestamp=right_now
+                            , status="True"
+                            , taggedBy=username
                         )
                         main.session.add(new_tagged_repo)
                         main.session.commit()
@@ -1313,67 +1308,100 @@ class CategorizedTags(Resource):
                         num_of_tagged_repos = int(handle_tagged_repos.count())
 
                         if (num_of_tagged_repos > cardinality):
+
                             # Extract IDs of tagged repos to be deleted
                             tagged_repo_ids = []
-                            for _tagged_repo in handle_tagged_repos\
-                                .order_by(main.TaggedRepos.timestamp.desc())\
+                            for _tagged_repo in handle_tagged_repos \
+                                .order_by(main.TaggedRepos.timestamp.desc(), main.TaggedRepos.id.desc()) \
                                 .slice(cardinality, num_of_tagged_repos):
                                 tagged_repo_ids.append(int(_tagged_repo.id))
 
+                                # 5. Delete affiliated assets
+                                rs_tagged_assets().filter(main.and_
+                                        (
+                                              main.TaggedAssets.status == 'True'
+                                            , main.TaggedAssets.tagID == _tagged_repo.tagID
+                                            , main.TaggedAssets.rollup == _tagged_repo.rollup
+                                            , main.TaggedAssets.category == _tagged_repo.category
+                                        )
+                                    ).delete()
+
+                                main.session.commit()
+                                main.session.flush()
+
                             # Need to use "synchronize_session='fetch'" when deleting after a "fetch" command
                             # http://docs.sqlalchemy.org/en/latest/orm/query.html#sqlalchemy.orm.query.Query.delete
-                            handle_tagged_repos.filter(main.TaggedRepos.id.in_(tagged_repo_ids))\
+                            handle_tagged_repos.filter(main.TaggedRepos.id.in_(tagged_repo_ids)) \
                                 .delete(synchronize_session='fetch')
 
                             # once delete is called transaction must actually be run before anything additional can be done
                             main.session.commit()
                             main.session.flush()
 
-
                         for r_repo in rs_repos().filter(main.Repos.repoID == _repo['repo_id']):
                             _this_repo = row_to_dict(r_repo)
 
                             new_tagged_asset = main.TaggedAssets(
-                                  assetID = _this_repo['assetID']
-                                , tagID = _this_tag['nameID']
-                                , rollup = _this_tag['rollup']
-                                , category = _this_tag['category']
-                                , taggedBy = username
-                                , timestamp = right_now
-                                , status = "True"
-                                , tagMode = tagMode
+                                assetID=_this_repo['assetID']
+                                , tagID=_this_tag['nameID']
+                                , rollup=_this_tag['rollup']
+                                , category=_this_tag['category']
+                                , taggedBy=username
+                                , timestamp=right_now
+                                , status="True"
+                                , tagMode=tagMode
                             )
                             main.session.add(new_tagged_asset)
-                            main.session.begin_nested()
+                            main.session.commit()
+                            main.session.flush()
 
-            main.session.commit()
-            main.session.flush()
 
-            # print "[1259] form_fields: %r" % json.dumps(form_fields)
-
-            # return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': int(new_entry.id)}}
-            return {'response': {'method': 'POST', 'result': 'success', 'message': 'New tags applied.', 'class': 'alert alert-success', 'id': 0}}
+            return {'response': {'method': 'POST', 'result': 'success', 'message': 'New tags applied.',
+                                 'class': 'alert alert-success', 'id': 0}}
 
         except (TypeError) as e:
             print ("[TypeError] POST /api/v2/someclass / %s" % e)
             main.session.rollback()
-            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+            return {
+                'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
         except (ValueError) as e:
             print ("[ValueError] POST /api/v2/someclass / %s" % e)
             main.session.rollback()
-            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
-        # except (main.IntegrityError) as e:
-        #     print ("[IntegrityError] POST /api/v2/someclass / %s" % e)
-        #     main.session.rollback()
-        #     return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted something already exists.', 'class': 'alert alert-danger'}}
+            return {
+                'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+            # except (main.IntegrityError) as e:
+            #     print ("[IntegrityError] POST /api/v2/someclass / %s" % e)
+            #     main.session.rollback()
+            #     return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted something already exists.', 'class': 'alert alert-danger'}}
 
     # @jwt_required()
     def put(self, _id):
-        return {'response': {'method': 'PUT', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
+        return {'response': {'method': 'PUT', 'result': 'success', 'message': 'No POST method for this endpoint.',
+                             'class': 'alert alert-warning'}}
 
-    # @jwt_required()
-    def delete(self, _id):
-        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
+    @jwt_required()
+    def delete(self, _tagged_repo_id):
+        print ("[1387] Got here")
+        obj_tagged_repo = rs_tagged_repos().filter(main.TaggedRepos.id == _tagged_repo_id).first()
+        print ("[1389] Got here")
+
+        rs_tagged_assets().filter(
+            main.and_(
+                  main.TaggedAssets.tagID == obj_tagged_repo.tagID
+                , main.TaggedAssets.rollup == obj_tagged_repo.rollup
+                , main.TaggedAssets.category == obj_tagged_repo.category
+                , main.TaggedAssets.status == 'True'
+            )
+        ).delete()
+        main.session.commit()
+        main.session.flush()
+        print ("[1399] Got here")
+        rs_tagged_repos().filter(main.TaggedRepos.id == _tagged_repo_id).delete()
+        print ("[1401] Got here")
+        main.session.commit()
+        main.session.flush()
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Tagged repo item successfully deleted.',
+                             'class': 'alert alert-success', 'id': int(_tagged_repo_id)}}
 
 
 # # Generic model class template
@@ -1449,8 +1477,6 @@ class CategorizedTags(Resource):
 #         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Some item successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
 
 
-api.add_resource(TodoItem, '/todos/<int:id>')
-api.add_resource(SecureMe, '/secureme/<int:id>')
 api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(Signup, '/user/signup')
 api.add_resource(Repos, '/repos')
@@ -1461,3 +1487,4 @@ api.add_resource(MistParams, '/params', '/param/<string:_field_name>/<int:_value
 api.add_resource(TagDefinitions, '/tagdefinitions', '/tagdefinition/<int:_id>')
 api.add_resource(PublishSites, '/publishsites', '/publishsite/<int:_id>')
 api.add_resource(CategorizedTags, '/categorizedtags', '/categorizedtags/<int:_td_id>')
+api.add_resource(TaggedRepos, '/taggedrepos', '/taggedrepos/<int:_tagged_repo_id>')
