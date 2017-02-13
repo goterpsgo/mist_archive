@@ -21,7 +21,7 @@
                 </div>
                 <div class="panel-body">
                     <span ng-if="user.repos !== undefined">
-                        <select ng-model="_form_fields.assign_repos" multiple size="20" style="width: 350px;">
+                        <select ng-model="_form_fields.assign_repos" multiple size="20" style="width: 250px;">
                             <option ng-repeat="_repo in assign_repos" value="{{_repo.repo_id}},{{_repo.sc_id}}">{{_repo.server_name}} {{_repo.repo_name}}</option>
                         </select>
                     </span>

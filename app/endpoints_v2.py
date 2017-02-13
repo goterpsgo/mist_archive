@@ -152,6 +152,13 @@ def create_new_token(request):
     return jwt.jwt_encode_callback(obj_identity)
 
 
+def create_full_tag_dname(_id):
+    obj_tag = rs_tags().filter(main.Tags.id == _id).first()
+    print ("[157] obj_tag.parentID: %r / %r" % (obj_tag.parentID, obj_tag.depth))
+    if (obj_tag is not None):
+        create_full_tag_dname(obj_tag.parentID)
+
+
 def create_user_dict(obj_user):
     # 1. Generate user dict
     user = {
@@ -252,6 +259,9 @@ def create_user_dict(obj_user):
                                 , main.Tags.rollup == obj_tagged_repo.rollup
                               )
                         ).order_by(main.Tags.dname)
+
+                        # TODO: add dname values from parents to list
+                        # affiliate IDs for tags belonging to assigned repos
                         if int(obj_tags.count()) != 0:
                             for obj_tag in obj_tags:
                                 tag = {
@@ -260,6 +270,8 @@ def create_user_dict(obj_user):
                                     , 'tagged_repos_id': obj_tagged_repo.id
                                 }
                                 user['repos'][identifier]['tags'].append(tag)
+
+                                # create_full_tag_dname(obj_tag.id)
 
             user['cnt_repos'] += 1    # if a user has at least one repo assigned then value > 0
     return user
@@ -1281,11 +1293,7 @@ class TaggedRepos(Resource):
                             )
                         )
 
-                        # once delete is called transaction must actually be run before anything additional can be done
-                        main.session.commit()
-                        main.session.flush()
-
-                        # 3. Insert new tagged repo
+                        # 2. Insert new tagged repo
                         new_tagged_repo = main.TaggedRepos(
                             repoID=_repo['repo_id']
                             , scID=_repo['sc_id']
@@ -1300,12 +1308,17 @@ class TaggedRepos(Resource):
                         main.session.commit()
                         main.session.flush()
 
-                        # 4. Delete extra tagged repos
+                        # 3. Mark extra repos as "false"
                         # select earliest set of IDs to be filtered out
                         # NOTE: .slice() acts as "limit (recordset size) offset cardinality"
 
-                        # used for SQL limit value
+                        # Value to be used for SQL limit value
                         num_of_tagged_repos = int(handle_tagged_repos.count())
+
+                        # 5. Mark status of affiliated assets as false for historical purposes
+                        upd_form = {
+                            "status": 'False'
+                        }
 
                         if (num_of_tagged_repos > cardinality):
 
@@ -1314,9 +1327,9 @@ class TaggedRepos(Resource):
                             for _tagged_repo in handle_tagged_repos \
                                 .order_by(main.TaggedRepos.timestamp.desc(), main.TaggedRepos.id.desc()) \
                                 .slice(cardinality, num_of_tagged_repos):
+
                                 tagged_repo_ids.append(int(_tagged_repo.id))
 
-                                # 5. Delete affiliated assets
                                 rs_tagged_assets().filter(main.and_
                                         (
                                               main.TaggedAssets.status == 'True'
@@ -1324,15 +1337,14 @@ class TaggedRepos(Resource):
                                             , main.TaggedAssets.rollup == _tagged_repo.rollup
                                             , main.TaggedAssets.category == _tagged_repo.category
                                         )
-                                    ).delete()
+                                    ).update(upd_form)
 
                                 main.session.commit()
                                 main.session.flush()
 
-                            # Need to use "synchronize_session='fetch'" when deleting after a "fetch" command
-                            # http://docs.sqlalchemy.org/en/latest/orm/query.html#sqlalchemy.orm.query.Query.delete
-                            handle_tagged_repos.filter(main.TaggedRepos.id.in_(tagged_repo_ids)) \
-                                .delete(synchronize_session='fetch')
+                            # Tag all repos with IDs in tagged_repo_ids as false
+                            for _id in tagged_repo_ids:
+                                handle_tagged_repos.filter(main.TaggedRepos.id == _id).update(upd_form)
 
                             # once delete is called transaction must actually be run before anything additional can be done
                             main.session.commit()
@@ -1385,6 +1397,9 @@ class TaggedRepos(Resource):
         obj_tagged_repo = rs_tagged_repos().filter(main.TaggedRepos.id == _tagged_repo_id).first()
         print ("[1389] Got here")
 
+        upd_form = {
+            "status": 'False'
+        }
         rs_tagged_assets().filter(
             main.and_(
                   main.TaggedAssets.tagID == obj_tagged_repo.tagID
@@ -1392,11 +1407,11 @@ class TaggedRepos(Resource):
                 , main.TaggedAssets.category == obj_tagged_repo.category
                 , main.TaggedAssets.status == 'True'
             )
-        ).delete()
+        ).update(upd_form)
         main.session.commit()
         main.session.flush()
         print ("[1399] Got here")
-        rs_tagged_repos().filter(main.TaggedRepos.id == _tagged_repo_id).delete()
+        rs_tagged_repos().filter(main.TaggedRepos.id == _tagged_repo_id).update(upd_form)
         print ("[1401] Got here")
         main.session.commit()
         main.session.flush()
