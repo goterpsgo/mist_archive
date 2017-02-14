@@ -3,15 +3,29 @@
 
     angular
         .module('app')
-        .factory('TagsService', Service);
+        .factory('AssetsService', Service);
 
     function Service($http, $q, __env) {
         var factory = {
-              _insert_taggedrepos: insert_taggedrepos
-            , _delete_taggedrepos: delete_taggedrepos
+              _get_assets: get_assets
         };
 
         return factory;
+
+        function get_assets() {
+            var deferred = $q.defer();
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/assets')
+                .then(
+                    function(response) {
+                        deferred.resolve(response.data);
+                    }
+                    , function(data, status, headers, config) {
+                        // deferred.resolve(response.data.response);
+                        deferred.resolve(JSON.parse('{"response": {"method": "GET", "result": "error", "status": "' + status + '"}}'));
+                    }
+                );
+            return deferred.promise;
+        }
 
         function insert_taggedrepos(form_data) {
             var deferred = $q.defer();
