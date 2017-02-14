@@ -12,9 +12,26 @@
 
         return factory;
 
-        function get_assets() {
+        function get_assets(_params) {
             var deferred = $q.defer();
-            $http.get(__env.api_url + ':' + __env.port + '/api/v2/assets')
+            var config = {
+                headers : {
+                    'Content-Type': 'application/json;charset=utf-8;'
+                }
+            }
+
+            var form_data = {};
+            if (typeof(_params.search_value) !== 'undefined') {
+                form_data.search_value = _params.search_value;
+            }
+            if (typeof(_params.category.value) !== 'undefined') {
+                form_data.category = _params.category.value;
+            }
+            if (typeof(_params.repo.repo_id) !== 'undefined') {
+                form_data.repo = _params.repo.repo_id + ',' + _params.repo.sc_id;
+            }
+
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/assets', form_data, config)
                 .then(
                     function(response) {
                         deferred.resolve(response.data);

@@ -146,6 +146,8 @@
         $scope.load_assets = function() {
             // load_assets();
             console.log('[144] $scope.load_assets');
+            AssetsService
+                ._get_assets($scope.search_form);
         };
 
         $scope.update_search = function() {
