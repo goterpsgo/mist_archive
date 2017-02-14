@@ -1,4 +1,91 @@
-<div class="col-md-6 col-md-offset-3">
-    <h1>Home</h1>
-    <p>Assets Tagging page</p>
+<br />
+<br />
+<br />
+<div class="col-md-12 col-md-offset-0">
+    <h3 class="row">
+        Assets Manual Tagging
+    </h3>
+    <form ng-submit="submit_auto_tag()">
+        <div class="row">
+            <input type="submit" value="Save Update" class="btn btn-primary" style="width: 300px; font-size: 18px;" /> <span class="{{status.class}}">{{status.result}}: {{status.message}}</span>
+        </div>
+        <div class="row">
+
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span style="font-size: 20px;">Titles</span> <img ng-if="vm.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="col-md-10">
+                            <tr>
+                                <td>
+                                    <select class="select2-search" ng-model="assigned_tag_definition" ng-options="_def as _def.title for _def in tag_definitions track by _def.id" size="1" ng-change="load_tags()"></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div webix-ui
+                                         id="tags_tree"
+                                         view="tree"
+                                         webix-data="treeData"
+                                         type="lineTree"
+                                         width="400"
+                                         height="500"
+                                         select="multiselect"
+                                    ></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="panel-footer">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span style="font-size: 20px;">Assets</span>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <table>
+                            <tr>
+                                <td colspan="2"><button type="button" class="btn btn-primary" ng-click="load_assets()">Search Assets</button></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;">Select User Assigned Repos</td>
+                                <td style="padding: 5px;"><select class="select2-search" size="1" style="width: 300px;" ng-model="search_form.repo" ng-options="_assign_repos.server_name + ' ' + _assign_repos.repo_name for _assign_repos in profile.assign_repos track by _assign_repos.repo_id + ',' + _assign_repos.sc_id"></select></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px;">Search By</td>
+                                <td style="padding: 5px;">
+                                    <select class="select2-search" size="1" style="width: 300px;" ng-model="search_form.category" ng-options="_option.text for _option in search_form.category_dropdown track by _option.value" ng-change="update_search()"></select>
+                                    <input class="form-control" type="text" ng-model="search_form.search_value" title="{{search_form.search_description}}">
+                                </td>
+                            </tr>
+                        </table>
+
+
+                        {{assets_list}}
+                    </div>
+                    <div class="panel-footer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row {{status_class}}">
+            {{profile.assign_repos}}
+        </div>
+    </form>
+    <h3 class="row">
+        <!-- any future content here. -->
+    </h3>
 </div>
