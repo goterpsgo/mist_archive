@@ -22,15 +22,17 @@
             , "category_dropdown": [
                   {"value": "-1", "text": "Select Field Type To Search", "desc": "Select Field Type To Search"}
                 , {"value": "assets_ip", "text": "IP", "desc": "IP range could be specified in CIDR format (e.g. 10.11.1.0/24) or Dot format 10.11.1.0-10.11.1.64"}
-                , {"value": "assets_dnsName", "text": "DNS Name", "desc": "Assets (in all repositories) having the specified field containing the search string will be returned.  Search string could contain wild card *."}
-                , {"value": "assets_osCPE", "text": "OS", "desc": "Assets (in all repositories) having the specified field containing the search string will be returned.  Search string could contain wild card *."}
-                , {"value": "assets_macAddress", "text": "MAC Address", "desc": "Assets (in all repositories) having the specified field containing the search string will be returned.  Search string could contain wild card *."}
-                , {"value": "assets_netbiosName", "text": "NetBIOS Name", "desc": "Assets (in all repositories) having the specified field containing the search string will be returned.  Search string could contain wild card *."}
-                , {"value": "assets_biosGUID", "text": "BIOS GUID", "desc": "Assets (in all repositories) having the specified field containing the search string will be returned.  Search string could contain wild card *."}
-                , {"value": "assets_mcafeeGUID", "text": "McAfee GUID", "desc": "Assets (in all repositories) having the specified field containing the search string will be returned.  Search string could contain wild card *."}
-                , {"value": "repos", "text": "Repository", "desc": "Assets in all repositories of which the names containing the search string will be returned.  Search string could contain wild card *."}
+                , {"value": "assets_dnsName", "text": "DNS Name", "desc": "Assets (in all assigned repositories) having the specified field containing the search string will be returned."}
+                , {"value": "assets_osCPE", "text": "OS", "desc": "Assets (in all assigned repositories) having the specified field containing the search string will be returned."}
+                , {"value": "assets_macAddress", "text": "MAC Address", "desc": "Assets (in all assigned repositories) having the specified field containing the search string will be returned."}
+                , {"value": "assets_netbiosName", "text": "NetBIOS Name", "desc": "Assets (in all assigned repositories) having the specified field containing the search string will be returned."}
+                , {"value": "assets_biosGUID", "text": "BIOS GUID", "desc": "Assets (in all assigned repositories) having the specified field containing the search string will be returned."}
+                , {"value": "assets_mcafeeGUID", "text": "McAfee GUID", "desc": "Assets (in all assigned repositories) having the specified field containing the search string will be returned."}
+                , {"value": "repos", "text": "Repository", "desc": "Assets (in all assigned repositories) of which the names containing the search string will be returned."}
               ]
         };
+
+        $scope.assets_list = [];
 
         initController();
 
@@ -121,7 +123,7 @@
 
                           // if there are assigned repos for given user, add .repos[] entries to bound .assign_repos array for dropdown selections
                           if (Object.keys($scope.profile.repos).length > 0) {
-                              $scope.profile.assign_repos = [{"repo_name": "Search All Assigned Repos", "repo_id": -1}];
+                              $scope.profile.assign_repos = [{"repo_name": "Search All Assigned Repos", "repo_id": -1, "sc_id": "-1"}];
                               angular.forEach($scope.profile.repos, function(repo, key) {
                                   repo.tags['is_checked'] = false;
                                   var selected_repo_entry = {'repo_id': repo.repoID, 'sc_id': repo.scID, 'is_checked': false, 'tags': repo.tags};
@@ -144,10 +146,22 @@
         };
 
         $scope.load_assets = function() {
-            // load_assets();
-            console.log('[144] $scope.load_assets');
-            AssetsService
-                ._get_assets($scope.search_form);
+            // console.log('[144] $scope.search_form');
+            // console.log($scope.search_form);
+
+            // Service will not trigger unless a repo is supplied or category and search string are supplied
+            if (($scope.search_form.repo !== undefined) || ($scope.search_form.search_value !== undefined && $scope.search_form.search_value != '' && $scope.search_form.category !== undefined && $scope.search_form.category.value != '-1')) {
+                AssetsService
+                    ._get_assets($scope.search_form)
+                .then(
+                      function(result) {
+                        $scope.assets_list = result.assets_list;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+            }
         };
 
         $scope.update_search = function() {
