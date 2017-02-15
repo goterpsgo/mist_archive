@@ -1433,31 +1433,81 @@ class Assets(Resource):
 
         rs_dict['assets_list'] = assets_list
         return jsonify(rs_dict)  # return rs_dict
-#
-#     @jwt_required()
-#     def post(self):
-#         try:
-#             form_fields = request.get_json(force=True)
-#
-#             new_entry = main.SomeModel(
-#                   name = form_fields['name']
-#                 , description = form_fields['description'] if ("description" in form_fields) else "TBD"
-#                 , defaultValue = form_fields['defaultValue'] if ("defaultValue" in form_fields) else None
-#                 , type = form_fields['type'] if ("type" in form_fields) else "plaintext"
-#                 , cardinality = form_fields['cardinality'] if ("cardinality" in form_fields) else 1
-#                 , timestamp = datetime.now()
-#             )
-#
-#             main.session.add(new_entry)
-#             main.session.commit()
-#             main.session.flush()
-#
-#             return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': int(new_entry.id)}}
-#
-#         except (TypeError) as e:
-#             print ("[TypeError] POST /api/v2/someclass / %s" % e)
-#             main.session.rollback()
-#             return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+
+    @jwt_required()
+    def post(self):
+        try:
+            form_fields = request.get_json(force=True)
+
+            # NOTE: this really should be in the .get() method but I can't figure out how to pass multiple distinct values through an endpoint
+            # and a GET request does not contain data. - JWT 14 Feb 2017
+            if (form_fields['action'] == "search_assets"):
+                rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
+                rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+
+                assets_list = []
+                asset_filters = {}
+
+                # create assets object handle
+                handle_assets = rs_assets()\
+                    .order_by(main.Assets.assetID)
+
+                # category select and free type field
+                if ('search_value' in form_fields):
+                    if (form_fields['category'][:7] == "assets_"):
+                        # TODO: need to handle IP ranges
+                        asset_filters[form_fields['category'][7:]] = form_fields['search_value']
+
+                        # Using a dynamic filter by providing a dict
+                        # http://stackoverflow.com/a/7605366/6554056
+                        handle_assets = handle_assets\
+                            .filter(
+                                getattr(main.Assets, form_fields['category'][7:])
+                                    .like("%"+form_fields['search_value']+"%")
+                            )
+                    else:
+                        handle_assets = handle_assets\
+                            .join(main.Repos, main.Assets.assetID == main.Repos.assetID)\
+                            .filter(
+                                main.Repos.repoName.like("%"+form_fields['search_value']+"%")
+                            )
+
+                # repo ID dropdown
+                if ('repo_id' in form_fields and form_fields["repo_id"] != -1):
+                    handle_assets = handle_assets\
+                        .join(main.Repos, main.Assets.assetID == main.Repos.assetID)\
+                        .filter(
+                            main.and_(main.Repos.repoID == form_fields['repo_id'], main.Repos.scID == form_fields['sc_id'])
+                        )
+
+                for r_asset in handle_assets:
+                    assets_list.append(row_to_dict(r_asset))
+
+                rs_dict['assets_list'] = assets_list
+                return jsonify(rs_dict)  # return rs_dict
+
+            # Handling regular form POST
+            else:
+
+                # new_entry = main.SomeModel(
+                #       name = form_fields['name']
+                #     , description = form_fields['description'] if ("description" in form_fields) else "TBD"
+                #     , defaultValue = form_fields['defaultValue'] if ("defaultValue" in form_fields) else None
+                #     , type = form_fields['type'] if ("type" in form_fields) else "plaintext"
+                #     , cardinality = form_fields['cardinality'] if ("cardinality" in form_fields) else 1
+                #     , timestamp = datetime.now()
+                # )
+                #
+                # main.session.add(new_entry)
+                # main.session.commit()
+                # main.session.flush()
+
+                return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': 1}}
+
+        except (TypeError) as e:
+            print ("[TypeError] POST /api/v2/someclass / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
 #         except (ValueError) as e:
 #             print ("[ValueError] POST /api/v2/someclass / %s" % e)
 #             main.session.rollback()
