@@ -12,6 +12,7 @@
 
         return factory;
 
+        // get_assets should use $http.get() but won't handle multi-field structured data - JWT 15 Feb 2017
         function get_assets(_params) {
             var deferred = $q.defer();
             var config = {
@@ -20,18 +21,19 @@
                 }
             }
 
-            var form_data = {};
-            if (typeof(_params.search_value) !== 'undefined') {
+            var form_data = {'action': 'search_assets'};    // form_data will always have a minimum size of 1 - JWT 15 Feb 2017
+            if (_params.search_value !== undefined) {
                 form_data.search_value = _params.search_value;
             }
-            if (typeof(_params.category.value) !== 'undefined') {
+            if (_params.category !== undefined) {
                 form_data.category = _params.category.value;
             }
-            if (typeof(_params.repo.repo_id) !== 'undefined') {
-                form_data.repo = _params.repo.repo_id + ',' + _params.repo.sc_id;
+            if (_params.repo !== undefined) {
+                form_data.repo_id = _params.repo.repo_id;
+                form_data.sc_id = _params.repo.sc_id;
             }
 
-            $http.get(__env.api_url + ':' + __env.port + '/api/v2/assets', form_data, config)
+            $http.post(__env.api_url + ':' + __env.port + '/api/v2/assets', form_data, config)
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
