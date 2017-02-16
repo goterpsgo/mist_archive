@@ -72,8 +72,9 @@
                             </tr>
                         </table>
 
-
-                        {{assets_list}}
+                        <div ng-repeat="asset in assets_list">
+                            <h4 style="cursor: default;" title="ID: {{asset.assetID}}&#013;OS: {{asset.osCPE}}&#013;macAddress: {{asset.macAddress}}&#013;biosGUID: {{asset.biosGUID}}&#013;Last Publish: {{asset.published}}">{{asset.dnsName}} {{asset.ip}}</h4>
+                        </div>
                     </div>
                     <div class="panel-footer">
 
