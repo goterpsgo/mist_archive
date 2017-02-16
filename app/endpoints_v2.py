@@ -1455,7 +1455,8 @@ class Assets(Resource):
                 # category select and free type field
                 if ('search_value' in form_fields):
                     if (form_fields['category'][:7] == "assets_"):
-                        # TODO: need to handle IP ranges
+                        # TODO: need to handle IP v4/v6 ranges
+                        # https://dev.mysql.com/doc/refman/5.7/en/miscellaneous-functions.html#function_inet-aton
                         asset_filters[form_fields['category'][7:]] = form_fields['search_value']
 
                         # Using a dynamic filter by providing a dict
