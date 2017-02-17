@@ -1459,13 +1459,13 @@ class Assets(Resource):
                         if (form_fields['category'][7:] == "ip"):
                             ip_list = []
                             if ("/" in form_fields['search_value']):    # query IP by CIDR
-                                for item in list(netaddr.IPNetwork(form_fields['search_value']).iter_hosts()):
-                                    ip_list.append(item.format())
+                                for item in list(netaddr.IPNetwork(form_fields['search_value']).iter_hosts()):  # iterate through collection of IPAddress objects
+                                    ip_list.append(item.format())   # .format() extracts address from IPAddress object
                             else:   # assume query IP by range
                                 _first, _last = form_fields['search_value'].split("-")
                                 netaddr.iter_iprange(_first, _last)
-                                for item in netaddr.iter_iprange(_first, _last):
-                                    ip_list.append(item.format())
+                                for item in netaddr.iter_iprange(_first, _last):    # iterate through collection of IPAddress objects
+                                    ip_list.append(item.format())   # .format() extracts address from IPAddress object
                             handle_assets = handle_assets\
                                 .filter(main.Assets.ip.in_(ip_list))
 
