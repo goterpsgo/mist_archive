@@ -10,10 +10,11 @@ from werkzeug.utils import secure_filename
 import base64
 import os
 from datetime import datetime
+from socket import inet_aton, inet_ntoa
+import netaddr
 import config
 import json
 import requests
-import socket
 import pdb
 
 api_endpoints = Blueprint('mist_auth', __name__, url_prefix="/api/v2")
@@ -1454,19 +1455,45 @@ class Assets(Resource):
 
                 # category select and free type field
                 if ('search_value' in form_fields):
-                    if (form_fields['category'][:7] == "assets_"):
-                        # TODO: need to handle IP v4/v6 ranges
-                        # https://dev.mysql.com/doc/refman/5.7/en/miscellaneous-functions.html#function_inet-aton
-                        asset_filters[form_fields['category'][7:]] = form_fields['search_value']
+                    if (form_fields['category'][:7] == "assets_"):  # If search term is an Assets row value...
+                        if (form_fields['category'][7:] == "ip"):
+                            ip_list = []
+                            if ("/" in form_fields['search_value']):    # query IP by CIDR
+                                for item in list(netaddr.IPNetwork(form_fields['search_value']).iter_hosts()):
+                                    ip_list.append(item.format())
+                            else:   # assume query IP by range
+                                _first, _last = form_fields['search_value'].split("-")
+                                netaddr.iter_iprange(_first, _last)
+                                for item in netaddr.iter_iprange(_first, _last):
+                                    ip_list.append(item.format())
+                            handle_assets = handle_assets\
+                                .filter(main.Assets.ip.in_(ip_list))
 
-                        # Using a dynamic filter by providing a dict
-                        # http://stackoverflow.com/a/7605366/6554056
-                        handle_assets = handle_assets\
-                            .filter(
-                                getattr(main.Assets, form_fields['category'][7:])
-                                    .like("%"+form_fields['search_value']+"%")
-                            )
-                    else:
+                            # https://dev.mysql.com/doc/refman/5.7/en/miscellaneous-functions.html#function_inet-aton
+                            # NOTE: the code below should be used when
+                            # 1. MySQL is updated to v5.6 or higher
+                            # 2. an IP column is provided that allows for a
+                            # if ("/" in form_fields['search_value']):    # query IP by CIDR
+                            #     _first_as_int = netaddr.IPNetwork(form_fields['search_value']).first
+                            #     _last_as_int = netaddr.IPNetwork(form_fields['search_value']).last
+                            #     # _ip, _cidr = form_fields['search_value'].split("/")
+                            # else:   # assume query IP by range
+                            #     _first, _last = form_fields['search_value'].split("-")
+                            #     _first_as_int = inet_aton(_first)
+                            #     _last_as_int = inet_aton(_last)
+                            # handle_assets = handle_assets\
+                            #     .filter(main.between(inet_aton(getattr(main.Assets, "ip")), _first_as_int, _last_as_int))
+                        else:
+                            asset_filters[form_fields['category'][7:]] = form_fields['search_value']
+
+                            # Using a dynamic filter by providing a dict
+                            # http://stackoverflow.com/a/7605366/6554056
+                            handle_assets = handle_assets\
+                                .filter(
+                                    getattr(main.Assets, form_fields['category'][7:])
+                                        .like("%"+form_fields['search_value']+"%")
+                                )
+                    else:   # If search term is part of a repo name...
                         handle_assets = handle_assets\
                             .join(main.Repos, main.Assets.assetID == main.Repos.assetID)\
                             .filter(
