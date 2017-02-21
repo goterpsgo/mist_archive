@@ -43,6 +43,9 @@ update Tags t
 set t.tag_definition_id = td.id;
 alter table Tags add constraint foreign key (tag_definition_id) references tagDefinition(id);
 
+create index idx_tags_tag_definition_id on Tags (tag_definition_id);
+create index idx_tags_nameid_rollup on Tags (nameID, rollup);
+create index idx_taggedrepos_scid_repoid_status on taggedRepos (scID, repoID, status);
 
 # # NAME: sp_get_user
 # # INPUT: mistUser id (INT) or username value (VARCHAR) or null
