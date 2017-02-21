@@ -1394,9 +1394,7 @@ class TaggedRepos(Resource):
 
     @jwt_required()
     def delete(self, _tagged_repo_id):
-        print ("[1387] Got here")
         obj_tagged_repo = rs_tagged_repos().filter(main.TaggedRepos.id == _tagged_repo_id).first()
-        print ("[1389] Got here")
 
         upd_form = {
             "status": 'False'
@@ -1411,9 +1409,8 @@ class TaggedRepos(Resource):
         ).update(upd_form)
         main.session.commit()
         main.session.flush()
-        print ("[1399] Got here")
+
         rs_tagged_repos().filter(main.TaggedRepos.id == _tagged_repo_id).update(upd_form)
-        print ("[1401] Got here")
         main.session.commit()
         main.session.flush()
         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Tagged repo item successfully deleted.',
@@ -1509,6 +1506,7 @@ class Assets(Resource):
                         )
 
                 for r_asset in handle_assets:
+                    # Add tags to r_asset
                     assets_list.append(row_to_dict(r_asset))
 
                 rs_dict['assets_list'] = assets_list
@@ -1516,24 +1514,71 @@ class Assets(Resource):
 
             # Handling regular form POST
             else:
+                username = form_fields['username']
+                tree_nodes = form_fields['tree_nodes']
+                tagMode = form_fields['tagMode']
+                selected_assets = form_fields['selected_assets']
+                cardinality = int(form_fields['cardinality'])
+                right_now = datetime.now()
+                _tags = []
 
-                # new_entry = main.SomeModel(
-                #       name = form_fields['name']
-                #     , description = form_fields['description'] if ("description" in form_fields) else "TBD"
-                #     , defaultValue = form_fields['defaultValue'] if ("defaultValue" in form_fields) else None
-                #     , type = form_fields['type'] if ("type" in form_fields) else "plaintext"
-                #     , cardinality = form_fields['cardinality'] if ("cardinality" in form_fields) else 1
-                #     , timestamp = datetime.now()
-                # )
-                #
-                # main.session.add(new_entry)
-                # main.session.commit()
-                # main.session.flush()
+                handle_tags = rs_tags().filter(main.Tags.id.in_(tree_nodes)).order_by(main.Tags.dname)
 
-                return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': 1}}
+                for r_tag in handle_tags:
+                    _tags.append(row_to_dict(r_tag))
+
+                for _index_asset, _asset in enumerate(selected_assets):  # loop through checked assets
+                    for _tag in _tags:
+                        new_tagged_asset = main.TaggedAssets(
+                              assetID = _asset['assetID']
+                            , tagID = _tag['nameID']
+                            , rollup = _tag['rollup']
+                            , category = _tag['category']
+                            , taggedBy = username
+                            , timestamp = right_now
+                            , status = 'True'
+                            , tagMode = tagMode
+                        )
+
+                        main.session.add(new_tagged_asset)
+                        main.session.commit()
+                        main.session.flush()
+
+                        handle_tagged_assets = rs_tagged_assets()\
+                            .filter(
+                                main.and_(
+                                      main.TaggedAssets.assetID == _asset['assetID']
+                                    , main.TaggedAssets.rollup == _tag['rollup']
+                                    , main.TaggedAssets.category == _tag['category']
+                                    , main.TaggedAssets.status == 'True'
+                                )
+                            )
+
+                        num_of_tagged_assets = int(handle_tagged_assets.count())
+
+                        upd_form = {
+                            "status": "False"
+                        }
+
+                        if (num_of_tagged_assets > cardinality):
+                            tagged_asset_ids = []
+                            for _tagged_assets in handle_tagged_assets\
+                                .order_by(main.TaggedAssets.timestamp.desc(), main.TaggedAssets.id.desc())\
+                                .slice(cardinality, num_of_tagged_assets):
+
+                                tagged_asset_ids.append(_tagged_assets.id)
+
+                            rs_tagged_assets()\
+                                .filter(main.TaggedAssets.id.in_(tagged_asset_ids))\
+                                .update(upd_form, synchronize_session='fetch')
+
+                            main.session.commit()
+                            main.session.flush()
+
+                return {'response': {'method': 'POST', 'result': 'success', 'message': 'Asset tagging submitted.', 'class': 'alert alert-success', 'id': 1}}
 
         except (TypeError) as e:
-            print ("[TypeError] POST /api/v2/someclass / %s" % e)
+            print ("[TypeError] POST /api/v2/assets / %s" % e)
             main.session.rollback()
             return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
 #         except (ValueError) as e:
