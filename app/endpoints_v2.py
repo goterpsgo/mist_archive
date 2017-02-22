@@ -1511,6 +1511,23 @@ class Assets(Resource):
                     # Add tags to r_asset
                     assets_list.append(row_to_dict(r_asset))
 
+                for _index_asset, _asset in enumerate(assets_list):
+                    assets_list[_index_asset]["tags"] = {}
+                    for r_tagged_asset in rs_tagged_assets()\
+                        .filter(main.and_(main.TaggedAssets.assetID == _asset['assetID'], main.TaggedAssets.status == 'True')):
+                        _tagged_asset = row_to_dict(r_tagged_asset)
+
+                        for r_tag in rs_tags()\
+                            .filter(
+                                main.and_(
+                                      main.Tags.nameID == r_tagged_asset.tagID
+                                    , main.Tags.category == r_tagged_asset.category
+                                    , main.Tags.rollup == r_tagged_asset.rollup
+                                )
+                            ).all():
+                            _tag = row_to_dict(r_tag)
+                            assets_list[_index_asset]["tags"][r_tagged_asset.id] = _tag
+
                 rs_dict['assets_list'] = assets_list
                 return jsonify(rs_dict)  # return rs_dict
 
