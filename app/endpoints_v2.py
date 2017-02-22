@@ -1594,7 +1594,7 @@ class Assets(Resource):
                             main.session.commit()
                             main.session.flush()
 
-                return {'response': {'method': 'POST', 'result': 'success', 'message': 'Asset tagging submitted.', 'class': 'alert alert-success', 'id': 1}}
+                return {'response': {'method': 'POST', 'result': 'success', 'message': 'Asset tagging applied.', 'class': 'alert alert-success', 'id': 1}}
 
         except (TypeError) as e:
             print ("[TypeError] POST /api/v2/assets / %s" % e)
