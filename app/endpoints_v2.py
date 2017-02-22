@@ -1439,7 +1439,7 @@ class Assets(Resource):
 
             # NOTE: this really should be in the .get() method but I can't figure out how to pass multiple distinct values through an endpoint
             # and a GET request does not contain data. - JWT 14 Feb 2017
-            if (form_fields['action'] == "search_assets"):
+            if ((form_fields['action'] == "search_assets") or ('cardinality' not in form_fields)):
                 rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
                 rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
@@ -1626,12 +1626,12 @@ class Assets(Resource):
 #             main.session.rollback()
 #             return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
 #
-#     @jwt_required()
-#     def delete(self, _id):
-#         main.session.query(main.SomeModel).filter(main.SomeModel.id == _id).delete()
-#         main.session.commit()
-#         main.session.flush()
-#         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Some item successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
+    @jwt_required()
+    def delete(self, _id):
+        main.session.query(main.TaggedAssets).filter(main.TaggedAssets.id == _id).delete()
+        main.session.commit()
+        main.session.flush()
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Some item successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
 
 
 # # Generic model class template
@@ -1718,4 +1718,4 @@ api.add_resource(TagDefinitions, '/tagdefinitions', '/tagdefinition/<int:_id>')
 api.add_resource(PublishSites, '/publishsites', '/publishsite/<int:_id>')
 api.add_resource(CategorizedTags, '/categorizedtags', '/categorizedtags/<int:_td_id>')
 api.add_resource(TaggedRepos, '/taggedrepos', '/taggedrepos/<int:_tagged_repo_id>')
-api.add_resource(Assets, '/assets')
+api.add_resource(Assets, '/assets', '/assets/<int:_id>')
