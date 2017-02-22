@@ -5,4 +5,5 @@ Flask-JWT
 MySQL-python
 uwsgi
 flask-cors
+netaddr
 
