@@ -8,12 +8,15 @@
     function Service($http, $q, __env) {
         var factory = {
               _get_assets: get_assets
+            , _insert_taggedassets: insert_taggedassets
+            , _delete_asset_tag: delete_asset_tag
         };
 
         return factory;
 
         // get_assets should use $http.get() but won't handle multi-field structured data - JWT 15 Feb 2017
         function get_assets(_params) {
+
             var deferred = $q.defer();
             var config = {
                 headers : {
@@ -40,13 +43,13 @@
                     }
                     , function(data, status, headers, config) {
                         // deferred.resolve(response.data.response);
-                        deferred.resolve(JSON.parse('{"response": {"method": "GET", "result": "error", "status": "' + status + '"}}'));
+                        deferred.resolve(JSON.parse('{"response": {"method": "POST", "result": "error", "status": "' + status + '"}}'));
                     }
                 );
             return deferred.promise;
         }
 
-        function insert_taggedrepos(form_data) {
+        function insert_taggedassets(form_data) {
             var deferred = $q.defer();
             var config = {
                 headers : {
@@ -54,9 +57,10 @@
                 }
             }
 
-            $http.post(__env.api_url + ':' + __env.port + '/api/v2/taggedrepos', form_data, config)
-                .then(function(form_data, status, headers, config) {
-                    deferred.resolve(form_data);
+            form_data['action'] = 'tag_assets';    // form_data will always have a minimum size of 1 - JWT 15 Feb 2017
+            $http.post(__env.api_url + ':' + __env.port + '/api/v2/assets', form_data, config)
+                .then(function(response) {
+                    deferred.resolve(response.data);
                 }
                 , function(data, status, headers, config) {
                     // deferred.resolve(response.data.response);
@@ -65,12 +69,12 @@
             return deferred.promise;
         }
 
-        function delete_taggedrepos(_tagged_repo_id) {
+        function delete_asset_tag(_id) {
             var deferred = $q.defer();
 
-            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/taggedrepos/' + _tagged_repo_id)
+            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/assets/' + _id)
                 .then(function(result) {
-                    deferred.resolve(result);
+                    deferred.resolve(result.data);
                 }
                 , function(data, status, headers, config) {
                     // deferred.resolve(response.data.response);

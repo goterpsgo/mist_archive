@@ -5,7 +5,7 @@
     <h3 class="row">
         Assets Manual Tagging
     </h3>
-    <form ng-submit="submit_auto_tag()">
+    <form ng-submit="submit_manual_tag()">
         <div class="row">
             <input type="submit" value="Save Update" class="btn btn-primary" style="width: 300px; font-size: 18px;" /> <span class="{{status.class}}">{{status.result}}: {{status.message}}</span>
         </div>
@@ -17,7 +17,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            <span style="font-size: 20px;">Titles</span> <img ng-if="vm.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                            <span style="font-size: 20px;">Tags</span> <img ng-if="vm.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
                         </h3>
                     </div>
                     <div class="panel-body">
@@ -72,9 +72,17 @@
                             </tr>
                         </table>
 
-                        <div ng-repeat="asset in assets_list">
-                            <h4 style="cursor: default;" title="ID: {{asset.assetID}}&#013;OS: {{asset.osCPE}}&#013;macAddress: {{asset.macAddress}}&#013;biosGUID: {{asset.biosGUID}}&#013;Last Publish: {{asset.published}}">{{asset.dnsName}} {{asset.ip}}</h4>
-                        </div>
+                        <table class="table table-hover">
+                            <tr ng-repeat="asset in assets_list">
+                                <td>
+                                    <input type="checkbox" ng-model="asset.is_checked"> <span style="cursor: default;" title="ID: {{asset.assetID}}&#013;OS: {{asset.osCPE}}&#013;macAddress: {{asset.macAddress}}&#013;biosGUID: {{asset.biosGUID}}&#013;Last Publish: {{asset.published}}">{{asset.dnsName}} ({{asset.ip}})</span>
+                                    <div ng-repeat="(key, tag) in asset.tags">
+                                        &nbsp;<button ng-click="delete_tagging(key)" class="btn btn-danger glyphicon glyphicon-trash" title="Delete Asset Tag"></button> {{tag.dname}}
+                                    </div>
+                                    <br />
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                     <div class="panel-footer">
 
