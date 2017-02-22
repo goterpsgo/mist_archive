@@ -146,9 +146,10 @@
         };
 
         $scope.load_assets = function() {
-            // console.log('[144] $scope.search_form');
-            // console.log($scope.search_form);
+            load_assets();
+        };
 
+        function load_assets() {
             // Service will not trigger unless a repo is supplied or category and search string are supplied
             if (($scope.search_form.repo !== undefined) || ($scope.search_form.search_value !== undefined && $scope.search_form.search_value != '' && $scope.search_form.category !== undefined && $scope.search_form.category.value != '-1')) {
                 AssetsService
@@ -162,16 +163,16 @@
                       }
                 );
             }
-        };
+        }
 
         $scope.update_search = function() {
             // load_assets();
             $scope.search_form.search_description = $scope.search_form.category.desc;
         };
 
-        $scope.delete_tagging = function(_tagged_repos_id) {
-            TaggedReposService
-                ._delete_taggedrepos(_tagged_repos_id)
+        $scope.delete_tagging = function(_id) {
+            AssetsService
+                ._delete_asset_tag(_id)
                 .then(
                       function(result) {
                         $scope.status = result.response;
@@ -182,8 +183,7 @@
                 )
                 .then(
                     function() {
-                        get_this_user();    // reload list of user-assigned repos and tags
-                        get_repos();
+                        load_assets();
                         // clear status message after five seconds
                         $timeout(function() {
                             $scope.status = '';
@@ -201,14 +201,15 @@
                 $scope.form_fields['tree_nodes'].push($$("tags_tree").getSelectedId());
             }
 
-            $scope.form_fields['selected_repos'] = [];
-            for (var _cnt = 0; _cnt < $scope.profile.assign_repos.length; _cnt++) {
-                if ($scope.profile.assign_repos[_cnt].is_checked == true) {
-                    $scope.form_fields['selected_repos'].push(
-                        {'sc_id': $scope.profile.assign_repos[_cnt].sc_id, 'repo_id': $scope.profile.assign_repos[_cnt].repo_id}
+            $scope.form_fields['selected_assets'] = [];
+            for (var _cnt = 0; _cnt < $scope.assets_list.length; _cnt++) {
+                if ($scope.assets_list[_cnt].is_checked == true) {
+                    $scope.form_fields['selected_assets'].push(
+                        {'assetID': $scope.assets_list[_cnt].assetID, 'ip': $scope.assets_list[_cnt].ip}
                     );
                 }
             }
+            $scope.form_fields['tagMode'] = 'Manual';
             $scope.form_fields['username'] = $scope.profile.username;
             $scope.form_fields['cardinality'] = $scope.cardinality[$scope.assigned_tag_definition.id];
 
@@ -216,11 +217,11 @@
             // console.log($$("tags_tree").getSelectedId());
             // console.log($$("tags_tree").getChecked());
 
-            TaggedReposService
-                ._insert_taggedrepos($scope.form_fields)
+            AssetsService
+                ._insert_taggedassets($scope.form_fields)
                 .then(
                       function(result) {
-                        $scope.status = result.data.response;
+                        $scope.status = result.response;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
@@ -228,7 +229,7 @@
                 )
                 .then(
                     function() {
-                        get_this_user();    // reload list of user-assigned repos and tags
+                        load_assets();
                         get_repos();
                         // clear status message after five seconds
                         $timeout(function() {
