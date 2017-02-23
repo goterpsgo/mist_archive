@@ -5,7 +5,7 @@
         .module('app')
         .controller('Repostag.IndexController', Controller);
 
-    function Controller($scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, TaggedReposService, ReposService) {
+    function Controller($scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, TaggedReposService, ReposService, $mdDialog) {
         var vm = this;
         $scope.tag_definitions = {};
         $scope.assigned_tag_definition = {"value": 23};
@@ -16,6 +16,7 @@
         $scope.cardinality = {};
         $scope.assign_repos = [];
         $scope.form_fields = {'tagMode': 'Repo', 'cardinality': 1};
+        $scope.rollup_track_by_repo = {};
 
         initController();
 
@@ -98,6 +99,7 @@
 
         function get_this_user() {
             var username = $localStorage.currentUser.username;
+            $scope.rollup_track_by_repo = {};
             MistUsersService._get_user(username)
                 .then(
                       function(user) {
@@ -110,11 +112,17 @@
                                   repo.tags['is_checked'] = false;
                                   var selected_repo_entry = {'repo_id': repo.repoID, 'sc_id': repo.scID, 'is_checked': false, 'tags': repo.tags};
                                   $scope.profile.assign_repos.push(selected_repo_entry);
-                                  console.log('[113] tags:');
-                                  console.log(repo.tags);
+
+                                  if (($scope.rollup_track_by_repo[key] == undefined) && (repo.tags.length > 0)) {
+                                      $scope.rollup_track_by_repo[key] = [];
+                                  }
+
+                                  if (repo.tags.length > 0) {
+                                      for (var _cnt_rollup = 0; _cnt_rollup < repo.tags.length; _cnt_rollup++) {
+                                          $scope.rollup_track_by_repo[key].push(repo.tags[_cnt_rollup].rollup);
+                                      }
+                                  }
                               })
-                              console.log('[113] $scope.profile.assign_repos:');
-                              console.log($scope.profile.assign_repos);
                           }
                       }
                     , function(err) {
@@ -150,7 +158,7 @@
                 );
         }
 
-        $scope.submit_auto_tag = function() {
+        function auto_tag() {
             $scope.form_fields['tree_nodes'] = [];
             if ($$("tags_tree").getSelectedId() instanceof Array) {
                 $scope.form_fields['tree_nodes'] = $$("tags_tree").getSelectedId();
@@ -169,10 +177,6 @@
             }
             $scope.form_fields['username'] = $scope.profile.username;
             $scope.form_fields['cardinality'] = $scope.cardinality[$scope.assigned_tag_definition.id];
-
-            console.log($scope.form_fields)
-            // console.log($$("tags_tree").getSelectedId());
-            // console.log($$("tags_tree").getChecked());
 
             TaggedReposService
                 ._insert_taggedrepos($scope.form_fields)
@@ -194,6 +198,49 @@
                         }, 5000);
                     }
                 );
+        }
+
+        $scope.submit_auto_tag = function() {
+            if ($scope.assigned_tag_definition.cardinality > 1) {
+                auto_tag();
+            }
+            else {
+                // note all checked off repos and save them to _checked_repos
+                var _checked_repos = [];
+                for (var _cnt = 0; _cnt < $scope.profile.assign_repos.length; _cnt++) {
+                    if ($scope.profile.assign_repos[_cnt].is_checked == true) {
+                        var _repo = $scope.profile.assign_repos[_cnt];
+                        _checked_repos.push(_repo.server_name+','+_repo.repo_name+','+_repo.repo_id+','+_repo.sc_id);
+                    }
+                }
+
+                // if one or more checked repo is in list of repo with tags then mark found_key as true
+                var found_key = false;
+                for (var _cnt = 0; _cnt < _checked_repos.length; _cnt++) {
+                    var _checked_repo = _checked_repos[_cnt];
+                    if ($scope.rollup_track_by_repo[_checked_repo] != undefined) {
+                        found_key = true;
+                    }
+                }
+
+                // print user confirm modal window
+                if (found_key) {
+                    var confirm = $mdDialog.confirm()
+                        .title('Overwrite current tags?')
+                        .textContent('You have selected a tag category with a cardinality of 1. You have selected one more more repos already associated wtih a tag of that category. Overwrite entry?')
+                        .ok('Replace Current Tag')
+                        .cancel('Cancel Operation');
+
+                    $mdDialog.show(confirm).then(function() {
+                        auto_tag();
+                    }, function() {
+                        console.log('Cancel Operation');
+                    });
+                }
+                else {
+                    auto_tag();
+                }
+            }
         }
     }
 })();

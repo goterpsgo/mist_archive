@@ -8,7 +8,7 @@
     }
 
     angular
-        .module('app', ['ui.router', 'ngMessages', 'ngStorage', 'ngAnimate', 'ngTouch', 'ui.bootstrap', 'satellizer', 'ngFileUpload', 'webix'])
+        .module('app', ['ui.router', 'ngMessages', 'ngStorage', 'ngAnimate', 'ngTouch', 'ui.bootstrap', 'satellizer', 'ngFileUpload', 'webix', 'ngMaterial'])
         .config(config)
         .constant('__env', env)
         .run(run);
