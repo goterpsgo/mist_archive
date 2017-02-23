@@ -268,6 +268,8 @@ def create_user_dict(obj_user):
                                 tag = {
                                       'dname': obj_tag.dname
                                     , 'id': obj_tag.id
+                                    , 'rollup': obj_tag.rollup
+                                    , 'category': obj_tag.category
                                     , 'tagged_repos_id': obj_tagged_repo.id
                                 }
                                 user['repos'][identifier]['tags'].append(tag)
