@@ -1278,7 +1278,7 @@ class TaggedRepos(Resource):
             cardinality = int(form_fields['cardinality'])
             right_now = datetime.now()
 
-            if (len(tree_nodes) < cardinality):
+            if (len(tree_nodes) <= cardinality):
                 for _index_node, _id in enumerate(tree_nodes):  # loop through checked tree nodes
                     for r_tag in rs_tags().filter(main.Tags.id == int(_id)):
                         _this_tag = row_to_dict(r_tag)
@@ -1544,7 +1544,7 @@ class Assets(Resource):
                 right_now = datetime.now()
                 _tags = []
 
-                if (len(tree_nodes) < cardinality):
+                if (len(tree_nodes) <= cardinality):
                     handle_tags = rs_tags().filter(main.Tags.id.in_(tree_nodes)).order_by(main.Tags.dname)
 
                     for r_tag in handle_tags:
