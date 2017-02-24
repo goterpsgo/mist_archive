@@ -1324,37 +1324,42 @@ class TaggedRepos(Resource):
                                 "status": 'False'
                             }
 
-                            if (num_of_tagged_repos > cardinality):
+                            # if (num_of_tagged_repos > cardinality):
 
-                                # Extract IDs of tagged repos to be deleted
-                                tagged_repo_ids = []
-                                for _tagged_repo in handle_tagged_repos \
-                                    .order_by(main.TaggedRepos.timestamp.desc(), main.TaggedRepos.id.desc()) \
-                                    .slice(cardinality, num_of_tagged_repos):
+                            # Extract IDs of tagged repos to be deleted
+                            tagged_repo_ids = []
+                            for _tagged_repo in handle_tagged_repos \
+                                .order_by(main.TaggedRepos.timestamp.desc(), main.TaggedRepos.id.desc()) \
+                                .slice(cardinality, num_of_tagged_repos):
 
-                                    tagged_repo_ids.append(int(_tagged_repo.id))
+                                tagged_repo_ids.append(int(_tagged_repo.id))
 
-                                    rs_tagged_assets().filter(main.and_
-                                            (
-                                                  main.TaggedAssets.status == 'True'
-                                                , main.TaggedAssets.tagID == _tagged_repo.tagID
-                                                , main.TaggedAssets.rollup == _tagged_repo.rollup
-                                                , main.TaggedAssets.category == _tagged_repo.category
-                                            )
-                                        ).update(upd_form)
+                                rs_tagged_assets().filter(main.and_
+                                        (
+                                              main.TaggedAssets.status == 'True'
+                                            , main.TaggedAssets.tagID == _tagged_repo.tagID
+                                            , main.TaggedAssets.rollup == _tagged_repo.rollup
+                                            , main.TaggedAssets.category == _tagged_repo.category
+                                        )
+                                    ).update(upd_form)
 
-                                    main.session.commit()
-                                    main.session.flush()
-
-                                # Tag all repos with IDs in tagged_repo_ids as false
-                                for _id in tagged_repo_ids:
-                                    handle_tagged_repos.filter(main.TaggedRepos.id == _id).update(upd_form)
-
-                                # once delete is called transaction must actually be run before anything additional can be done
                                 main.session.commit()
                                 main.session.flush()
 
-                            for r_repo in rs_repos().filter(main.Repos.repoID == _repo['repo_id']):
+                            # Tag all repos with IDs in tagged_repo_ids as false
+                            for _id in tagged_repo_ids:
+                                handle_tagged_repos.filter(main.TaggedRepos.id == _id).update(upd_form)
+
+                            # once delete is called transaction must actually be run before anything additional can be done
+                            main.session.commit()
+                            main.session.flush()
+
+                            for r_repo in rs_repos().filter(
+                                main.and_(
+                                      main.Repos.repoID == _repo['repo_id']
+                                    , main.Repos.scID == _repo['sc_id']
+                                )
+                            ):
                                 _this_repo = row_to_dict(r_repo)
 
                                 new_tagged_asset = main.TaggedAssets(
@@ -1378,12 +1383,12 @@ class TaggedRepos(Resource):
 
 
         except (TypeError) as e:
-            print ("[TypeError] POST /api/v2/someclass / %s" % e)
+            print ("[TypeError] POST /api/v2/taggedrepos / %s" % e)
             main.session.rollback()
             return {
                 'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
         except (ValueError) as e:
-            print ("[ValueError] POST /api/v2/someclass / %s" % e)
+            print ("[ValueError] POST /api/v2/taggedrepos / %s" % e)
             main.session.rollback()
             return {
                 'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
@@ -1585,20 +1590,20 @@ class Assets(Resource):
                                 "status": "False"
                             }
 
-                            if (num_of_tagged_assets > cardinality):
-                                tagged_asset_ids = []
-                                for _tagged_assets in handle_tagged_assets\
-                                    .order_by(main.TaggedAssets.timestamp.desc(), main.TaggedAssets.id.desc())\
-                                    .slice(cardinality, num_of_tagged_assets):
+                            # if (num_of_tagged_assets > cardinality):
+                            tagged_asset_ids = []
+                            for _tagged_assets in handle_tagged_assets\
+                                .order_by(main.TaggedAssets.timestamp.desc(), main.TaggedAssets.id.desc())\
+                                .slice(cardinality, num_of_tagged_assets):
 
-                                    tagged_asset_ids.append(_tagged_assets.id)
+                                tagged_asset_ids.append(_tagged_assets.id)
 
-                                rs_tagged_assets()\
-                                    .filter(main.TaggedAssets.id.in_(tagged_asset_ids))\
-                                    .update(upd_form, synchronize_session='fetch')
+                            rs_tagged_assets()\
+                                .filter(main.TaggedAssets.id.in_(tagged_asset_ids))\
+                                .update(upd_form, synchronize_session='fetch')
 
-                                main.session.commit()
-                                main.session.flush()
+                            main.session.commit()
+                            main.session.flush()
 
                     return {'response': {'method': 'POST', 'result': 'success', 'message': 'Asset tagging applied.', 'class': 'alert alert-success', 'id': 1}}
                 else:
