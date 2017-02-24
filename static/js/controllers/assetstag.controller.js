@@ -5,7 +5,7 @@
         .module('app')
         .controller('Assetstag.IndexController', Controller);
 
-    function Controller($scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, TaggedReposService, ReposService, AssetsService) {
+    function Controller($scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, TaggedReposService, ReposService, AssetsService, $mdDialog) {
         var vm = this;
         $scope.tag_definitions = {};
         $scope.assigned_tag_definition = {"value": 23};
@@ -31,6 +31,7 @@
                 , {"value": "repos", "text": "Repository", "desc": "Assets (in all assigned repositories) of which the names containing the search string will be returned."}
               ]
         };
+        $scope.rollup_track_by_asset = {};
 
         $scope.assets_list = [];
 
@@ -116,6 +117,7 @@
 
         function get_this_user() {
             var username = $localStorage.currentUser.username;
+            $scope.rollup_track_by_asset = {};
             MistUsersService._get_user(username)
                 .then(
                       function(user) {
@@ -128,11 +130,7 @@
                                   repo.tags['is_checked'] = false;
                                   var selected_repo_entry = {'repo_id': repo.repoID, 'sc_id': repo.scID, 'is_checked': false, 'tags': repo.tags};
                                   $scope.profile.assign_repos.push(selected_repo_entry);
-                                  console.log('[113] tags:');
-                                  console.log(repo.tags);
                               })
-                              console.log('[113] $scope.profile.assign_repos:');
-                              console.log($scope.profile.assign_repos);
                           }
                       }
                     , function(err) {
@@ -157,6 +155,18 @@
                 .then(
                       function(result) {
                         $scope.assets_list = result.assets_list;
+
+                        for (var _cnt_assets = 0; _cnt_assets < $scope.assets_list.length; _cnt_assets++) {
+                            var _asset = $scope.assets_list[_cnt_assets];
+                            if (($scope.rollup_track_by_asset[_asset.assetID] == undefined) && (Object.keys(_asset.tags).length > 0)) {
+                                $scope.rollup_track_by_asset[_asset.assetID] = []
+                            }
+                            if ((Object.keys(_asset.tags).length > 0)) {
+                                angular.forEach(_asset.tags, function(tag, key) {
+                                    $scope.rollup_track_by_asset[_asset.assetID].push(_asset.tags[key].rollup);
+                                })
+                            }
+                        }
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
@@ -190,9 +200,9 @@
                         }, 5000);
                     }
                 );
-        }
+        };
 
-        $scope.submit_manual_tag = function() {
+        function manual_tag() {
             $scope.form_fields['tree_nodes'] = [];
             if ($$("tags_tree").getSelectedId() instanceof Array) {
                 $scope.form_fields['tree_nodes'] = $$("tags_tree").getSelectedId();
@@ -213,7 +223,6 @@
             $scope.form_fields['username'] = $scope.profile.username;
             $scope.form_fields['cardinality'] = $scope.cardinality[$scope.assigned_tag_definition.id];
 
-            console.log($scope.form_fields)
             // console.log($$("tags_tree").getSelectedId());
             // console.log($$("tags_tree").getChecked());
 
@@ -237,6 +246,50 @@
                         }, 5000);
                     }
                 );
+        }
+
+        $scope.submit_manual_tag = function() {
+            if ($scope.assigned_tag_definition.cardinality > 1) {
+                manual_tag();
+            }
+            else {
+                // note all checked off assets and save them to _checked_assets
+                var _checked_assets = [];
+                for (var _cnt = 0; _cnt < $scope.assets_list.length; _cnt++) {
+                    if ($scope.assets_list[_cnt].is_checked == true) {
+                        var _asset = $scope.assets_list[_cnt].assetID;
+                        _checked_assets.push(_asset);
+                    }
+                }
+
+                // if one or more checked repo is in list of repo with tags then mark found_key as true
+                var found_key = false;
+                for (var _cnt = 0; _cnt < _checked_assets.length; _cnt++) {
+                    var _checked_asset = _checked_assets[_cnt];
+                    if ($scope.rollup_track_by_asset[_checked_asset] != undefined) {
+                        found_key = true;
+                        break;
+                    }
+                }
+
+                // print user confirm modal window
+                if (found_key) {
+                    var confirm = $mdDialog.confirm()
+                        .title('Overwrite current tags?')
+                        .textContent('You have selected a tag category with a cardinality of 1. You have selected one more more assets already associated wtih a tag of that category. Overwrite entry?')
+                        .ok('Replace Current Tag')
+                        .cancel('Cancel Operation');
+
+                    $mdDialog.show(confirm).then(function() {
+                        manual_tag();
+                    }, function() {
+                        console.log('Cancel Operation');
+                    });
+                }
+                else {
+                    manual_tag();
+                }
+            }
         }
     }
 })();
