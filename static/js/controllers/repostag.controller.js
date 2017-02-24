@@ -220,6 +220,7 @@
                     var _checked_repo = _checked_repos[_cnt];
                     if ($scope.rollup_track_by_repo[_checked_repo] != undefined) {
                         found_key = true;
+                        break;
                     }
                 }
 
