@@ -120,7 +120,6 @@
                 .then(
                       function(repos) {
                           $scope.assign_repos = repos.repos_list;
-                          console.log('[104]');
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
