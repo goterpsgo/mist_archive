@@ -5,7 +5,7 @@
         .module('app')
         .controller('Assetstag.IndexController', Controller);
 
-    function Controller($scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, TaggedReposService, ReposService, AssetsService, $mdDialog) {
+    function Controller($q, $scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, TaggedReposService, ReposService, AssetsService, $mdDialog) {
         var vm = this;
         $scope.tag_definitions = {};
         $scope.assigned_tag_definition = {"value": 23};
@@ -20,8 +20,7 @@
         $scope.search_form = {
               "search_description": "Search Category Description"
             , "category_dropdown": [
-                  {"value": "-1", "text": "Select Field Type To Search", "desc": "Select Field Type To Search"}
-                , {"value": "assets_ip", "text": "IP", "desc": "IP range could be specified in CIDR format (e.g. 10.11.1.0/24) or Dot format 10.11.1.0-10.11.1.64"}
+                  {"value": "assets_ip", "text": "IP", "desc": "IP range could be specified in CIDR format (e.g. 10.11.1.0/24) or Dot format 10.11.1.0-10.11.1.64"}
                 , {"value": "assets_dnsName", "text": "DNS Name", "desc": "Assets (in all assigned repositories) having the specified field containing the search string will be returned."}
                 , {"value": "assets_osCPE", "text": "OS", "desc": "Assets (in all assigned repositories) having the specified field containing the search string will be returned."}
                 , {"value": "assets_macAddress", "text": "MAC Address", "desc": "Assets (in all assigned repositories) having the specified field containing the search string will be returned."}
@@ -31,6 +30,7 @@
                 , {"value": "repos", "text": "Repository", "desc": "Assets (in all assigned repositories) of which the names containing the search string will be returned."}
               ]
         };
+        $scope.search_form.category = {};
         $scope.rollup_track_by_asset = {};
 
         $scope.assets_list = [];
@@ -38,11 +38,26 @@
         initController();
 
         function initController() {
-            get_this_user();
-            get_repos();
-            load_tag_definitions();
-            load_categorized_tags(26);
-            $scope.assigned_tag_definition = 26;
+            var deferred = $q.defer();
+            var promise = deferred.promise;
+
+            promise
+                .then(function(val) {
+                    get_this_user();
+                })
+                .then(function(val) {
+                    get_repos();
+                })
+                .then(function(val) {
+                    load_tag_definitions();
+                })
+                .then(function(val) {
+                    load_categorized_tags(26);
+                })
+            ;
+
+            deferred.resolve();
+            $scope.search_form.category = $scope.search_form.category_dropdown[0];
         }
 
         function load_tag_definitions() {
@@ -55,6 +70,7 @@
                         for (var _cnt = 0; _cnt < $scope.tag_definitions.length; _cnt++) {
                             $scope.cardinality[$scope.tag_definitions[_cnt]['id']] = $scope.tag_definitions[_cnt]['cardinality'];
                         }
+                        $scope.assigned_tag_definition = $scope.tag_definitions[5];
                         vm.loading = false;
                       }
                     , function(err) {
@@ -115,6 +131,32 @@
                 });
         }
 
+        function load_assets() {
+            // Service will not trigger unless a repo is supplied or category and search string are supplied
+            AssetsService
+                ._get_assets($scope.search_form)
+            .then(
+                  function(result) {
+                    $scope.assets_list = result.assets_list;
+
+                    for (var _cnt_assets = 0; _cnt_assets < $scope.assets_list.length; _cnt_assets++) {
+                        var _asset = $scope.assets_list[_cnt_assets];
+                        if (($scope.rollup_track_by_asset[_asset.assetID] == undefined) && (Object.keys(_asset.tags).length > 0)) {
+                            $scope.rollup_track_by_asset[_asset.assetID] = []
+                        }
+                        if ((Object.keys(_asset.tags).length > 0)) {
+                            angular.forEach(_asset.tags, function(tag, key) {
+                                $scope.rollup_track_by_asset[_asset.assetID].push(_asset.tags[key].rollup);
+                            })
+                        }
+                    }
+                  }
+                , function(err) {
+                    $scope.status = 'Error loading data: ' + err.message;
+                  }
+            );
+        }
+
         function get_this_user() {
             var username = $localStorage.currentUser.username;
             $scope.rollup_track_by_asset = {};
@@ -125,12 +167,14 @@
 
                           // if there are assigned repos for given user, add .repos[] entries to bound .assign_repos array for dropdown selections
                           if (Object.keys($scope.profile.repos).length > 0) {
-                              $scope.profile.assign_repos = [{"repo_name": "Search All Assigned Repos", "repo_id": -1, "sc_id": "-1"}];
+                              $scope.profile.assign_repos = [];
                               angular.forEach($scope.profile.repos, function(repo, key) {
                                   repo.tags['is_checked'] = false;
                                   var selected_repo_entry = {'repo_id': repo.repoID, 'sc_id': repo.scID, 'is_checked': false, 'tags': repo.tags};
                                   $scope.profile.assign_repos.push(selected_repo_entry);
-                              })
+                              });
+                              $scope.search_form.repo = $scope.profile.assign_repos[0];
+                              load_assets();
                           }
                       }
                     , function(err) {
@@ -146,34 +190,6 @@
         $scope.load_assets = function() {
             load_assets();
         };
-
-        function load_assets() {
-            // Service will not trigger unless a repo is supplied or category and search string are supplied
-            if (($scope.search_form.repo !== undefined) || ($scope.search_form.search_value !== undefined && $scope.search_form.search_value != '' && $scope.search_form.category !== undefined && $scope.search_form.category.value != '-1')) {
-                AssetsService
-                    ._get_assets($scope.search_form)
-                .then(
-                      function(result) {
-                        $scope.assets_list = result.assets_list;
-
-                        for (var _cnt_assets = 0; _cnt_assets < $scope.assets_list.length; _cnt_assets++) {
-                            var _asset = $scope.assets_list[_cnt_assets];
-                            if (($scope.rollup_track_by_asset[_asset.assetID] == undefined) && (Object.keys(_asset.tags).length > 0)) {
-                                $scope.rollup_track_by_asset[_asset.assetID] = []
-                            }
-                            if ((Object.keys(_asset.tags).length > 0)) {
-                                angular.forEach(_asset.tags, function(tag, key) {
-                                    $scope.rollup_track_by_asset[_asset.assetID].push(_asset.tags[key].rollup);
-                                })
-                            }
-                        }
-                      }
-                    , function(err) {
-                        $scope.status = 'Error loading data: ' + err.message;
-                      }
-                );
-            }
-        }
 
         $scope.update_search = function() {
             // load_assets();

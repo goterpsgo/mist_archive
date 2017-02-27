@@ -5,7 +5,7 @@
         .module('app')
         .controller('Repostag.IndexController', Controller);
 
-    function Controller($scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, TaggedReposService, ReposService, $mdDialog) {
+    function Controller($q, $scope, $timeout, $localStorage, MistUsersService, TagDefinitionsService, CategorizedTagsService, TaggedReposService, ReposService, $mdDialog) {
         var vm = this;
         $scope.tag_definitions = {};
         $scope.assigned_tag_definition = {"value": 23};
@@ -21,11 +21,25 @@
         initController();
 
         function initController() {
-            get_this_user();
-            get_repos();
-            load_tag_definitions();
-            load_categorized_tags(26);
-            $scope.assigned_tag_definition = 26;
+            var deferred = $q.defer();
+            var promise = deferred.promise;
+
+            promise
+                .then(function(val) {
+                    get_this_user();
+                })
+                .then(function(val) {
+                    get_repos();
+                })
+                .then(function(val) {
+                    load_tag_definitions();
+                })
+                .then(function(val) {
+                    load_categorized_tags(26);
+                })
+            ;
+
+            deferred.resolve();
         }
 
         function load_tag_definitions() {
@@ -38,6 +52,7 @@
                         for (var _cnt = 0; _cnt < $scope.tag_definitions.length; _cnt++) {
                             $scope.cardinality[$scope.tag_definitions[_cnt]['id']] = $scope.tag_definitions[_cnt]['cardinality'];
                         }
+                        $scope.assigned_tag_definition = $scope.tag_definitions[5];
                         vm.loading = false;
                       }
                     , function(err) {
@@ -45,6 +60,7 @@
                         vm.loading = false;
                       }
                 );
+            // $scope.assigned_tag_definition = $scope.tag_definitions[5];
         }
 
         function load_categorized_tags(_id) {
