@@ -12,7 +12,7 @@
 
         return factory;
 
-        function get_repopublishtim() {
+        function get_repopublishtimes() {
             var deferred = $q.defer();
             $http.get(__env.api_url + ':' + __env.port + '/api/v2/repopublishtimes')
                 .then(
