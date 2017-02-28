@@ -1736,7 +1736,8 @@ class RepoPublishTimes(Resource):
 
         repo_publish_times_list = []
 
-        for r_repo_publish_times in rs_repo_publish_times().order_by(main.RepoPublishTimes.id):
+        # return only the very last entry
+        for r_repo_publish_times in rs_repo_publish_times().order_by(main.RepoPublishTimes.id.desc()).limit(1).all():
             repo_publish_times_list.append(row_to_dict(r_repo_publish_times))
 
         rs_dict['repo_publish_times_list'] = repo_publish_times_list
