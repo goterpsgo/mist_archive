@@ -164,6 +164,38 @@ class TaggedAssets(Base.Model):
     status = Column(String(5))
     tagMode = Column(String(45))
 
+class PublishSched(Base.Model):
+    __tablename__ = "publishSched"
+    id = Column(Integer, primary_key=True)
+    user = Column(String)
+    destSite = Column(String)
+    publishOptions = Column(String)
+    freqOption = Column(String)
+    weekOfMonth = Column(CHAR(3))
+    dayOfMonth = Column(CHAR(2))
+    time = Column(String)
+    daysOfWeeks = Column(String)
+    timezone = Column(String)
+    status = Column(String)
+    assetOptions = Column(String)
+    destSiteName = Column(String)
+    dateScheduled = Column(TIMESTAMP)
+
+class PublishJobs(Base.Model):
+    __tablename__ = "publishJobs"
+    jobID = Column(Integer, primary_key=True)
+    finishTime = Column(TIMESTAMP)
+    status = Column(String)
+    userName = Column(String)
+    filename = Column(String)
+
+class Published(Base.Model):
+    __tablename__ = "published"
+    id = Column(Integer, primary_key=True)
+    userName = Column(String)
+    userID = Column(Integer)
+    timestamp = Column(TIMESTAMP)
+
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
                     'key': '/opt/mist_base/certificates/mist-interface.key',
