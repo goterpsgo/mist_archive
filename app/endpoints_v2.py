@@ -68,6 +68,12 @@ def rs_assets():
 def rs_tagged_assets():
     return main.session.query(main.TaggedAssets)
 
+def rs_publish_sched():
+    return main.session.query(main.PublishSched)
+
+def rs_repo_publish_times():
+    return main.session.query(main.RepoPublishTimes)
+
 # http://stackoverflow.com/a/1960546/6554056
 def row_to_dict(row):
     d = {}
@@ -1647,6 +1653,157 @@ class Assets(Resource):
         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Some item successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
 
 
+
+# PublishSched model class template
+class PublishSched(Resource):
+    @jwt_required()
+    def get(self):
+        rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
+        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+
+        publish_sched_list = []
+
+        for r_publish_sched in rs_publish_sched().order_by(main.PublishSched.destSiteName):
+            publish_sched_list.append(row_to_dict(r_publish_sched))
+
+        rs_dict['publish_sched_list'] = publish_sched_list
+        return jsonify(rs_dict)  # return rs_dict
+
+    # @jwt_required()
+    # def post(self):
+    #     try:
+    #         form_fields = request.get_json(force=True)
+    #
+    #         new_entry = main.SomeModel(
+    #               name = form_fields['name']
+    #             , description = form_fields['description'] if ("description" in form_fields) else "TBD"
+    #             , defaultValue = form_fields['defaultValue'] if ("defaultValue" in form_fields) else None
+    #             , type = form_fields['type'] if ("type" in form_fields) else "plaintext"
+    #             , cardinality = form_fields['cardinality'] if ("cardinality" in form_fields) else 1
+    #             , timestamp = datetime.now()
+    #         )
+    #
+    #         main.session.add(new_entry)
+    #         main.session.commit()
+    #         main.session.flush()
+    #
+    #         return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': int(new_entry.id)}}
+    #
+    #     except (TypeError) as e:
+    #         print ("[TypeError] POST /api/v2/someclass / %s" % e)
+    #         main.session.rollback()
+    #         return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+    #     except (ValueError) as e:
+    #         print ("[ValueError] POST /api/v2/someclass / %s" % e)
+    #         main.session.rollback()
+    #         return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+    #     except (main.IntegrityError) as e:
+    #         print ("[IntegrityError] POST /api/v2/someclass / %s" % e)
+    #         main.session.rollback()
+    #         return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted something already exists.', 'class': 'alert alert-danger'}}
+    #
+    # @jwt_required()
+    # def put(self, _id):
+    #     try:
+    #         upd_form = request.get_json(force=True)
+    #
+    #         rs_some_model().filter(main.SomeModel.id == _id).update(upd_form)
+    #
+    #         main.session.commit()
+    #         main.session.flush()
+    #
+    #         return {'response': {'method': 'PUT', 'result': 'success', 'message': 'Some value successfully updated.', 'class': 'alert alert-success', '_id': _id}}
+    #
+    #     except (main.ProgrammingError) as e:
+    #         print ("[ProgrammingError] PUT /api/v2/someclass/%s / %s" % (_id,e))
+    #         main.session.rollback()
+    #         return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
+    #
+    # @jwt_required()
+    # def delete(self, _id):
+    #     main.session.query(main.SomeModel).filter(main.SomeModel.id == _id).delete()
+    #     main.session.commit()
+    #     main.session.flush()
+    #     return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Some item successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
+
+
+# RepoPublishTimes model class template
+class RepoPublishTimes(Resource):
+    @jwt_required()
+    def get(self):
+        rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
+        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+
+        repo_publish_times_list = []
+
+        for r_repo_publish_times in rs_repo_publish_times().order_by(main.RepoPublishTimes.id):
+            repo_publish_times_list.append(row_to_dict(r_repo_publish_times))
+
+        rs_dict['repo_publish_times_list'] = repo_publish_times_list
+        return jsonify(rs_dict)  # return rs_dict
+
+    # @jwt_required()
+    # def post(self):
+    #     try:
+    #         form_fields = request.get_json(force=True)
+    #
+    #         new_entry = main.SomeModel(
+    #               name = form_fields['name']
+    #             , description = form_fields['description'] if ("description" in form_fields) else "TBD"
+    #             , defaultValue = form_fields['defaultValue'] if ("defaultValue" in form_fields) else None
+    #             , type = form_fields['type'] if ("type" in form_fields) else "plaintext"
+    #             , cardinality = form_fields['cardinality'] if ("cardinality" in form_fields) else 1
+    #             , timestamp = datetime.now()
+    #         )
+    #
+    #         main.session.add(new_entry)
+    #         main.session.commit()
+    #         main.session.flush()
+    #
+    #         return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': int(new_entry.id)}}
+    #
+    #     except (TypeError) as e:
+    #         print ("[TypeError] POST /api/v2/someclass / %s" % e)
+    #         main.session.rollback()
+    #         return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+    #     except (ValueError) as e:
+    #         print ("[ValueError] POST /api/v2/someclass / %s" % e)
+    #         main.session.rollback()
+    #         return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+    #     except (main.IntegrityError) as e:
+    #         print ("[IntegrityError] POST /api/v2/someclass / %s" % e)
+    #         main.session.rollback()
+    #         return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted something already exists.', 'class': 'alert alert-danger'}}
+    #
+    # @jwt_required()
+    # def put(self, _id):
+    #     try:
+    #         upd_form = request.get_json(force=True)
+    #
+    #         rs_some_model().filter(main.SomeModel.id == _id).update(upd_form)
+    #
+    #         main.session.commit()
+    #         main.session.flush()
+    #
+    #         return {'response': {'method': 'PUT', 'result': 'success', 'message': 'Some value successfully updated.', 'class': 'alert alert-success', '_id': _id}}
+    #
+    #     except (main.ProgrammingError) as e:
+    #         print ("[ProgrammingError] PUT /api/v2/someclass/%s / %s" % (_id,e))
+    #         main.session.rollback()
+    #         return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
+    #
+    # @jwt_required()
+    # def delete(self, _id):
+    #     main.session.query(main.SomeModel).filter(main.SomeModel.id == _id).delete()
+    #     main.session.commit()
+    #     main.session.flush()
+    #     return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Some item successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
+
+
+
+
+
+
 # # Generic model class template
 # class SomeClass(Resource):
 #     @jwt_required()
@@ -1732,3 +1889,5 @@ api.add_resource(PublishSites, '/publishsites', '/publishsite/<int:_id>')
 api.add_resource(CategorizedTags, '/categorizedtags', '/categorizedtags/<int:_td_id>')
 api.add_resource(TaggedRepos, '/taggedrepos', '/taggedrepos/<int:_tagged_repo_id>')
 api.add_resource(Assets, '/assets', '/assets/<int:_id>')
+api.add_resource(PublishSched, '/publishsched')
+api.add_resource(RepoPublishTimes, '/repopublishtimes')

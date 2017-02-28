@@ -196,6 +196,17 @@ class Published(Base.Model):
     userID = Column(Integer)
     timestamp = Column(TIMESTAMP)
 
+class RepoPublishTimes(Base.Model):
+    __tablename__ = "repoPublishTimes"
+    id = Column(Integer, primary_key=True)
+    scID = Column(String)
+    repoID = Column(Integer)
+    arfLast = Column(TIMESTAMP)
+    cveLast = Column(TIMESTAMP)
+    pluginLast = Column(TIMESTAMP)
+    benchmarkLast = Column(TIMESTAMP)
+    iavmLast = Column(TIMESTAMP)
+
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist_base/certificates/mist-interface.crt',
                     'key': '/opt/mist_base/certificates/mist-interface.key',
