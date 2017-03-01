@@ -140,6 +140,82 @@
                   }
               }
             })
+            // Start config nested states
+            .state('publish.list', {
+              url: '/publish.list',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/publish.view.html',
+                  controller: 'Publish.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_main@publish' : {
+                  templateUrl: 'static/html/publish_list.view.html',
+                    controller: 'Publish.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
+            .state('publish.on_demand', {
+              url: '/publish.on_demand',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/publish.view.html',
+                  controller: 'Publish.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_main@publish' : {
+                  templateUrl: 'static/html/publish_on_demand.view.html',
+                    controller: 'Publish.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
+            .state('publish.schedule', {
+              url: '/publish.schedule',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/publish.view.html',
+                  controller: 'Publish.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_main@publish' : {
+                  templateUrl: 'static/html/publish_schedule.view.html',
+                    controller: 'Publish.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
             .state('profile', {
               url: '/profile',
               views : {

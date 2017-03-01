@@ -3,21 +3,21 @@
 
     angular
         .module('app')
-        .factory('PublishSchedService', Service);
+        .factory('PublishJobsService', Service);
 
     function Service($http, $q, __env) {
         var factory = {
-              _get_publishsched: get_publishsched
-            , _delete_publishsched: delete_publishsched
-            , _update_publishsched: update_publishsched
-            , _insert_publishsched: insert_publishsched
+              _get_publishjobs: get_publishjobs
+            , _delete_publishjobs: delete_publishjobs
+            , _update_publishjobs: update_publishjobs
+            , _insert_publishjobs: insert_publishjobs
         };
 
         return factory;
 
-        function get_publishsched() {
+        function get_publishjobs() {
             var deferred = $q.defer();
-            $http.get(__env.api_url + ':' + __env.port + '/api/v2/publishsched')
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/publishjobs')
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
@@ -30,7 +30,7 @@
             return deferred.promise;
         }
 
-        function insert_publishsched(form_data) {
+        function insert_publishjobs(form_data) {
             var deferred = $q.defer();
             var config = {
                 headers : {
@@ -38,7 +38,7 @@
                 }
             }
 
-            $http.post(__env.api_url + ':' + __env.port + '/api/v2/publishsched', form_data, config)
+            $http.post(__env.api_url + ':' + __env.port + '/api/v2/publishjobs', form_data, config)
                 .then(function(form_data, status, headers, config) {
                     deferred.resolve(form_data);
                 }
@@ -49,14 +49,14 @@
             return deferred.promise;
         }
 
-        function update_publishsched(id, form_data) {
+        function update_publishjobs(id, form_data) {
             var deferred = $q.defer();
             var config = {
                 headers : {
                     'Content-Type': 'application/json;charset=utf-8;'
                 }
             };
-            $http.put(__env.api_url + ':' + __env.port + '/api/v2/publishsched/' + id, form_data, config)
+            $http.put(__env.api_url + ':' + __env.port + '/api/v2/publishjobs/' + id, form_data, config)
                 .then(
                       function(form_data, status, headers, config) {
                         deferred.resolve(form_data);
@@ -69,10 +69,10 @@
             return deferred.promise;
         }
 
-        function delete_publishsched(id) {
+        function delete_publishjobs(id) {
             var deferred = $q.defer();
 
-            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/publishsched/' + id)
+            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/publishjobs/' + id)
                 .then(function(data, status, headers) {
                     deferred.resolve(data);
                 }
