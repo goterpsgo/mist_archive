@@ -13,9 +13,9 @@
             </div>
             <div class="panel-body" style="text-align: center;">
                 <div class="btn-group-vertical" role="group" style="width: 200px;">
-                    <button type="button" class="btn btn-default" ng-click="select_task('List of Available Publications')" ui-sref="config.list">List of Available Publications</button>
-                    <button type="button" class="btn btn-default" ng-click="select_task('Publish On Demand')" ui-sref="config.on_demand">Publish On Demand</button>
-                    <button type="button" class="btn btn-default" ng-click="select_task('Schedule A Job')" ui-sref="config.schedule">Schedule A Job</button>
+                    <button type="button" class="btn btn-default" ng-click="select_task('List Available Publications')" ui-sref="publish.list">List Available Publications</button>
+                    <button type="button" class="btn btn-default" ng-click="select_task('Publish On Demand')" ui-sref="publish.on_demand">Publish On Demand</button>
+                    <button type="button" class="btn btn-default" ng-click="select_task('Schedule A Job')" ui-sref="publish.schedule">Schedule A Job</button>
                 </div>
             </div>
             <div class="panel-footer">
@@ -30,20 +30,11 @@
                     {{_task}}
                 </h3>
             </div>
-            <div class="panel-body" ui-view="_main" style="margin-left: 10px; margin-right: 10px;">
+            <div class="panel-body" ui-view="_main">
             </div>
             <div class="panel-footer">
 
             </div>
         </div>
     </div>
-</div>
-
-
-
-<div class="col-md-6 col-md-offset-3">
-    <h1>Home</h1>
-    <p>Publishing page</p>
-    <p>{{publish_sched_list}}</p>
-    <p>{{repo_publish_times_list}}</p>
 </div>

@@ -5,16 +5,17 @@
         .module('app')
         .controller('Publish.IndexController', Controller);
 
-    function Controller($scope, PublishSchedService, PublishJobsService, RepoPublishTimesService) {
+    function Controller($state, $scope, PublishSchedService, PublishJobsService, RepoPublishTimesService, PublishSitesService) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
-        obj_tasks['publish.list'] = 'Global Parameters';
-        obj_tasks['publish.on_demand'] = 'Set Banner Text';
-        obj_tasks['publish.schedule'] = 'Click Below to Set Classification Level';
+        obj_tasks['publish.list'] = 'List Available Publications';
+        obj_tasks['publish.on_demand'] = 'Publish On Demand';
+        obj_tasks['publish.schedule'] = 'Schedule A Job';
         $scope.publish_sched_list = {};
         $scope.repo_publish_times_list = {};
         $scope.publish_jobs_list = {};
+        $scope.publish_sites_list = [];
 
         initController();
 
@@ -24,12 +25,12 @@
 
             $scope._task = obj_tasks[$state.current.name];
             if ($state.current.name == 'publish.list') {
-
+                load_publish_sites();
             }
-            if ($state.current.name == 'publish.manage_security_centers') {
-                load_sc_data();
+            if ($state.current.name == 'publish.on_demand') {
+                load_publish_sites();
             }
-            if ($state.current.name == 'publish.publish.schedule') {
+            if ($state.current.name == 'publish.schedule') {
                 load_publish_sched();
             }
         }
@@ -77,6 +78,23 @@
                 .then(
                     function(results) {
                         $scope.publish_jobs_list = results.publish_jobs_list;
+                        vm.loading = false;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                        vm.loading -= 1;
+                      }
+                );
+        }
+
+        function load_publish_sites() {
+            vm.loading += 1;
+            PublishSitesService
+                ._get_publishsites()
+                .then(
+                    function(results) {
+                        $scope.publish_sites_list = results.publish_sites_list;
+                        $scope.publish_sites_list.unshift({"id":"0","location":"localhost","name":"localhost"});
                         vm.loading = false;
                       }
                     , function(err) {

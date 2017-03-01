@@ -3,7 +3,7 @@
         <ul class="nav nav-tabs" style="display:inline-block; padding-top: 34px;">
             <li ng-class="{active: selectedTab == 2}"><a ui-sref="repostag" ng-click="selectedTab = 2;">Tag by Repos</a></li>
             <li ng-class="{active: selectedTab == 3}"><a ui-sref="assetstag" ng-click="selectedTab = 3;">Tag by Assets</a></li>
-            <li ng-class="{active: selectedTab == 4}"><a ui-sref="publish" ng-click="selectedTab = 4;">Publish</a></li>
+            <li ng-class="{active: selectedTab == 4}"><a ui-sref="publish.list" ng-click="selectedTab = 4;_task='List Available Publications';">Publish</a></li>
             <li ng-class="{active: selectedTab == 6}"><a ui-sref="tagactivities" ng-click="selectedTab = 6;">Tag Activities</a></li>
             <li ng-class="{active: selectedTab == 7}"><a ui-sref="locallogs" ng-click="selectedTab = 7;">Local Logs</a></li>
             <li ng-class="{active: selectedTab == 5}"><a ui-sref="config.global_parameters" ng-click="selectedTab = 5;_task='Global Parameters';">Config</a></li>
@@ -16,7 +16,7 @@
         <ul class="nav nav-tabs" style="display:inline-block; padding-top: 34px;">
             <li ng-class="{active: selectedTab == 2}"><a ui-sref="repostag" ng-click="selectedTab = 2;">Tag by Repos</a></li>
             <li ng-class="{active: selectedTab == 3}"><a ui-sref="assetstag" ng-click="selectedTab = 3;">Tag by Assets</a></li>
-            <li ng-class="{active: selectedTab == 4}"><a ui-sref="publish" ng-click="selectedTab = 4;">Publish</a></li>
+            <li ng-class="{active: selectedTab == 4}"><a ui-sref="publish" ng-click="selectedTab = 4;_task='List Available Publications';">Publish</a></li>
             <li ng-class="{active: selectedTab == 1}"><a ui-sref="profile" ng-click="selectedTab = 1;">User Profile</a></li>
             <li style="font-weight: bold;"><a ui-sref="login">Logout</a></li>
         </ul>
