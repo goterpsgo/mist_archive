@@ -486,7 +486,7 @@
                        return config;
                    },
                    'response': function (response) {
-                       // best practice should be using response.config.headers.Authorization, not response.data.Authorization
+                       // best practice should be using response.headers('Authorization'), not response.data.Authorization
                        if ((typeof(response.data.Authorization) !== 'undefined') && (typeof($localStorage.currentUser) !== 'undefined')) {
                             $localStorage.currentUser.token = 'JWT ' + response.data.Authorization.split(' ').pop();
                        }
