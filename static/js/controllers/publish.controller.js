@@ -96,7 +96,7 @@
                     function(results) {
                         vm.publish_sites_list = results.publish_sites_list;
                         vm.publish_sites_list.unshift({'id':0,'location':'localhost','name':'localhost'});
-                        vm.selected_site = vm.publish_sites_list[0];
+                        vm.selected_site = vm.publish_sites_list[0];    // setting default selection in here may be bad practice; didn't work when tried in init() - JWT 2 Mar 2017
                         vm.loading = false;
                       }
                     , function(err) {
