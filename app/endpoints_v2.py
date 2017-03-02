@@ -1165,6 +1165,9 @@ class PublishSites(Resource):
         for r_publish_site in rs_publish_sites().order_by(main.PublishSites.id):
             publish_sites_list.append(row_to_dict(r_publish_site))
 
+        for site in publish_sites_list:
+            site['id'] = int(site['id'])
+
         rs_dict['publish_sites_list'] = publish_sites_list
         return jsonify(rs_dict)  # return rs_dict
 
