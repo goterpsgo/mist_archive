@@ -1,4 +1,4 @@
 <div class="col-md-12">
     <p>Publish on demand</p>
-    <p>{{publish_sites_list}}</p>
+    <select class="select2-search" ng-model="vm.selected_site" size="1" style="width: 300px;" ng-options="item.name + ' (' + item.location + ')' for item in vm.publish_sites_list track by item.id"></select>
 </div>

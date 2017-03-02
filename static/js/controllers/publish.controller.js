@@ -15,7 +15,8 @@
         $scope.publish_sched_list = {};
         $scope.repo_publish_times_list = {};
         $scope.publish_jobs_list = {};
-        $scope.publish_sites_list = [];
+        vm.publish_sites_list = {};
+
 
         initController();
 
@@ -93,8 +94,9 @@
                 ._get_publishsites()
                 .then(
                     function(results) {
-                        $scope.publish_sites_list = results.publish_sites_list;
-                        $scope.publish_sites_list.unshift({"id":"0","location":"localhost","name":"localhost"});
+                        vm.publish_sites_list = results.publish_sites_list;
+                        vm.publish_sites_list.unshift({'id':0,'location':'localhost','name':'localhost'});
+                        vm.selected_site = vm.publish_sites_list[0];
                         vm.loading = false;
                       }
                     , function(err) {
