@@ -1157,8 +1157,9 @@ class TagDefinitions(Resource):
 class PublishSites(Resource):
     @jwt_required()
     def get(self):
+        new_token = create_new_token(request)
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        # rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        rs_dict['Authorization'] = new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         publish_sites_list = []
 
@@ -1169,7 +1170,10 @@ class PublishSites(Resource):
             site['id'] = int(site['id'])
 
         rs_dict['publish_sites_list'] = publish_sites_list
-        return jsonify(rs_dict)  # return rs_dict
+        resp = jsonify(rs_dict)
+        resp.status_code = 200
+        resp.headers['Authorization'] = new_token
+        return resp  # return rs_dict
 
     @jwt_required()
     def post(self):
