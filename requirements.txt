@@ -6,4 +6,6 @@ MySQL-python
 uwsgi
 flask-cors
 netaddr
+lxml
+jsonschema
 
