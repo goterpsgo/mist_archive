@@ -17,6 +17,8 @@ import json
 import requests
 import pdb
 
+import os
+
 api_endpoints = Blueprint('mist_auth', __name__, url_prefix="/api/v2")
 api = Api(api_endpoints)
 this_app = return_app()
@@ -1829,38 +1831,45 @@ class PublishJobs(Resource):
         return jsonify(rs_dict)  # return rs_dict
 
     # @jwt_required()
-    # def post(self):
-    #     try:
-    #         form_fields = request.get_json(force=True)
-    #
-    #         new_entry = main.SomeModel(
-    #               name = form_fields['name']
-    #             , description = form_fields['description'] if ("description" in form_fields) else "TBD"
-    #             , defaultValue = form_fields['defaultValue'] if ("defaultValue" in form_fields) else None
-    #             , type = form_fields['type'] if ("type" in form_fields) else "plaintext"
-    #             , cardinality = form_fields['cardinality'] if ("cardinality" in form_fields) else 1
-    #             , timestamp = datetime.now()
-    #         )
-    #
-    #         main.session.add(new_entry)
-    #         main.session.commit()
-    #         main.session.flush()
-    #
-    #         return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': int(new_entry.id)}}
-    #
-    #     except (TypeError) as e:
-    #         print ("[TypeError] POST /api/v2/someclass / %s" % e)
-    #         main.session.rollback()
-    #         return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
-    #     except (ValueError) as e:
-    #         print ("[ValueError] POST /api/v2/someclass / %s" % e)
-    #         main.session.rollback()
-    #         return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
-    #     except (main.IntegrityError) as e:
-    #         print ("[IntegrityError] POST /api/v2/someclass / %s" % e)
-    #         main.session.rollback()
-    #         return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted something already exists.', 'class': 'alert alert-danger'}}
-    #
+    def post(self):
+        try:
+            print "Got here"
+            form_fields = request.get_json(force=True)
+            print "Got here too"
+
+            print ("[1838] form_fields['job_type']: %r" % form_fields['job_type'])
+            if (form_fields['job_type'] == 'on_demand'):
+                print ("Run on demand")
+                return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed publish command on demand.', 'class': 'alert alert-success'}}
+
+            # new_entry = main.SomeModel(
+            #       name = form_fields['name']
+            #     , description = form_fields['description'] if ("description" in form_fields) else "TBD"
+            #     , defaultValue = form_fields['defaultValue'] if ("defaultValue" in form_fields) else None
+            #     , type = form_fields['type'] if ("type" in form_fields) else "plaintext"
+            #     , cardinality = form_fields['cardinality'] if ("cardinality" in form_fields) else 1
+            #     , timestamp = datetime.now()
+            # )
+            #
+            # main.session.add(new_entry)
+            # main.session.commit()
+            # main.session.flush()
+
+            # return {'response': {'method': 'POST', 'result': 'success', 'message': 'New something entry submitted.', 'class': 'alert alert-success', 'id': int(new_entry.id)}}
+
+        except (TypeError) as e:
+            print ("[TypeError] POST /api/v2/publishjobs / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (ValueError) as e:
+            print ("[ValueError] POST /api/v2/publishjobs / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': str(e), 'class': 'alert alert-danger'}}
+        except (main.IntegrityError) as e:
+            print ("[IntegrityError] POST /api/v2/publishjobs / %s" % e)
+            main.session.rollback()
+            return {'response': {'method': 'POST', 'result': 'error', 'message': 'Submitted something already exists.', 'class': 'alert alert-danger'}}
+
     # @jwt_required()
     # def put(self, _id):
     #     try:
