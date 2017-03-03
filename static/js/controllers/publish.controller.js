@@ -5,7 +5,7 @@
         .module('app')
         .controller('Publish.IndexController', Controller);
 
-    function Controller($state, $scope, PublishSchedService, PublishJobsService, RepoPublishTimesService, PublishSitesService) {
+    function Controller($state, $scope, $timeout, $localStorage, PublishSchedService, PublishJobsService, RepoPublishTimesService, PublishSitesService) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
@@ -16,6 +16,10 @@
         $scope.repo_publish_times_list = {};
         $scope.publish_jobs_list = {};
         vm.publish_sites_list = {};
+        $scope.status = '';
+
+        $scope.scan_options = {"cve": false, "benchmark": false, "iavm": false, "plugin": false, "all_scan": false};
+        $scope.asset_options = {"assets": false, "opattr": false, "all_asset": false};
 
 
         initController();
@@ -105,5 +109,56 @@
                       }
                 );
         }
+
+        $scope.publish_on_demand = function() {
+            console.log($scope.scan_options);
+            console.log($scope.asset_options);
+            console.log(vm.selected_site);
+            console.log($localStorage.user.id);
+            vm.user = ' --user ' + $localStorage.user.id;
+            vm.site = ' --site "' + vm.selected_site + '"'
+            vm.options = vm.user + vm.site;
+
+
+            var form_data = {'job_type': 'on_demand', 'options': vm.options};
+            return PublishJobsService
+                ._insert_publishjobs($scope.form_data)
+                .then(function(result) {
+                    $scope.status = 'Executed publish on demand.';
+                    $scope.status_class = 'alert alert-success';
+                })
+                .then(function() {
+                    // clear status message after five seconds
+                    $timeout(function() {
+                        $scope.status = '';
+                        $scope.status_class = '';
+                    }, 5000);
+                });
+
+
+            // return SecurityCentersService._insert_sc($scope.form_data).then()
+            //     .then(function(result) {
+            //         $scope.form_data['status'] = result.message;
+            //         $scope.form_data['status_class'] = result.class;
+            //         $scope.form_data['serverName'] = '';
+            //         $scope.form_data['fqdn_IP'] = '';
+            //         $scope.form_data['username'] = '';
+            //         $scope.form_data['pw'] = '';
+            //         $scope.form_data['certificateFile'] = '';
+            //         $scope.form_data['keyFile'] = '';
+            //         $scope.form_data['version'] = 5;
+            //     })
+            //     .then(function() {
+            //         load_sc_data();
+            //     })
+            //     .then(function() {
+            //         // clear status message after five seconds
+            //         $timeout(function() {
+            //             $scope.form_data['status'] = '';
+            //             $scope.form_data['status_class'] = '';
+            //         }, 5000);
+            //     });
+
+        };
     }
 })();
