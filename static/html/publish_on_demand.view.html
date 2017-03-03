@@ -1,4 +1,72 @@
 <div class="col-md-12">
-    <p>Publish on demand</p>
-    <select class="select2-search" ng-model="vm.selected_site" size="1" style="width: 300px;" ng-options="item.name + ' (' + item.location + ')' for item in vm.publish_sites_list track by item.id"></select>
+    <form ng-submit="publish_on_demand()">
+        <div class="row">
+            <input type="submit" value="Publish to Selected Site" class="btn btn-primary"> <span class="{{status_class}}">{{status}}</span>
+        </div>
+        <br />
+        <div class="row">
+            <md-card>
+                <md-card-content>
+                    <div flex-gt-sm="100">
+                        <md-input-container>
+                          <label>Select Site Location</label>
+                          <md-select ng-model="vm.selected_site">
+                            <md-option ng-repeat="item in vm.publish_sites_list" ng-value="item.location">
+                              {{item.name}} ({{item.location}})
+                            </md-option>
+                          </md-select>
+                        </md-input-container>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <md-card>
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span class="md-headline">Scan Result Options</span>
+                        </md-card-title-text>
+                    </md-card-title>
+                    <md-card-content>
+                        <div flex-gt-sm="50">
+                            <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.cve" aria-label="CVE"> CVE</md-checkbox>
+                        </div>
+                        <div flex-gt-sm="50">
+                            <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.benchmark" aria-label="Benchmark"> Benchmark</md-checkbox>
+                        </div>
+                        <div flex-gt-sm="50">
+                            <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.iavm" aria-label="IAVM"> IAVM</md-checkbox>
+                        </div>
+                        <div flex-gt-sm="50">
+                            <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.plugin" aria-label="Plugin"> Plugin</md-checkbox>
+                        </div>
+                        <div flex-gt-sm="50">
+                            <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.all_scan" aria-label="All Scan Results"> All Scan Results Regardless of Last Publish Date</md-checkbox>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
+            <div class="col-md-6">
+                <md-card>
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span class="md-headline">Scan Result Options</span>
+                        </md-card-title-text>
+                    </md-card-title>
+                    <md-card-content>
+                        <div flex-gt-sm="50">
+                            <md-checkbox class="md-primary" type="checkbox" ng-model="asset_options.assets" aria-label="Asset ARF"> Asset ARF</md-checkbox>
+                        </div>
+                        <div flex-gt-sm="50">
+                            <md-checkbox class="md-primary" type="checkbox" ng-model="asset_options.opattr" aria-label="Oper Attributes ARF"> Oper Attributes ARF</md-checkbox>
+                        </div>
+                        <div flex-gt-sm="50">
+                            <md-checkbox class="md-primary" type="checkbox" ng-model="asset_options.all_asset" aria-label="All Available Assets"> All Available Assets Regardless of Last Publish Date</md-checkbox>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
+        </div>
+    </form>
 </div>
