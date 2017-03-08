@@ -1452,12 +1452,14 @@ class Assets(Resource):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
         rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
-        assets_list = []
+        tagged_assets_list = []
 
-        for r_asset in rs_assets().order_by(main.Assets.assetID):
-            assets_list.append(row_to_dict(r_asset))
+        for r_tagged_asset in rs_tagged_assets()\
+            .filter(main.TaggedAssets.status == "true")\
+            .order_by(main.TaggedAssets.timestamp.desc()):
+            tagged_assets_list.append(row_to_dict(r_tagged_asset))
 
-        rs_dict['assets_list'] = assets_list
+        rs_dict['tagged_assets_list'] = tagged_assets_list
         return jsonify(rs_dict)  # return rs_dict
 
     @jwt_required()
