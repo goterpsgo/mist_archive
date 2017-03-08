@@ -8,11 +8,30 @@
     function Service($http, $q, __env) {
         var factory = {
               _get_assets: get_assets
+            , _get_tagged_assets: get_tagged_assets
             , _insert_taggedassets: insert_taggedassets
             , _delete_asset_tag: delete_asset_tag
         };
 
         return factory;
+
+        // get_assets should use $http.get() but won't handle multi-field structured data - JWT 15 Feb 2017
+        function get_tagged_assets(_params) {
+
+            var deferred = $q.defer();
+
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/assets')
+                .then(
+                    function(response) {
+                        deferred.resolve(response.data);
+                    }
+                    , function(data, status, headers, config) {
+                        // deferred.resolve(response.data.response);
+                        deferred.resolve(JSON.parse('{"response": {"method": "GET", "result": "error", "status": "' + status + '"}}'));
+                    }
+                );
+            return deferred.promise;
+        }
 
         // get_assets should use $http.get() but won't handle multi-field structured data - JWT 15 Feb 2017
         function get_assets(_params) {
