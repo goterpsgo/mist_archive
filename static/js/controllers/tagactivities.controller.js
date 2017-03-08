@@ -39,8 +39,8 @@
                         }, {
                           "name": "Tag ID"
                           , "displayName": "Tag ID"
-                          , "field": "tagID"
-                          , "width": 80
+                          , "field": "full_tag"
+                          , "width": 350
                         }, {
                           "name": "Tag Mode"
                           , "displayName": "Tag Mode"
@@ -56,6 +56,11 @@
                         columnDefs: $scope.column_names
                     };
                     $scope.grid_options.data = result.tagged_assets_list;
+                    for (var _cnt = 0; _cnt < $scope.grid_options.data.length; _cnt++) {
+                        var _row = $scope.grid_options.data[_cnt];
+                        _row.full_tag = _row['tagID'] + ' | ' + _row['category'] + ' | ' + _row['rollup'];
+                    }
+
                   }
                 , function(err) {
                     $scope.status = 'Error loading data: ' + err.message;
