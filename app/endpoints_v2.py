@@ -1454,10 +1454,16 @@ class Assets(Resource):
 
         tagged_assets_list = []
 
-        for r_tagged_asset in rs_tagged_assets()\
+        handle_tagged_assets = main.session.query(main.TaggedAssets, main.Tags)\
+            .join(main.Tags, main.TaggedAssets.tagID == main.Tags.nameID)\
             .filter(main.TaggedAssets.status == "true")\
-            .order_by(main.TaggedAssets.timestamp.desc()):
-            tagged_assets_list.append(row_to_dict(r_tagged_asset))
+            .order_by(main.TaggedAssets.timestamp.desc())\
+            .all()
+
+        for r_tagged_asset in handle_tagged_assets:
+            _tagged_asset = row_to_dict(r_tagged_asset.TaggedAssets)
+            _tagged_asset['dname'] = r_tagged_asset.Tags.dname
+            tagged_assets_list.append(_tagged_asset)
 
         rs_dict['tagged_assets_list'] = tagged_assets_list
         return jsonify(rs_dict)  # return rs_dict
