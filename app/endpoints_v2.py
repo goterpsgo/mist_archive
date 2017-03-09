@@ -1905,6 +1905,40 @@ class PublishJobs(Resource):
 
 
 
+# Generic model class template
+class LocalLogs(Resource):
+    @jwt_required()
+    def get(self, _name=None):
+        rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
+        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+
+        _parent_dir = "/var/log/MIST/"
+        _log_dirs = {"assets": [], "publishing": [], "tagging": []}
+
+        # if filename is provided then parse contents of file provided
+        # NOTE: string format is dir_filename
+        if _name is not None:
+            _dir, _filename = _name.split("_", 1)
+            _full_filename = _parent_dir + _dir + "/" + _filename
+            _contents = open(_full_filename).read()
+            rs_dict['log_content'] = {"content": _contents}
+        else:
+            # otherwise list files from each directory from _log_dirs
+            for _dir, _files in _log_dirs.iteritems():
+                _log_dirs[_dir] = os.listdir(_parent_dir + _dir)
+
+            rs_dict['local_logs_list'] = _log_dirs
+
+        return jsonify(rs_dict)  # return rs_dict
+
+    def post(self):
+        return {'message': 'No POST method for this endpoint.'}
+
+    def put(self, _id):
+        return {'message': 'No PUT method for this endpoint.'}
+
+    def delete(self, _id):
+        return {'message': 'No DELETE method for this endpoint.'}
 
 
 # # Generic model class template
@@ -1995,3 +2029,4 @@ api.add_resource(Assets, '/assets', '/assets/<int:_id>')
 api.add_resource(PublishSched, '/publishsched')
 api.add_resource(PublishJobs, '/publishjobs', '/publishjob/<int:_jobid>')
 api.add_resource(RepoPublishTimes, '/repopublishtimes')
+api.add_resource(LocalLogs, '/locallogs', '/locallog/<string:_name>')
