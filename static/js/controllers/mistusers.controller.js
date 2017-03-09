@@ -56,9 +56,5 @@
             // populate $scope.user to provide user status and state to be used in the nav view.
             $scope.user = $localStorage.user;
         }
-
-        $scope.add_user = function() {
-            console.log('Add user');
-        };
     }
 })();
