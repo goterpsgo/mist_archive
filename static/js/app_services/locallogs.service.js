@@ -14,7 +14,6 @@
         return factory;
 
         function get_local_logs() {
-            console.log('[locallogs.service:get_local_logs():17] Got here');
             var deferred = $q.defer();
             $http.get(__env.api_url + ':' + __env.port + '/api/v2/locallogs')
                 .then(
