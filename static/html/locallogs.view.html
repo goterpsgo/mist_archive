@@ -1,15 +1,46 @@
-<div class="col-md-6 col-md-offset-3">
-    <h1>Home</h1>
-    <p>Local Logs page</p>
-    [ {{local_logs_list}} ]
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="row">
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Local Logs
+                </h3>
+            </div>
+            <div class="panel-body">
+                <div webix-ui
+                     id="local_logs_tree"
+                     view="tree"
+                     webix-data="local_logs_list"
+                     type="lineTree"
+                     width="300"
+                     height="400"
+                     select="true"
+                     webix-event="onItemClick = vm.node_click(id)"
+                ></div>
+            </div>
+            <div class="panel-footer">
 
-                                    <div webix-ui
-                                         id="tags_tree"
-                                         view="tree"
-                                         webix-data="local_logs_list"
-                                         type="lineTree"
-                                         width="400"
-                                         height="500"
-                                         select="multiselect"
-                                    ></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Content
+                </h3>
+            </div>
+            <div class="panel-body" ui-view="_main">
+                <pre>{{log_content}}</pre>
+            </div>
+            <div class="panel-footer">
+
+            </div>
+        </div>
+    </div>
 </div>
