@@ -1913,7 +1913,12 @@ class LocalLogs(Resource):
         rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         _parent_dir = "/var/log/MIST/"
-        _log_dirs = {"assets": [], "publishing": [], "tagging": []}
+        _log_dirs = [
+            {"id": "1", "value": "assets", "data": []},
+            {"id": "2", "value": "publishing", "data": []},
+            {"id": "3", "value": "tagging", "data": []}
+        ]
+        _id_to_path_map = {}
 
         # if filename is provided then parse contents of file provided
         # NOTE: string format is dir_filename
@@ -1924,10 +1929,19 @@ class LocalLogs(Resource):
             rs_dict['log_content'] = {"content": _contents}
         else:
             # otherwise list files from each directory from _log_dirs
-            for _dir, _files in _log_dirs.iteritems():
-                _log_dirs[_dir] = os.listdir(_parent_dir + _dir)
+            _id = 4
+            for _index_dir, _item in enumerate(_log_dirs):
+                _dir = _item["value"]
+                _files = os.listdir(_parent_dir + _dir)
+                for _index_file, _file in enumerate(_files):
+                    _files[_index_file] = "/" + _dir + "/" + _file
+                    _tree_node = {"id": str(_id), "value": _file}
+                    _log_dirs[_index_dir]['data'].append(_tree_node)
+                    _id_to_path_map[_id] =  _dir + "_" + _file
+                    _id += 1
 
             rs_dict['local_logs_list'] = _log_dirs
+            rs_dict['id_to_path_map'] = _id_to_path_map
 
         return jsonify(rs_dict)  # return rs_dict
 
