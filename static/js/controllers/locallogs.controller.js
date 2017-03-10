@@ -29,15 +29,22 @@
 
         this.node_click = function(_id) {
             if ($scope.id_to_path_map[_id] !== undefined) {
-                LocalLogsService._get_local_log($scope.id_to_path_map[_id])
-                    .then(
-                          function(results) {
-                              $scope.log_content = results.log_content.content;
-                          }
-                        , function(err) {
-                            $scope.status = 'Error loading data: ' + err.message;
-                          }
-                    );
+                // save content to $scope.log_content if filename ends in .log
+                if ($scope.id_to_path_map[_id].substr($scope.id_to_path_map[_id].length - 4) == '.log') {
+                    LocalLogsService._get_local_log($scope.id_to_path_map[_id])
+                        .then(
+                            function (results) {
+                                $scope.log_content = results.log_content.content;
+                            }
+                            , function (err) {
+                                $scope.status = 'Error loading data: ' + err.message;
+                            }
+                        );
+                }
+                // show warning message to $scope.log_content if filename does not end in .log
+                else {
+                    $scope.log_content = 'Cannot display non-text content.';
+                }
             }
         }
     }
