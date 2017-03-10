@@ -11,16 +11,15 @@
         initController();
 
         function initController() {
-            console.log('[locallogs.controller:initController():14] Got here');
             get_local_logs();
         }
 
         function get_local_logs() {
-            console.log('[locallogs.controller:get_local_logs():19] Got here');
             LocalLogsService._get_local_logs()
                 .then(
                       function(results) {
                           $scope.local_logs_list = results.local_logs_list;
+                          $scope.id_to_path_map = results.id_to_path_map;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
@@ -28,16 +27,18 @@
                 );
         }
 
-        function get_local_log(_name) {
-            LocalLogsService._get_local_logs(_name)
-                .then(
-                      function(results) {
-                          $scope.log_content = results.log_content;
-                      }
-                    , function(err) {
-                        $scope.status = 'Error loading data: ' + err.message;
-                      }
-                );
+        this.node_click = function(_id) {
+            if ($scope.id_to_path_map[_id] !== undefined) {
+                LocalLogsService._get_local_log($scope.id_to_path_map[_id])
+                    .then(
+                          function(results) {
+                              $scope.log_content = results.log_content.content;
+                          }
+                        , function(err) {
+                            $scope.status = 'Error loading data: ' + err.message;
+                          }
+                    );
+            }
         }
     }
 })();
