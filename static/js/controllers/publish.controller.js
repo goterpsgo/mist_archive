@@ -5,7 +5,7 @@
         .module('app')
         .controller('Publish.IndexController', Controller);
 
-    function Controller($state, $scope, $timeout, $localStorage, PublishSchedService, PublishJobsService, RepoPublishTimesService, PublishSitesService) {
+    function Controller($state, $scope, $timeout, $localStorage, PublishSchedService, PublishJobsService, RepoPublishTimesService, PublishSitesService, MistParamsService) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
@@ -17,9 +17,16 @@
         $scope.publish_jobs_list = {};
         vm.publish_sites_list = {};
         $scope.status = '';
+        $scope.this_date = new Date();
 
         $scope.scan_options = {"cve": false, "benchmark": false, "iavm": false, "plugin": false, "all_scan": false};
         $scope.asset_options = {"assets": false, "opattr": false, "all_asset": false};
+
+        $scope.grid_options = {
+            columnDefs: $scope.column_names,
+            // enableSorting: true,
+            'data': []
+        };
 
 
         initController();
@@ -30,7 +37,8 @@
 
             $scope._task = obj_tasks[$state.current.name];
             if ($state.current.name == 'publish.list') {
-                load_publish_sites();
+                load_publish_jobs();
+                load_mist_params();
             }
             if ($state.current.name == 'publish.on_demand') {
                 load_publish_sites();
@@ -83,6 +91,45 @@
                 .then(
                     function(results) {
                         $scope.publish_jobs_list = results.publish_jobs_list;
+
+                        // [kept for reference] [ES5] array forEach loop
+                        // $scope.publish_jobs_list.forEach(function(_row, _index, _ref) {
+                        //     if (_row.status == 'Completed') {
+                        //         _ref[_index].filename = '<a href="#">' + _row.filename + '</a>';
+                        //     }
+                        // });
+
+                        // [kept for reference] Displaying links in ui-grid cell
+                        // $scope.column_names = [
+                        //     {
+                        //       "name": "Filename"
+                        //       , "displayName": "Filename"
+                        //       , "field": "filename"
+                        //       , "width": 350
+                        //       , cellTemplate: '<div><a href="#">{{row.entity.filename}}</a></div>'
+                        //     },
+                        //     {
+                        //       "name": "PublishDate"
+                        //       , "displayName": "Publish Date"
+                        //       , "field": "finishTime"
+                        //       , "width": 150
+                        //       , "sort": {"direction": "desc", "priority": 0}
+                        //     },
+                        //     {
+                        //       "name": "Status"
+                        //       , "displayName": "Status"
+                        //       , "field": "status"
+                        //     },
+                        //     {
+                        //       "name": "PublishedBy"
+                        //       , "displayName": "Published By"
+                        //       , "field": "userName"
+                        //     }
+                        // ];
+                        // $scope.grid_options = {
+                        //     columnDefs: $scope.column_names
+                        // };
+                        // $scope.grid_options.data = results.publish_jobs_list;
                         vm.loading = false;
                       }
                     , function(err) {
@@ -160,5 +207,23 @@
             //     });
 
         };
+
+        function load_mist_params() {
+            MistParamsService
+                ._get_mist_params()
+                .then(
+                    function(results) {
+                        var _mist_params = results.mist_params_list[0];
+                        // $scope._mist_params = _mist_params;
+                        $scope.assign_chunk_size = _mist_params.chunkSize;
+                        $scope.assign_log_rollover = _mist_params.logsRollOverPeriod;
+                        $scope.assign_pub_rollover = _mist_params.pubsRollOverPeriod;
+                        $scope.assign_assets_refresh = _mist_params.scPullFreq;
+                      }
+                    , function(err) {
+                          $scope.status = 'Error loading data: ' + err.message;
+                      }
+                );
+        }
     }
 })();
