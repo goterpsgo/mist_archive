@@ -568,7 +568,8 @@ class Users(Resource):
 
                 # All repo assignments are saved in requestUserAccess table
                 # Repo assignments are marked as approved if also saved in UserAccess table
-                # obj_repos = rs_repos_handle.filter(main.and_(main.Repos.scID == obj_repo_access.scID, main.Repos.repoID == obj_repo_access.repoID))
+                # obj_repos = rs_repos_handle.filter(main.and_(main.Repos.sc
+                # ID == obj_repo_access.scID, main.Repos.repoID == obj_repo_access.repoID))
                 userAccessEntry = main.session.query(main.UserAccess)\
                     .filter(main.and_(main.UserAccess.userID == single_repo['userID'], main.UserAccess.scID == single_repo['scID'], main.UserAccess.repoID == single_repo['repoID']))
 
@@ -1824,10 +1825,10 @@ class RepoPublishTimes(Resource):
 
 # PublishJobs model class template
 class PublishJobs(Resource):
-    # @jwt_required()
+    @jwt_required()
     def get(self):
         rs_dict = {}  # used to hold and eventually return publish_jobs_list[] recordset and associated metadata
-        # rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         publish_jobs_list = []
 
@@ -2028,6 +2029,20 @@ class LocalLogs(Resource):
 #         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Some item successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
 
 
+# PublishJobs model class template
+class PublicationDownloader(Resource):
+    # @jwt_required()   # users will access this resource directly, not through Angular - request will not contain token
+    def get(self, _name=None):
+        if (_name is not None):
+            _dir, _filename = _name.split("_", 1)
+            _fullpath = "/opt/mist/frontend/app/MIST/Users/%s/%s" % (_dir, _filename)
+            response = make_response(open(_fullpath).read())
+            response.headers["Content-Type"] = "application/zip"
+            response.headers["Content-Disposition"] = "attachment; filename=" + _filename
+            return response
+        else:
+            return "No such file."
+
 api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(Signup, '/user/signup')
 api.add_resource(Repos, '/repos')
@@ -2044,3 +2059,4 @@ api.add_resource(PublishSched, '/publishsched')
 api.add_resource(PublishJobs, '/publishjobs', '/publishjob/<int:_jobid>')
 api.add_resource(RepoPublishTimes, '/repopublishtimes')
 api.add_resource(LocalLogs, '/locallogs', '/locallog/<string:_name>')
+api.add_resource(PublicationDownloader, '/publicationdownloader/<string:_name>')
