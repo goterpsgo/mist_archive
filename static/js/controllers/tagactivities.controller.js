@@ -8,7 +8,7 @@
     function Controller($scope, AssetsService) {
         var vm = this;
         $scope.grid_options = {
-            columnDefs: $scope.columns,
+            columnDefs: $scope.column_names,
             // enableSorting: true,
             'data': []
         };
@@ -60,7 +60,6 @@
                     $scope.grid_options.data = result.tagged_assets_list;
                     for (var _cnt = 0; _cnt < $scope.grid_options.data.length; _cnt++) {
                         var _row = $scope.grid_options.data[_cnt];
-                        console.log(_row);
                         _row.full_tag = _row['tagID'] + ' | ' + _row['category'] + ' | ' + _row['rollup'] + ' | ' + _row['dname'];
                     }
 
