@@ -835,12 +835,24 @@ class SecurityCenter(Resource):
             if ('certificateFile' in request.files):
                 certificateFile = request.files['certificateFile']
                 certificateFile_name = secure_filename(certificateFile.filename)
+                if (not os.path.exists(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'])):
+                    try:
+                        os.makedirs(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'])
+                    except OSError as exc:
+                        if exc.errno != 17:
+                            raise
                 certificateFile.save(os.path.join(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'], certificateFile_name))
                 form_fields['certificateFile'] = this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'] + "/" + certificateFile_name
 
             if ('keyFile' in request.files):
                 keyFile = request.files['keyFile']
                 keyFile_name = secure_filename(keyFile.filename)
+                if (not os.path.exists(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'])):
+                    try:
+                        os.makedirs(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'])
+                    except OSError as exc:
+                        if exc.errno != 17:
+                            raise
                 keyFile.save(os.path.join(this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'], keyFile_name))
                 form_fields['keyFile'] = this_app.config['UPLOAD_FOLDER'] + "/" + form_fields['version'] + "/" + keyFile_name
 
