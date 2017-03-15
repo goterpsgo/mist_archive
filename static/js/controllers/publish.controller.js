@@ -158,18 +158,25 @@
         }
 
         $scope.publish_on_demand = function() {
-            console.log($scope.scan_options);
-            console.log($scope.asset_options);
-            console.log(vm.selected_site);
-            console.log($localStorage.user.id);
             vm.user = ' --user ' + $localStorage.user.id;
-            vm.site = ' --site "' + vm.selected_site + '"'
+            vm.site = ' --site "' + vm.selected_site + '"';
             vm.options = vm.user + vm.site;
 
+            for (var _node in $scope.scan_options) {
+                if ($scope.scan_options[_node]) {
+                    vm.options += ' --' + _node;
+                }
+            }
+
+            for (var _node in $scope.asset_options) {
+                if ($scope.asset_options[_node]) {
+                    vm.options += ' --' + _node;
+                }
+            }
 
             var form_data = {'job_type': 'on_demand', 'options': vm.options};
             return PublishJobsService
-                ._insert_publishjobs($scope.form_data)
+                ._insert_publishjobs(form_data)
                 .then(function(result) {
                     $scope.status = 'Executed publish on demand.';
                     $scope.status_class = 'alert alert-success';
