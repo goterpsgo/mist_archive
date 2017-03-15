@@ -9,7 +9,7 @@ import hashlib
 from werkzeug.utils import secure_filename
 import base64
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from socket import inet_aton, inet_ntoa
 import netaddr
 import config
@@ -1834,8 +1834,16 @@ class PublishJobs(Resource):
 
         publish_jobs_list = []
 
-        # return only the very last entry
-        for r_publish_jobs in rs_publish_jobs().order_by(main.PublishJobs.finishTime.desc()):
+        rollver_days = int(rs_mist_params().first().pubsRollOverPeriod)
+        _today = datetime.now()
+        _then = _today - timedelta(days=rollver_days)
+
+        # limit by date
+        handle_publish_jobs = rs_publish_jobs()\
+            .filter(main.between(main.PublishJobs.finishTime, _then, _today))\
+            .order_by(main.PublishJobs.finishTime.desc())
+
+        for r_publish_jobs in handle_publish_jobs:
             publish_jobs_list.append(row_to_dict(r_publish_jobs))
 
         rs_dict['publish_jobs_list'] = publish_jobs_list
