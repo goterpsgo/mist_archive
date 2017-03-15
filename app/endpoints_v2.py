@@ -323,7 +323,8 @@ class Users(Resource):
             users_list = []
             if _user is None:
                 for r_user in rs_users():
-                    users_list.append(create_user_dict(r_user))
+                    user_as_dict = create_user_dict(r_user)
+                    users_list.append(user_as_dict)
             else:
                 users_list.append(create_user_dict(r_single_user))
             rs_dict['users_list'] = users_list  # add users_list[] to rs_dict
@@ -705,6 +706,7 @@ class Signup(Resource):
                     , userID = new_user.id
                     , userName = form_fields['username']
                 )
+                main.session.add(new_user_access)
                 main.session.begin_nested()
 
             main.session.commit()
