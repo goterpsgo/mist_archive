@@ -15,6 +15,8 @@ import netaddr
 import config
 import json
 import requests
+import subprocess
+import shlex
 import pdb
 
 import os
@@ -1864,13 +1866,11 @@ class PublishJobs(Resource):
     # @jwt_required()
     def post(self):
         try:
-            print "Got here"
             form_fields = request.get_json(force=True)
-            print "Got here too"
 
-            print ("[1838] form_fields['job_type']: %r" % form_fields['job_type'])
             if (form_fields['job_type'] == 'on_demand'):
-                print ("Run on demand")
+                subprocess.call(shlex.split("/opt/mist/publishing/publish.py %s" % form_fields["options"]))
+
                 return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed publish command on demand.', 'class': 'alert alert-success'}}
 
             # new_entry = main.SomeModel(
