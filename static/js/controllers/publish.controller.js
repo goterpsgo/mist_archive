@@ -13,7 +13,7 @@
         obj_tasks['publish.on_demand'] = 'Publish On Demand';
         obj_tasks['publish.schedule'] = 'Schedule A Job';
         $scope.publish_sched_list = {};
-        $scope.repo_publish_times_list = {};
+        $scope.repo_publish_times = {};
         $scope.publish_jobs_list = {};
         vm.publish_sites_list = {};
         $scope.status = '';
@@ -74,7 +74,7 @@
                 ._get_repopublishtimes()
                 .then(
                     function(results) {
-                        $scope.repo_publish_times_list = results.repo_publish_times_list;
+                        $scope.repo_publish_times = results.repo_publish_times;
                         vm.loading = false;
                       }
                     , function(err) {
