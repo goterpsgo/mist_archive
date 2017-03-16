@@ -22,50 +22,61 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <md-card>
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span class="md-headline">Scan Result Options</span>
-                        </md-card-title-text>
-                    </md-card-title>
-                    <md-card-content>
-                        <div flex-gt-sm="50">
-                            <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.cve" aria-label="CVE"> CVE</md-checkbox>
-                        </div>
-                        <div flex-gt-sm="50">
-                            <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.benchmark" aria-label="Benchmark"> Benchmark</md-checkbox>
-                        </div>
-                        <div flex-gt-sm="50">
-                            <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.iavm" aria-label="IAVM"> IAVM</md-checkbox>
-                        </div>
-                        <div flex-gt-sm="50">
-                            <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.plugin" aria-label="Plugin"> Plugin</md-checkbox>
-                        </div>
-                        <div flex-gt-sm="50">
-                            <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.all_scan" aria-label="All Scan Results"> All Scan Results Regardless of Last Publish Date</md-checkbox>
-                        </div>
-                    </md-card-content>
-                </md-card>
+                <br />
+                <table class="table table-hover">
+                    <thead>
+                        <th colspan="2">Scan Result Options</th>
+                    </thead>
+                    <tr>
+                        <td><strong>Option</strong></td>
+                        <td><strong>Last Published On</strong></td>
+                    </tr>
+                    <tr>
+                        <td><md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.cve" aria-label="CVE"> CVE</md-checkbox></td>
+                        <td>{{repo_publish_times.cveLast}}</td>
+                    </tr>
+                    <tr>
+                        <td><md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.benchmark" aria-label="Benchmark"> Benchmark</md-checkbox></td>
+                        <td>{{repo_publish_times.benchmarkLast}}</td>
+                    </tr>
+                    <tr>
+                        <td><md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.iavm" aria-label="IAVM"> IAVM</md-checkbox></td>
+                        <td>{{repo_publish_times.iavmLast}}</td>
+                    </tr>
+                    <tr>
+                        <td><md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.plugin" aria-label="Plugin"> Plugin</md-checkbox></td>
+                        <td>{{repo_publish_times.pluginLast}}</td>
+                    </tr>
+                    <tr>
+                        <td><md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.all_scan" aria-label="All Scan Results"> All Scan Results Regardless of Last Publish Date</md-checkbox></td>
+                        <td></td>
+                    </tr>
+                </table>
+
             </div>
             <div class="col-md-6">
-                <md-card>
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span class="md-headline">Scan Result Options</span>
-                        </md-card-title-text>
-                    </md-card-title>
-                    <md-card-content>
-                        <div flex-gt-sm="50">
-                            <md-checkbox class="md-primary" type="checkbox" ng-model="asset_options.assets" aria-label="Asset ARF"> Asset ARF</md-checkbox>
-                        </div>
-                        <div flex-gt-sm="50">
-                            <md-checkbox class="md-primary" type="checkbox" ng-model="asset_options.opattr" aria-label="Oper Attributes ARF"> Oper Attributes ARF</md-checkbox>
-                        </div>
-                        <div flex-gt-sm="50">
-                            <md-checkbox class="md-primary" type="checkbox" ng-model="asset_options.all_asset" aria-label="All Available Assets"> All Available Assets Regardless of Last Publish Date</md-checkbox>
-                        </div>
-                    </md-card-content>
-                </md-card>
+                <br />
+                <table class="table table-hover">
+                    <thead>
+                        <th colspan="2">Tagged Asset Options</th>
+                    </thead>
+                    <tr>
+                        <td><strong>Option</strong></td>
+                        <td><strong>Last Published On</strong></td>
+                    </tr>
+                    <tr>
+                        <td><md-checkbox class="md-primary" type="checkbox" ng-model="asset_options.assets" aria-label="Asset ARF"> Asset ARF</md-checkbox></td>
+                        <td>{{repo_publish_times.arfLast}}</td>
+                    </tr>
+                    <tr>
+                        <td><md-checkbox class="md-primary" type="checkbox" ng-model="asset_options.opattr" aria-label="Oper Attributes ARF"> Oper Attributes ARF</md-checkbox></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><md-checkbox class="md-primary" type="checkbox" ng-model="asset_options.all_asset" aria-label="All Available Assets"> All Available Assets Regardless of Last Publish Date</md-checkbox></td>
+                        <td></td>
+                    </tr>
+                </table>
             </div>
         </div>
     </form>
