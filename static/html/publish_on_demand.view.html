@@ -1,14 +1,14 @@
 <div class="col-md-12">
-    <form ng-submit="publish_on_demand()">
+    <form ng-submit="publish('on demand')">
         <div class="row">
             <input type="submit" value="Publish to Selected Site" class="btn btn-primary"> <span class="{{status_class}}">{{status}}</span>
         </div>
-        <br />
         <div class="row">
             <md-card>
                 <md-card-content>
                     <div flex-gt-sm="100">
-                        Select Site Location <select ng-options="option.name for option in vm.publish_sites_list track by option.id" ng-model="vm.selected_site"></select>
+                        Select Site Location <select ng-options="option.name for option in vm.publish_sites_list track by option.id" ng-model="vm.form_fields.selected_site" style="width: 400px;"></select>
+                        <md-checkbox class="md-primary" type="checkbox" ng-model="scan_options.cleartext" aria-label="in Cleartext" ng-disabled="vm.form_fields.selected_site.name == 'localhost'"> in Cleartext</md-checkbox>
                     </div>
                 </md-card-content>
             </md-card>
@@ -70,6 +70,71 @@
                         <td></td>
                     </tr>
                 </table>
+            </div>
+        </div>
+        <div class="row">
+            <md-checkbox class="md-primary" type="checkbox" ng-model="vm.scheduled_job" aria-label="as a Scheduled Job" ng-click="vm.switch_job_type()">Set up Publishing as a Scheduled Job</md-checkbox>
+        </div>
+        <div class="row" ng-show="vm.scheduled_job" ng-click="vm.change_job_type">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Specify Schedule
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <select ng-options="option as option for option in vm.freq_option" ng-model="vm.form_fields.freqOption" style="width: 140px;" ng-change="vm.switch_freq()" placeholder="Frequency" title="Frequency"></select>
+                    <select ng-options="option as option for option in vm.weeks_of_month" ng-model="vm.form_fields.weekOfMonth" style="width: 50px;" ng-disabled="vm.form_fields.freqOption != 'Monthly(Day)'" ng-show="vm.weeks_of_month_show" placeholder="Weeks of Month" title="Weeks of Month"></select>
+                    <select ng-options="option as option for option in vm.days_of_weeks" ng-model="vm.form_fields.daysOfWeeks" style="width: 140px;" ng-disabled="vm.form_fields.freqOption != 'Daily'" ng-show="vm.days_of_weeks_show" placeholder="Days of Weeks" title="Days of Weeks"></select>
+                    <select ng-options="option as option for option in vm.weekdays" ng-model="vm.form_fields.daysOfWeeks" style="width: 140px;" ng-disabled="vm.form_fields.freqOption != 'Weekly' && vm.form_fields.freqOption != 'Monthly(Day)'" ng-show="vm.weekdays_show" placeholder="Weekdays" title="Weekdays"></select>
+                    <select ng-options="option as option for option in vm.days_of_month" ng-model="vm.form_fields.dayOfMonth" style="width: 50px;" ng-disabled="vm.form_fields.freqOption != 'Monthly(Date)'" ng-show="vm.days_of_month_show" placeholder="Days of Month" title="Days of Month"></select>
+                    <select ng-options="option as option for option in vm.times" ng-model="vm.form_fields.time" style="width: 100px;" placeholder="Time" title="Time"></select>
+                    <select ng-options="option.text for option in vm.timezones track by option.utc[0]" ng-model="vm.form_fields.timezone" style="width: 400px;" placeholder="Timezone" title="Timezone"></select>
+                </div>
+                <div class="panel-footer">
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Scheduled Jobs
+                    </h3>
+                </div>
+                <div class="panel-body" style="text-align: center;">
+                    <table class="table table-hover">
+                        <thead>
+                            <th>&nbsp;</th>
+                            <th>assetOptions</th>
+                            <th>publishOptions</th>
+                            <th>dateScheduled</th>
+                            <th>dayOfMonth</th>
+                            <th>dayOfWeeks</th>
+                            <th>weekOfMonth</th>
+                            <th>destSite</th>
+                            <th>freqOption</th>
+                            <th>status</th>
+                            <th>time</th>
+                            <th>timezone</th>
+                        </thead>
+                        <tr ng-repeat="_row in publish_sched_list">
+                            <td><button type="button" class="btn btn-primary glyphicon glyphicon-edit" title="Edit Entry" placeholder="Edit Entry"></button></td>
+                            <td>{{_row.assetOptions}}</td>
+                            <td>{{_row.publishOptions}}</td>
+                            <td>{{_row.dateScheduled}}</td>
+                            <td>{{_row.dayOfMonth}}</td>
+                            <td>{{_row.dayOfWeeks}}</td>
+                            <td>{{_row.weekOfMonth}}</td>
+                            <td>{{_row.destSite}}</td>
+                            <td>{{_row.freqOption}}</td>
+                            <td>{{_row.status}}</td>
+                            <td>{{_row.time}}</td>
+                            <td>{{_row.timezone}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="panel-footer">
+
+                </div>
             </div>
         </div>
     </form>
