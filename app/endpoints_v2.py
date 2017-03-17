@@ -1834,7 +1834,7 @@ class PublishJobs(Resource):
             form_fields = request.get_json(force=True)
 
             if (form_fields['job_type'] == 'on demand'):
-                subprocess.call(shlex.split("/opt/mist/publishing/publish.py %s" % form_fields["options"]))
+                subprocess.Popen(["/opt/mist/publishing/publish.py %s" % form_fields["options"]], shell=True, stdout=subprocess.PIPE)
 
                 return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed publish command on demand.', 'class': 'alert alert-success'}}
 
