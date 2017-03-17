@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template, current_app, make_response
 from flask_restful import Resource, Api, reqparse, abort
-from flask_jwt import JWT, jwt_required, current_identity
+from flask_jwt import JWT, jwt_required, current_identity, JWTError
 from mist_main import return_app
 from common.models import main, base_model
 from common.db_helpers import PasswordCheck
@@ -133,12 +133,24 @@ class User(object):
 
 def authenticate(username, password):
     main.session.rollback()
-    user = main.session.query(main.MistUser)\
-      .filter(main.MistUser.username==username, main.MistUser.password==hashlib.sha256(password).hexdigest())\
-      .first()
-    users = main.session.query()
-    if hasattr(user, 'username'):
-      return user
+
+    # First try logging in with PKI, if cert was sent
+    subject_dn = request.environ.get('SSL_CLIENT_S_DN')
+    if subject_dn:
+        user = main.session.query(main.MistUser).filter(main.MistUser.subjectDN == subject_dn).first()
+        if user:
+            return user
+
+    # Now try logging in with username password
+    if not all([username, password]):
+        raise JWTError('Bad Request', 'Invalid credentials')
+
+    user = (main.session.query(main.MistUser)
+            .filter(main.MistUser.username == username, main.MistUser.password == hashlib.sha256(password).hexdigest())
+            .first())
+
+    # Will return None if nothing matched the query
+    return user
 
 
 def identity(payload):
@@ -147,6 +159,36 @@ def identity(payload):
 
 
 jwt = JWT(this_app, authenticate, identity)
+
+def auth_request_handler():
+    """
+    Override flask_jwt's default auth_request_handler() to not require username and password. In the case of logging
+    in with PKI, no username and password will be passed in
+    """
+    data = request.get_json()
+    username = data.get(this_app.config.get('JWT_AUTH_USERNAME_KEY'))
+    password = data.get(this_app.config.get('JWT_AUTH_PASSWORD_KEY'))
+
+    success = authenticate(username, password)
+
+    if success:
+        access_token = jwt.jwt_encode_callback(identity)
+        return jwt.auth_response_callback(access_token, identity)
+    else:
+        raise JWTError('Bad Request', 'Invalid credentials')
+
+
+def auth_response_handler(access_token, ident):
+    """
+    Override flask_jwt's default auth_response_handler() method to return not just the access
+    token but also the username. In the case of logging in with PKI, you won't already know the username,
+    you'll have to get it from the DB and return it here, to pass back to the client.
+    """
+    return jsonify({'access_token': access_token.decode('utf-8'), 'username': ident.username})
+
+# Override defaults for these two methods
+jwt.auth_request_handler(auth_request_handler)
+jwt.auth_response_handler(auth_response_handler)
 
 
 # NOTE: only used with flask_jwt.jwt_encode_callback()
@@ -691,16 +733,17 @@ class Signup(Resource):
                 raise ValueError("Password error: " + error)
 
             new_user = main.MistUser(
-                  username=form_fields['username']
-                , password=hashlib.sha256(form_fields['password0']).hexdigest()
-                , subjectDN="No certs"
-                , firstName=form_fields['first_name']
-                , lastName=form_fields['last_name']
-                , organization=form_fields['organization']
-                , lockout="No"
-                , permission=0
-                , permission_id=1
+                username=form_fields['username'],
+                password=hashlib.sha256(form_fields['password0']).hexdigest(),
+                subjectDN=request.environ.get('SSL_CLIENT_S_DN', 'No certs'),
+                firstName=form_fields['first_name'],
+                lastName=form_fields['last_name'],
+                organization=form_fields['organization'],
+                lockout="No",
+                permission=0,
+                permission_id=1
             )
+
             main.session.add(new_user)
             main.session.begin_nested()
 

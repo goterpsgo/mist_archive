@@ -515,7 +515,42 @@
             var publicPages = ['/login', '/signup'];    // add path to array if it's not to be protected
             var restrictedPage = publicPages.indexOf($location.path()) === -1;
             if (restrictedPage && !$localStorage.currentUser && !$sessionStorage.currentUser) {
-                $location.path('/login');
+
+                // first try to log in with pki, if haven't tried that yet
+                if (!$localStorage.authWithCertAttempted) {
+                    console.log('attempting');
+                    $http.post('/auth', { username: 'xxx', password: 'xxx' })
+                        .success(function (response) {
+                            if (response.access_token && response.username) {
+                                console.log('success callback');
+                                $localStorage.authWithCertAttempted = true;
+                                $localStorage.currentUser = {
+                                      username: response.username,
+                                      token: response.access_token
+                                };
+
+                                // add jwt token to auth header for all requests made by the $http service
+                                $http.defaults.headers.common.Authorization = 'JWT ' + response.access_token;
+
+                                // add token to session
+                                $sessionStorage.currentUser = { username: response.username, token: response.access_token };
+                                console.log('logged in with user ' + response.username)
+                            } else {
+                                console.log('error callback');
+                                $localStorage.authWithCertAttempted = true;
+                                $location.path('/login');
+                            }
+                        })
+                        .error(function(data, status) {
+                            console.log('error callback');
+                            $localStorage.authWithCertAttempted = true;
+                            $location.path('/login');
+                        });
+                }
+                else {
+                    console.log($localStorage.authWithCertAttempted);
+                    $location.path('/login');
+                }
             }
         });
     }
