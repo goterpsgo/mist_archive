@@ -218,7 +218,7 @@
 
         $scope.publish = function() {
             vm.user = ' --user ' + $localStorage.user.id;
-            vm.site = ' --site "' + vm.form_fields.selected_site + '"';
+            vm.site = ' --site "' + vm.form_fields.selected_site.location + '"';
             vm.options = vm.user + vm.site;
 
             for (var _node in $scope.scan_options) {
