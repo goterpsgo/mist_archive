@@ -16,7 +16,7 @@ import config
 import json
 import requests
 import subprocess
-import shlex
+from crontab import CronTab
 import pdb
 
 import os
@@ -1881,6 +1881,9 @@ class PublishJobs(Resource):
 
                 return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed publish command on demand.', 'class': 'alert alert-success'}}
 
+            else:
+                print ("[1885] form_fields: %r" % json.dumps(form_fields))
+                return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed scheduling publish job.', 'class': 'alert alert-success'}}
             # new_entry = main.SomeModel(
             #       name = form_fields['name']
             #     , description = form_fields['description'] if ("description" in form_fields) else "TBD"
