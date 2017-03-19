@@ -87,10 +87,10 @@
                 vm.weeks_of_month_show = false;
 
                 vm.form_fields.freqOption = vm.freq_option[0];  // 'Daily'
-                vm.form_fields.daysOfWeek = vm.days_of_weeks[0];
+                // vm.form_fields.daysOfWeek = vm.days_of_weeks[0];
                 vm.form_fields.weekdays = vm.days_of_weeks[0];
                 vm.form_fields.dayOfMonth = vm.days_of_month[0];
-                vm.form_fields.weekOfMonth = vm.weeks_of_month[0];
+                vm.form_fields.weeksOfMonth = vm.weeks_of_month[0];
                 vm.form_fields.time = vm.times[0];
                 vm.form_fields.timezone = vm.timezones[0];
 
@@ -220,24 +220,39 @@
             vm.user = ' --user ' + $localStorage.user.id;
             vm.site = ' --site "' + vm.form_fields.selected_site.location + '"';
             vm.options = vm.user + vm.site;
+            vm.scan_options_checked = false;
+            vm.asset_options_checked = false;
 
             for (var _node in $scope.scan_options) {
                 if ($scope.scan_options[_node]) {
                     vm.options += ' --' + _node;
+                    vm.scan_options_checked = (_node.substring(0,4) != 'all_'); // marked true if at least one scan result option is checked
                 }
             }
 
             for (var _node in $scope.asset_options) {
                 if ($scope.asset_options[_node]) {
                     vm.options += ' --' + _node;
+                    vm.asset_options_checked = (_node.substring(0,4) != 'all_');    // marked true if at least one tagged asset option is checked
                 }
             }
 
-            var form_data = {'job_type': $scope.publish_mode, 'options': vm.options};
+            vm.form_fields['options'] = vm.options;
+
+            if (!vm.scan_options_checked && !vm.asset_options_checked) {
+                $scope.status = 'Please select one or more scan result or tagged asset options.';
+                $scope.status_class = 'alert alert-warning';
+                // clear status message after five seconds
+                $timeout(function() {
+                    $scope.status = '';
+                    $scope.status_class = '';
+                }, 5000);
+            }
+
             return PublishJobsService
-                ._insert_publishjobs(form_data)
+                ._insert_publishjobs(vm.form_fields)
                 .then(function(result) {
-                    $scope.status = 'Executed publish ' + mode + '.';
+                    $scope.status = 'Executed publish ' + vm.form_fields.job_type + '.';
                     $scope.status_class = 'alert alert-success';
                 })
                 .then(function() {
