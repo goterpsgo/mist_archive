@@ -89,7 +89,7 @@
                     <select ng-options="option as option for option in vm.weekdays" ng-model="vm.form_fields.daysOfWeeks" style="width: 140px;" ng-disabled="vm.form_fields.freqOption != 'Weekly' && vm.form_fields.freqOption != 'Monthly(Day)'" ng-show="vm.weekdays_show" placeholder="Weekdays" title="Weekdays"></select>
                     <select ng-options="option as option for option in vm.days_of_month" ng-model="vm.form_fields.dayOfMonth" style="width: 50px;" ng-disabled="vm.form_fields.freqOption != 'Monthly(Date)'" ng-show="vm.days_of_month_show" placeholder="Days of Month" title="Days of Month"></select>
                     <select ng-options="option as option for option in vm.times" ng-model="vm.form_fields.time" style="width: 100px;" placeholder="Time" title="Time"></select>
-                    <select ng-options="option.text for option in vm.timezones track by option.utc[0]" ng-model="vm.form_fields.timezone" style="width: 400px;" placeholder="Timezone" title="Timezone"></select>
+                    <select ng-options="option.text for option in vm.timezones track by option.value" ng-model="vm.form_fields.timezone" style="width: 400px;" placeholder="Timezone" title="Timezone"></select>
                 </div>
                 <div class="panel-footer">
                 </div>
@@ -117,7 +117,10 @@
                             <th>timezone</th>
                         </thead>
                         <tr ng-repeat="_row in publish_sched_list">
-                            <td><button type="button" class="btn btn-primary glyphicon glyphicon-edit" title="Edit Entry" placeholder="Edit Entry"></button></td>
+                            <td>
+                                <button type="button" class="btn btn-danger glyphicon glyphicon-erase" title="Delete Entry" placeholder="Delete Entry" ng-click="delete_job(_row.id)"></button>
+                                <button type="button" class="btn btn-primary glyphicon glyphicon-edit" title="Edit Entry" placeholder="Edit Entry"></button>
+                            </td>
                             <td>{{_row.assetOptions}}</td>
                             <td>{{_row.publishOptions}}</td>
                             <td>{{_row.dateScheduled}}</td>
