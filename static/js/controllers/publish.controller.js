@@ -87,12 +87,14 @@
                 vm.weeks_of_month_show = false;
 
                 vm.form_fields.freqOption = vm.freq_option[0];  // 'Daily'
-                // vm.form_fields.daysOfWeek = vm.days_of_weeks[0];
+                vm.form_fields.daysOfWeek = vm.days_of_weeks[0];
+                console.log(vm.days_of_weeks[0]);
                 vm.form_fields.weekdays = vm.days_of_weeks[0];
                 vm.form_fields.dayOfMonth = vm.days_of_month[0];
-                vm.form_fields.weeksOfMonth = vm.weeks_of_month[0];
+                vm.form_fields.weekOfMonth = vm.weeks_of_month[0];
                 vm.form_fields.time = vm.times[0];
-                vm.form_fields.timezone = vm.timezones[0];
+                vm.form_fields.timezone = vm.timezones[14];
+                vm.form_fields.http_method = 'POST';
 
             }
             if ($state.current.name == 'publish.schedule') {
@@ -216,7 +218,34 @@
                 );
         }
 
+        $scope.delete_job = function(_id) {
+            return PublishJobsService
+                ._delete_publishjobs(_id)
+                .then(
+                      function(result) {
+                        $scope.status = 'Deleted scheduled job.';
+                        $scope.status_class = 'alert alert-success';
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                        vm.loading -= 1;
+                      }
+                )
+                .then(function() {
+                    load_publish_sched();
+                })
+                .then(function() {
+                    // clear status message after five seconds
+                    $timeout(function() {
+                        $scope.status = '';
+                        $scope.status_class = '';
+                    }, 5000);
+                });
+        }
+
         $scope.publish = function() {
+            vm.form_fields.publishOptions = '';
+            vm.form_fields.assetOptions = '';
             vm.user = ' --user ' + $localStorage.user.id;
             vm.site = ' --site "' + vm.form_fields.selected_site.location + '"';
             vm.options = vm.user + vm.site;
@@ -226,6 +255,7 @@
             for (var _node in $scope.scan_options) {
                 if ($scope.scan_options[_node]) {
                     vm.options += ' --' + _node;
+                    vm.form_fields.publishOptions += ' --' + _node;
                     vm.scan_options_checked = (_node.substring(0,4) != 'all_'); // marked true if at least one scan result option is checked
                 }
             }
@@ -233,11 +263,15 @@
             for (var _node in $scope.asset_options) {
                 if ($scope.asset_options[_node]) {
                     vm.options += ' --' + _node;
+                    vm.form_fields.assetOptions += ' --' + _node;
                     vm.asset_options_checked = (_node.substring(0,4) != 'all_');    // marked true if at least one tagged asset option is checked
                 }
             }
 
             vm.form_fields['options'] = vm.options;
+            vm.form_fields['destSite'] = vm.form_fields.selected_site.location;
+            vm.form_fields['destSiteName'] = vm.form_fields.selected_site.name;
+            vm.form_fields['user'] = $localStorage.user.username;
 
             if (!vm.scan_options_checked && !vm.asset_options_checked) {
                 $scope.status = 'Please select one or more scan result or tagged asset options.';
@@ -251,9 +285,18 @@
 
             return PublishJobsService
                 ._insert_publishjobs(vm.form_fields)
-                .then(function(result) {
-                    $scope.status = 'Executed publish ' + vm.form_fields.job_type + '.';
-                    $scope.status_class = 'alert alert-success';
+                .then(
+                      function(result) {
+                        $scope.status = 'Executed publish ' + vm.form_fields.job_type + '.';
+                        $scope.status_class = 'alert alert-success';
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                        vm.loading -= 1;
+                      }
+                )
+                .then(function() {
+                    load_publish_sched();
                 })
                 .then(function() {
                     // clear status message after five seconds
@@ -262,7 +305,6 @@
                         $scope.status_class = '';
                     }, 5000);
                 });
-
 
             // return SecurityCentersService._insert_sc($scope.form_data).then()
             //     .then(function(result) {
