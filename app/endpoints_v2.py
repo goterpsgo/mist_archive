@@ -2029,12 +2029,13 @@ class PublishJobs(Resource):
     #         main.session.rollback()
     #         return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
     #
-    # @jwt_required()
-    # def delete(self, _id):
-    #     main.session.query(main.SomeModel).filter(main.SomeModel.id == _id).delete()
-    #     main.session.commit()
-    #     main.session.flush()
-    #     return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Some item successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
+    @jwt_required()
+    def delete(self, _id):
+        main.session.query(main.PublishSched).filter(main.PublishSched.id == _id).delete()
+        main.session.commit()
+        main.session.flush()
+        write_crontab()
+        return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Scheduled job successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
 
 
 
@@ -2189,7 +2190,7 @@ api.add_resource(CategorizedTags, '/categorizedtags', '/categorizedtags/<int:_td
 api.add_resource(TaggedRepos, '/taggedrepos', '/taggedrepos/<int:_tagged_repo_id>')
 api.add_resource(Assets, '/assets', '/assets/<int:_id>')
 api.add_resource(PublishSched, '/publishsched')
-api.add_resource(PublishJobs, '/publishjobs', '/publishjob/<int:_jobid>')
+api.add_resource(PublishJobs, '/publishjobs', '/publishjob/<int:_id>')
 api.add_resource(RepoPublishTimes, '/repopublishtimes')
 api.add_resource(LocalLogs, '/locallogs', '/locallog/<string:_name>')
 api.add_resource(PublicationDownloader, '/publicationdownloader/<string:_name>')
