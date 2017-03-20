@@ -1,0 +1,3 @@
+#!/opt/mist/mist_base/.localpython/bin/python
+import virtualenv
+virtualenv.main()
