@@ -1,0 +1,36 @@
+.help-block {
+    font-size: 12px;
+}
+
+.bg-unclassified, .bg-green {
+    background-color: green;
+}
+
+.bg-confidential, .bg-blue {
+    background-color: #0055FF;
+}
+
+.bg-secret, .bg-red {
+    background-color: red;
+}
+
+.bg-top-secret, .bg-tssci, .bg-orange {
+    background-color: orange;
+}
+
+.text-white
+, .bg-unclassified, .bg-green
+, .bg-confidential, .bg-blue
+, .bg-secret, .bg-red
+, .bg-top-secret, .bg-tssci, .bg-orange
+{
+    color: white;
+}
+
+.row-hover:hover {
+    background-color: #EEEEEE;
+}
+
+.glyphicon {
+    font-size: 20px;
+}

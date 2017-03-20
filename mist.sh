@@ -7,7 +7,7 @@ if [ -f /etc/sysconfig/nginx ]; then
 fi
 
 
-MIST_HOME=/opt/mist_base
+MIST_HOME=/opt/mist/mist_base
 USER=mist
 
 APP_HOME=$MIST_HOME/app
@@ -39,6 +39,7 @@ start() {
 			echo "$NGINX_NAME (pid `pidof $NGINX_NAME`) already running."
 			exit 1
 		else
+		    echo "$NGINX_BIN -c $NGINX_CONFFILE"
 		    $NGINX_BIN -c $NGINX_CONFFILE
 		fi
 
@@ -56,6 +57,7 @@ start() {
 		if [ "$?" = 0 ] ; then
 			echo "$UWSGI_NAME (pid `pidof $UWSGI_NAME`) already running."
         else
+	    echo "$UWSGI_BIN --py-autoreload 1 --master --socket=/tmp/mist_app.sock --pidfile=/tmp/mist_app.pid --module=wsgi --honour-stdin --chdir=$APP_HOME --threads=1 --virtualenv=$ENV_HOME --die-on-term --uid $USER --gid $USER"
             $UWSGI_BIN --py-autoreload 1 --master --socket=/tmp/mist_app.sock --pidfile=/tmp/mist_app.pid --module=wsgi --honour-stdin --chdir=$APP_HOME --threads=1 --virtualenv=$ENV_HOME --die-on-term --uid $USER --gid $USER --logto=/opt/mist_base/log/mist_app.log > /dev/null 2>&1 &
 		fi
 

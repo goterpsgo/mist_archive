@@ -1,0 +1,10 @@
+server {
+    listen       0.0.0.0:8080;
+#    listen       somename:8080;
+    server_name  mist_static;
+
+    location / {
+        root   /opt/mist_base/static;
+        index  index.html index.htm;
+    }
+}

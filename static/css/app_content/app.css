@@ -39,3 +39,9 @@
     width: 500px;
     height: 250px;
 }
+
+.grid-tooltip {
+  overflow: visible;
+  z-index: 9999999;
+  float: left;
+}

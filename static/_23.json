@@ -1,0 +1,375 @@
+{
+  "tags": {
+    "category": "organization", 
+    "children": [
+      {
+        "category": "organization", 
+        "children": [
+          {
+            "category": "organization", 
+            "depth": "2", 
+            "dname": "Carnegie Mellon CERT CC", 
+            "hname": "CMCC", 
+            "id": "20956", 
+            "nameID": "39250", 
+            "parentID": "29998", 
+            "rollup": "http://CNDSP.dod.mil", 
+            "tagType": "L", 
+            "tag_definition_id": "23"
+          }
+        ], 
+        "depth": "1", 
+        "dname": "Non Government", 
+        "hname": "NGO", 
+        "id": "20951", 
+        "nameID": "29998", 
+        "parentID": "29995", 
+        "rollup": "http://CNDSP.dod.mil", 
+        "tagType": "N", 
+        "tag_definition_id": "23"
+      }, 
+      {
+        "category": "organization", 
+        "children": [
+          {
+            "category": "organization", 
+            "children": [
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "J6 STRATCOM", 
+                "hname": "J6 STRATCOM", 
+                "id": "20937", 
+                "nameID": "4787", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "DLA CERT", 
+                "hname": "DLA CERT", 
+                "id": "20938", 
+                "nameID": "4781", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "ARL-CNDSP", 
+                "hname": "ARL-CNDSP", 
+                "id": "20939", 
+                "nameID": "11380", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "MCNOSC", 
+                "hname": "MCNOSC", 
+                "id": "20941", 
+                "nameID": "12393", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "DREN CNDSP", 
+                "hname": "711th HPW", 
+                "id": "20942", 
+                "nameID": "12289", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "Information Technology Agency", 
+                "hname": "ITA", 
+                "id": "20943", 
+                "nameID": "39262", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "children": [
+                  {
+                    "category": "organization", 
+                    "depth": "4", 
+                    "dname": "Continental United States Army Theater Network Operations and Security Center", 
+                    "hname": "CONUS TNOSC", 
+                    "id": "20953", 
+                    "nameID": "36984", 
+                    "parentID": "13041", 
+                    "rollup": "http://CNDSP.dod.mil", 
+                    "tagType": "L", 
+                    "tag_definition_id": "23"
+                  }
+                ], 
+                "depth": "3", 
+                "dname": "ARCYBER", 
+                "hname": "ARCYBER", 
+                "id": "20944", 
+                "nameID": "13041", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "N", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "MDA CERT", 
+                "hname": "MDA CERT", 
+                "id": "20945", 
+                "nameID": "13040", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "DARPA CIRT", 
+                "hname": "DARPA CIRT", 
+                "id": "20946", 
+                "nameID": "13029", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "PENTCIRT", 
+                "hname": "PENTCIRT", 
+                "id": "20947", 
+                "nameID": "13042", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "USCG CNDSP", 
+                "hname": "USCG CNDSP", 
+                "id": "20948", 
+                "nameID": "13039", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "NISIRT", 
+                "hname": "T3-N", 
+                "id": "20949", 
+                "nameID": "10331", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "STRAT-NOC", 
+                "hname": "J633", 
+                "id": "20950", 
+                "nameID": "12494", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "24th Air Force CNDSP", 
+                "hname": "24th CNDSP", 
+                "id": "20955", 
+                "nameID": "13028", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "children": [
+                  {
+                    "category": "organization", 
+                    "depth": "4", 
+                    "dname": "Navy Regional Computer Emergency Response Team", 
+                    "hname": "NRCERT", 
+                    "id": "20940", 
+                    "nameID": "37006", 
+                    "parentID": "2105", 
+                    "rollup": "http://CNDSP.dod.mil", 
+                    "tagType": "L", 
+                    "tag_definition_id": "23"
+                  }
+                ], 
+                "depth": "3", 
+                "dname": "Navy Cyber Defense Operations Command, (3029A)", 
+                "hname": "NCDOC", 
+                "id": "20959", 
+                "nameID": "2105", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "N", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "NGA CNDSP", 
+                "hname": "NGA CNDSP", 
+                "id": "20960", 
+                "nameID": "13034", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "NRO CIRT", 
+                "hname": "NRO CIRT", 
+                "id": "20961", 
+                "nameID": "13035", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "DIA Enterprise", 
+                "hname": "CIO-4", 
+                "id": "20962", 
+                "nameID": "13036", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "DCMA NOSC", 
+                "hname": "DCMA NOSC", 
+                "id": "20963", 
+                "nameID": "13030", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "DECA NOSC", 
+                "hname": "DECA NOSC", 
+                "id": "20964", 
+                "nameID": "13031", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "DFAS CNDSP", 
+                "hname": "DFAS CNDSP", 
+                "id": "20965", 
+                "nameID": "13032", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }, 
+              {
+                "category": "organization", 
+                "depth": "3", 
+                "dname": "DTRA CNDSP", 
+                "hname": "DTRA CNDSP", 
+                "id": "20966", 
+                "nameID": "13033", 
+                "parentID": "269", 
+                "rollup": "http://CNDSP.dod.mil", 
+                "tagType": "L", 
+                "tag_definition_id": "23"
+              }
+            ], 
+            "depth": "2", 
+            "dname": "US Cyber Command", 
+            "hname": "USCC", 
+            "id": "20952", 
+            "nameID": "269", 
+            "parentID": "29997", 
+            "rollup": "http://CNDSP.dod.mil", 
+            "tagType": "N", 
+            "tag_definition_id": "23"
+          }, 
+          {
+            "category": "organization", 
+            "depth": "2", 
+            "dname": "United States Computer Emergency Response Team", 
+            "hname": "US CERT", 
+            "id": "20958", 
+            "nameID": "37016", 
+            "parentID": "29997", 
+            "rollup": "http://CNDSP.dod.mil", 
+            "tagType": "L", 
+            "tag_definition_id": "23"
+          }
+        ], 
+        "depth": "1", 
+        "dname": "Government", 
+        "hname": "Gov", 
+        "id": "20957", 
+        "nameID": "29997", 
+        "parentID": "29995", 
+        "rollup": "http://CNDSP.dod.mil", 
+        "tagType": "N", 
+        "tag_definition_id": "23"
+      }
+    ], 
+    "depth": "0", 
+    "dname": "Global", 
+    "hname": "Global", 
+    "id": "20954", 
+    "nameID": "29995", 
+    "parentID": "Top", 
+    "rollup": "http://CNDSP.dod.mil", 
+    "tagType": "N", 
+    "tag_definition_id": "23"
+  }
+}
+
