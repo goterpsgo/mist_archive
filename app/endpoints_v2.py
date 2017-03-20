@@ -16,7 +16,6 @@ import config
 import json
 import requests
 import subprocess
-from crontab import CronTab
 import pdb
 
 import os
@@ -1882,7 +1881,106 @@ class PublishJobs(Resource):
                 return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed publish command on demand.', 'class': 'alert alert-success'}}
 
             else:
-                print ("[1885] form_fields: %r" % json.dumps(form_fields))
+                new_scheduled_job = None
+                if (form_fields['freqOption'] == "Monthly(Date)"):
+                    new_scheduled_job = main.PublishSched(
+                          user = form_fields['user']
+                        , destSite = form_fields['destSite']
+                        , publishOptions = form_fields['publishOptions']
+                        , status = "Scheduled"
+                        , assetOptions = form_fields['assetOptions']
+                        , destSiteName = form_fields['destSiteName']
+                        , dateScheduled = datetime.now()
+                        , freqOption = form_fields['freqOption']
+                        , time = form_fields['time']
+                        , timezone = form_fields['timezone']['value']
+                        , dayOfMonth = form_fields['dayOfMonth']
+                    )
+                elif (form_fields['freqOption'] == "Monthly(Day)"):
+                    new_scheduled_job = main.PublishSched(
+                          user = form_fields['user']
+                        , destSite = form_fields['destSite']
+                        , publishOptions = form_fields['publishOptions']
+                        , status = "Scheduled"
+                        , assetOptions = form_fields['assetOptions']
+                        , destSiteName = form_fields['destSiteName']
+                        , dateScheduled = datetime.now()
+                        , freqOption = form_fields['freqOption']
+                        , time = form_fields['time']
+                        , timezone = form_fields['timezone']['value']
+                        , daysOfWeeks = form_fields['daysOfWeeks']
+                        , weekOfMonth = form_fields['weekOfMonth']
+                    )
+                else:   # "Daily" or "Weekly" by default
+                    new_scheduled_job = main.PublishSched(
+                          user = form_fields['user']
+                        , destSite = form_fields['destSite']
+                        , publishOptions = form_fields['publishOptions']
+                        , status = "Scheduled"
+                        , assetOptions = form_fields['assetOptions']
+                        , destSiteName = form_fields['destSiteName']
+                        , dateScheduled = datetime.now()
+                        , freqOption = form_fields['freqOption']
+                        , time = form_fields['time']
+                        , timezone = form_fields['timezone']['value']
+                        , daysOfWeeks = form_fields['daysOfWeeks']
+                    )
+
+                main.session.add(new_scheduled_job)
+                main.session.commit()
+                main.session.flush()
+
+                publish_sched_list = []
+                _rows = []
+                _days_as_int = {
+                      "Sunday": 0
+                    , "Monday": 1
+                    , "Tuesday": 2
+                    , "Wednesday": 3
+                    , "Thursday": 4
+                    , "Friday": 5
+                    , "Saturday": 6
+                }
+                _week_as_range = {
+                      "1st": "1-7"
+                    , "2nd": "8-14"
+                    , "3rd": "15-21"
+                    , "4th": "22-28"
+                }
+
+                # write publishSched entries to crontab
+                f = open("/tmp/mist_crontab.txt", "w")
+                for r_publish_sched in rs_publish_sched().order_by(main.PublishSched.destSiteName):
+                    publish_sched_list.append(row_to_dict(r_publish_sched))
+
+                    _this_hour = int(r_publish_sched.time.split(":")[0])
+
+                    _this_dayOfMonth = "*"
+
+                    if (r_publish_sched.dayOfMonth is not None):
+                        _this_dayOfMonth = int(r_publish_sched.dayOfMonth)
+                    elif (r_publish_sched.weekOfMonth is not None):
+                        _this_dayOfMonth = _week_as_range.get(r_publish_sched.weekOfMonth)
+
+                    _this_daysOfWeeks = "*"
+                    if (r_publish_sched.daysOfWeeks is not None):
+                        if (r_publish_sched.daysOfWeeks == "Weekdays"):
+                            _this_daysOfWeeks = "1-5"
+                        elif (r_publish_sched.daysOfWeeks == "Weekends"):
+                            _this_daysOfWeeks = "0,6"
+                        elif re.match('^[A-Za-z]+day$', r_publish_sched.daysOfWeeks):
+                            _this_daysOfWeeks = _days_as_int[r_publish_sched.daysOfWeeks]    # single digit 0-6
+
+                    _this_user = main.session.query(main.MistUser).filter(main.MistUser.username == r_publish_sched.user).first()
+                    _row = "0 %r %r * %r python /opt/mist/publishing/publish.py --user %r --site \"%r\" %r %r > /dev/null 2>&1\n" % (_this_hour, _this_dayOfMonth, _this_daysOfWeeks, _this_user.id, r_publish_sched.destSite, r_publish_sched.publishOptions, r_publish_sched.assetOptions)
+                    _row = _row.replace("'", "")    # remove single quotes
+
+                    f.write(_row)
+                f.close
+
+                if (os.path.exists("/tmp/mist_crontab.txt")):
+                    subprocess.Popen(["crontab -r; crontab /tmp/mist_crontab.txt; rm /tmp/mist_crontab.txt"], shell=True, stdout=subprocess.PIPE)
+
                 return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed scheduling publish job.', 'class': 'alert alert-success'}}
             # new_entry = main.SomeModel(
             #       name = form_fields['name']
