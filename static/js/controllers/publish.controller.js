@@ -218,6 +218,35 @@
                 );
         }
 
+        function switch_job_type() {
+            var _freq = vm.form_fields.freqOption;
+            switch (_freq) {
+                case 'Weekly':
+                    vm.days_of_weeks_show = false;
+                    vm.weekdays_show = true;
+                    vm.days_of_month_show = false;
+                    vm.weeks_of_month_show = false;
+                    break;
+                case 'Monthly(Date)':
+                    vm.days_of_weeks_show = false;
+                    vm.weekdays_show = false;
+                    vm.days_of_month_show = true;
+                    vm.weeks_of_month_show = false;
+                    break;
+                case 'Monthly(Day)':
+                    vm.days_of_weeks_show = false;
+                    vm.weekdays_show = true;
+                    vm.days_of_month_show = false;
+                    vm.weeks_of_month_show = true;
+                    break;
+                default:
+                    vm.days_of_weeks_show = true;
+                    vm.weekdays_show = false;
+                    vm.days_of_month_show = false;
+                    vm.weeks_of_month_show = false;
+            }
+        }
+
         $scope.delete_job = function(_id) {
             return PublishJobsService
                 ._delete_publishjobs(_id)
@@ -254,6 +283,7 @@
                     break;
                 }
             }
+            switch_job_type();
         };
 
         $scope.publish = function() {
@@ -342,33 +372,6 @@
             vm.form_fields.job_type = (vm.scheduled_job) ? 'on demand' : 'scheduled job';
         };
 
-        vm.switch_freq = function() {
-            var _freq = vm.form_fields.freqOption;
-            switch (_freq) {
-                case 'Weekly':
-                    vm.days_of_weeks_show = false;
-                    vm.weekdays_show = true;
-                    vm.days_of_month_show = false;
-                    vm.weeks_of_month_show = false;
-                    break;
-                case 'Monthly(Date)':
-                    vm.days_of_weeks_show = false;
-                    vm.weekdays_show = false;
-                    vm.days_of_month_show = true;
-                    vm.weeks_of_month_show = false;
-                    break;
-                case 'Monthly(Day)':
-                    vm.days_of_weeks_show = false;
-                    vm.weekdays_show = true;
-                    vm.days_of_month_show = false;
-                    vm.weeks_of_month_show = true;
-                    break;
-                default:
-                    vm.days_of_weeks_show = true;
-                    vm.weekdays_show = false;
-                    vm.days_of_month_show = false;
-                    vm.weeks_of_month_show = false;
-            }
-        }
+        vm.switch_job_type = switch_job_type();
     }
 })();
