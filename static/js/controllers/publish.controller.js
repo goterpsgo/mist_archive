@@ -241,7 +241,20 @@
                         $scope.status_class = '';
                     }, 5000);
                 });
-        }
+        };
+
+        // NOTE: will need to have conditional field loading similar to that in .switch_freq()
+        $scope.update_job = function (_id) {
+            for (var _cnt in $scope.publish_sched_list) {
+                var _job = $scope.publish_sched_list[_cnt];
+                if (_job.id == _id) {
+                    vm.form_fields.freqOption = _job.freqOption;
+                    vm.form_fields.time = _job.time;
+                    vm.form_fields.selected_site = _job.destSite;
+                    break;
+                }
+            }
+        };
 
         $scope.publish = function() {
             vm.form_fields.publishOptions = '';
@@ -305,30 +318,6 @@
                         $scope.status_class = '';
                     }, 5000);
                 });
-
-            // return SecurityCentersService._insert_sc($scope.form_data).then()
-            //     .then(function(result) {
-            //         $scope.form_data['status'] = result.message;
-            //         $scope.form_data['status_class'] = result.class;
-            //         $scope.form_data['serverName'] = '';
-            //         $scope.form_data['fqdn_IP'] = '';
-            //         $scope.form_data['username'] = '';
-            //         $scope.form_data['pw'] = '';
-            //         $scope.form_data['certificateFile'] = '';
-            //         $scope.form_data['keyFile'] = '';
-            //         $scope.form_data['version'] = 5;
-            //     })
-            //     .then(function() {
-            //         load_sc_data();
-            //     })
-            //     .then(function() {
-            //         // clear status message after five seconds
-            //         $timeout(function() {
-            //             $scope.form_data['status'] = '';
-            //             $scope.form_data['status_class'] = '';
-            //         }, 5000);
-            //     });
-
         };
 
         function load_mist_params() {
@@ -351,7 +340,7 @@
 
         vm.switch_job_type = function() {
             vm.form_fields.job_type = (vm.scheduled_job) ? 'on demand' : 'scheduled job';
-        }
+        };
 
         vm.switch_freq = function() {
             var _freq = vm.form_fields.freqOption;

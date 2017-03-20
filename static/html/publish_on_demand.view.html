@@ -119,7 +119,7 @@
                         <tr ng-repeat="_row in publish_sched_list">
                             <td>
                                 <button type="button" class="btn btn-danger glyphicon glyphicon-erase" title="Delete Entry" placeholder="Delete Entry" ng-click="delete_job(_row.id)"></button>
-                                <button type="button" class="btn btn-primary glyphicon glyphicon-edit" title="Edit Entry" placeholder="Edit Entry"></button>
+                                <button type="button" class="btn btn-primary glyphicon glyphicon-edit" title="Edit Entry" placeholder="Edit Entry" ng-click="update_job(_row.id)"></button>
                             </td>
                             <td>{{_row.assetOptions}}</td>
                             <td>{{_row.publishOptions}}</td>
