@@ -72,7 +72,7 @@
         function delete_publishjobs(id) {
             var deferred = $q.defer();
 
-            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/publishjobs/' + id)
+            $http.delete(__env.api_url + ':' + __env.port + '/api/v2/publishjob/' + id)
                 .then(function(data, status, headers) {
                     deferred.resolve(data);
                 }
