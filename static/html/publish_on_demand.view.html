@@ -1,7 +1,9 @@
 <div class="col-md-12">
     <form ng-submit="publish('on demand')">
         <div class="row">
-            <input type="submit" value="Publish to Selected Site" class="btn btn-primary"> <span class="{{status_class}}">{{status}}</span>
+            <input type="submit" value="Publish to Selected Site" class="btn btn-primary">
+            <input type="button" value="Reset Form" class="btn btn-default" ng-click="reset_form()">
+            <span class="{{status_class}}">{{status}}</span>
         </div>
         <div class="row">
             <md-card>
@@ -104,11 +106,11 @@
                     <table class="table table-hover">
                         <thead>
                             <th>&nbsp;</th>
-                            <th>assetOptions</th>
                             <th>publishOptions</th>
+                            <th>assetOptions</th>
                             <th>dateScheduled</th>
                             <th>dayOfMonth</th>
-                            <th>dayOfWeeks</th>
+                            <th>daysOfWeeks</th>
                             <th>weekOfMonth</th>
                             <th>destSite</th>
                             <th>freqOption</th>
@@ -121,11 +123,11 @@
                                 <button type="button" class="btn btn-danger glyphicon glyphicon-erase" title="Delete Entry" placeholder="Delete Entry" ng-click="delete_job(_row.id)"></button>
                                 <button type="button" class="btn btn-primary glyphicon glyphicon-edit" title="Edit Entry" placeholder="Edit Entry" ng-click="update_job(_row.id)"></button>
                             </td>
-                            <td>{{_row.assetOptions}}</td>
                             <td>{{_row.publishOptions}}</td>
+                            <td>{{_row.assetOptions}}</td>
                             <td>{{_row.dateScheduled}}</td>
                             <td>{{_row.dayOfMonth}}</td>
-                            <td>{{_row.dayOfWeeks}}</td>
+                            <td>{{_row.daysOfWeeks}}</td>
                             <td>{{_row.weekOfMonth}}</td>
                             <td>{{_row.destSite}}</td>
                             <td>{{_row.freqOption}}</td>
