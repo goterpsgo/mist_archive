@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 import base64
 import os
 from datetime import datetime, timedelta
+import time
 from socket import inet_aton, inet_ntoa
 import netaddr
 import config
@@ -112,10 +113,10 @@ def write_crontab():
     f = open("/tmp/mist_crontab.txt", "w")
     for r_publish_sched in rs_publish_sched().order_by(main.PublishSched.destSiteName):
 
-        print ("[115] this_app.config['TIMEZONE_VALUE']: %r" % this_app.config['TIMEZONE_VALUE'])
-        print ("[116] datetime.utcnow(): %r" % datetime.utcnow())
-        print ("[117] datetime.now(): %r" % datetime.now())
-        print ("[116] datetime.utcoffset(): %r" % datetime.utcoffset)
+        print ("[116] this_app.config['TIMEZONE_VALUE']: %r" % this_app.config['TIMEZONE_VALUE'])
+        print ("[117] datetime.utcnow(): %r" % datetime.utcnow())
+        print ("[118] datetime.now(): %r" % datetime.now())
+        print ("[119] datetime.now(): %r" % time.mktime(datetime.now()))
 
         _this_hour = int(r_publish_sched.time.split(":")[0])
         _this_minute = int(r_publish_sched.time.split(":")[1])
