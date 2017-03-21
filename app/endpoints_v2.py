@@ -112,6 +112,7 @@ def write_crontab():
     f = open("/tmp/mist_crontab.txt", "w")
     for r_publish_sched in rs_publish_sched().order_by(main.PublishSched.destSiteName):
         _this_hour = int(r_publish_sched.time.split(":")[0])
+        _this_minute = int(r_publish_sched.time.split(":")[1])
 
         _this_dayOfMonth = "*"
 
@@ -130,8 +131,8 @@ def write_crontab():
                 _this_daysOfWeeks = _days_as_int[r_publish_sched.daysOfWeeks]  # single digit 0-6
 
         _this_user = main.session.query(main.MistUser).filter(main.MistUser.username == r_publish_sched.user).first()
-        _row = "0 %r %r * %r python /opt/mist/publishing/publish.py --user %r --site \"%r\" %r %r > /dev/null 2>&1\n" % (
-        _this_hour, _this_dayOfMonth, _this_daysOfWeeks, _this_user.id, r_publish_sched.destSite,
+        _row = "%r %r %r * %r python /opt/mist/publishing/publish.py --user %r --site \"%r\" %r %r > /dev/null 2>&1\n" % (
+        _this_minute, _this_hour, _this_dayOfMonth, _this_daysOfWeeks, _this_user.id, r_publish_sched.destSite,
         r_publish_sched.publishOptions, r_publish_sched.assetOptions)
         _row = _row.replace("'", "")  # remove single quotes
 
@@ -1932,6 +1933,11 @@ class PublishJobs(Resource):
                 return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed publish command on demand.', 'class': 'alert alert-success'}}
 
             else:
+                if (form_fields['id'] != -1):
+                    rs_publish_sched().filter(main.PublishSched.id == form_fields['id']).delete()
+                    main.session.commit()
+                    main.session.flush()
+
                 new_scheduled_job = None
                 if (form_fields['freqOption'] == "Monthly(Date)"):
                     new_scheduled_job = main.PublishSched(
