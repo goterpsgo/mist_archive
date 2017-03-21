@@ -123,19 +123,16 @@
 
                         for (var _cnt_jobs in $scope.publish_sched_list) {
                             var _row = $scope.publish_sched_list[_cnt_jobs];
-                            console.log(_row);
-                            console.log(_row.timezone);
+                            for (var _cnt_timezones in vm.timezones) {
+                                var _timezone = vm.timezones[_cnt_timezones];
+                                if (_row.timezone == _timezone.value) {
+                                    $scope.publish_sched_list[_cnt_jobs]['offset'] = _timezone.offset;
+                                    $scope.publish_sched_list[_cnt_jobs]['isdst'] = _timezone.isdst;
+                                    break;
+                                }
+                            }
                         }
-
-
-
-
-
-
-
-
-
-
+                        console.log($scope.publish_sched_list);
                         vm.loading = false;
                       }
                     , function(err) {

@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="32687be2-0be4-4b42-8ecd-0f232cddf2ab" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/endpoints_v2.py" afterPath="$PROJECT_DIR$/app/endpoints_v2.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nginx/1.11.10/logs/access.log" afterPath="$PROJECT_DIR$/nginx/1.11.10/logs/access.log" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/js/controllers/publish.controller.js" afterPath="$PROJECT_DIR$/static/js/controllers/publish.controller.js" />
     </list>
@@ -118,10 +117,10 @@
             <file leaf-file-name="publish.controller.js" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/static/js/controllers/publish.controller.js">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="240">
-                    <caret line="125" column="44" lean-forward="false" selection-start-line="125" selection-start-column="44" selection-end-line="125" selection-end-column="44" />
+                  <state relative-caret-position="316">
+                    <caret line="128" column="36" lean-forward="true" selection-start-line="128" selection-start-column="36" selection-end-line="128" selection-end-column="36" />
                     <folding>
-                      <element signature="e#36185#39129#0" expanded="false" />
+                      <element signature="e#36668#39612#0" expanded="false" />
                     </folding>
                   </state>
                 </provider>
@@ -318,7 +317,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>form_fields.weeksOfMonth</find>
       <find>form_fields</find>
       <find>EDT</find>
       <find>utc[0]</find>
@@ -348,6 +346,7 @@
       <find>def write_cron</find>
       <find>Eastern Standard Time</find>
       <find>time</find>
+      <find>$scope.pub</find>
     </findStrings>
     <replaceStrings>
       <replace>, mistUsers</replace>
@@ -2326,10 +2325,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/static/js/controllers/publish.controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="125" column="44" lean-forward="false" selection-start-line="125" selection-start-column="44" selection-end-line="125" selection-end-column="44" />
+        <state relative-caret-position="316">
+          <caret line="128" column="36" lean-forward="true" selection-start-line="128" selection-start-column="36" selection-end-line="128" selection-end-column="36" />
           <folding>
-            <element signature="e#36185#39129#0" expanded="false" />
+            <element signature="e#36668#39612#0" expanded="false" />
           </folding>
         </state>
       </provider>
