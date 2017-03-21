@@ -282,29 +282,31 @@
                     $scope.status_class = '';
                 }, 5000);
             }
+            else {
+                return PublishJobsService
+                    ._insert_publishjobs(vm.form_fields)
+                    .then(
+                          function(result) {
+                            $scope.status = 'Executed publish ' + vm.form_fields.job_type + '.';
+                            $scope.status_class = 'alert alert-success';
+                          }
+                        , function(err) {
+                            $scope.status = 'Error loading data: ' + err.message;
+                            vm.loading -= 1;
+                          }
+                    )
+                    .then(function() {
+                        load_publish_sched();
+                    })
+                    .then(function() {
+                        // clear status message after five seconds
+                        $timeout(function() {
+                            $scope.status = '';
+                            $scope.status_class = '';
+                        }, 5000);
+                    });
+            }
 
-            return PublishJobsService
-                ._insert_publishjobs(vm.form_fields)
-                .then(
-                      function(result) {
-                        $scope.status = 'Executed publish ' + vm.form_fields.job_type + '.';
-                        $scope.status_class = 'alert alert-success';
-                      }
-                    , function(err) {
-                        $scope.status = 'Error loading data: ' + err.message;
-                        vm.loading -= 1;
-                      }
-                )
-                .then(function() {
-                    load_publish_sched();
-                })
-                .then(function() {
-                    // clear status message after five seconds
-                    $timeout(function() {
-                        $scope.status = '';
-                        $scope.status_class = '';
-                    }, 5000);
-                });
         };
 
         function load_mist_params() {
