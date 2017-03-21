@@ -1933,61 +1933,61 @@ class PublishJobs(Resource):
                 return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed publish command on demand.', 'class': 'alert alert-success'}}
 
             else:
-                if (form_fields['id'] != -1):
-                    rs_publish_sched().filter(main.PublishSched.id == form_fields['id']).delete()
-                    main.session.commit()
-                    main.session.flush()
-
-                new_scheduled_job = None
-                if (form_fields['freqOption'] == "Monthly(Date)"):
-                    new_scheduled_job = main.PublishSched(
-                          user = form_fields['user']
-                        , destSite = form_fields['destSite']
-                        , publishOptions = form_fields['publishOptions']
-                        , status = "Scheduled"
-                        , assetOptions = form_fields['assetOptions']
-                        , destSiteName = form_fields['destSiteName']
-                        , dateScheduled = datetime.now()
-                        , freqOption = form_fields['freqOption']
-                        , time = form_fields['time']
-                        , timezone = form_fields['timezone']['value']
-                        , dayOfMonth = form_fields['dayOfMonth']
-                    )
-                elif (form_fields['freqOption'] == "Monthly(Day)"):
-                    new_scheduled_job = main.PublishSched(
-                          user = form_fields['user']
-                        , destSite = form_fields['destSite']
-                        , publishOptions = form_fields['publishOptions']
-                        , status = "Scheduled"
-                        , assetOptions = form_fields['assetOptions']
-                        , destSiteName = form_fields['destSiteName']
-                        , dateScheduled = datetime.now()
-                        , freqOption = form_fields['freqOption']
-                        , time = form_fields['time']
-                        , timezone = form_fields['timezone']['value']
-                        , daysOfWeeks = form_fields['daysOfWeeks']
-                        , weekOfMonth = form_fields['weekOfMonth']
-                    )
-                else:   # "Daily" or "Weekly" by default
-                    new_scheduled_job = main.PublishSched(
-                          user = form_fields['user']
-                        , destSite = form_fields['destSite']
-                        , publishOptions = form_fields['publishOptions']
-                        , status = "Scheduled"
-                        , assetOptions = form_fields['assetOptions']
-                        , destSiteName = form_fields['destSiteName']
-                        , dateScheduled = datetime.now()
-                        , freqOption = form_fields['freqOption']
-                        , time = form_fields['time']
-                        , timezone = form_fields['timezone']['value']
-                        , daysOfWeeks = form_fields['daysOfWeeks']
-                    )
-
-                main.session.add(new_scheduled_job)
-                main.session.commit()
-                main.session.flush()
-
-                write_crontab()
+                # if (form_fields['id'] != -1):
+                #     rs_publish_sched().filter(main.PublishSched.id == form_fields['id']).delete()
+                #     main.session.commit()
+                #     main.session.flush()
+                #
+                # new_scheduled_job = None
+                # if (form_fields['freqOption'] == "Monthly(Date)"):
+                #     new_scheduled_job = main.PublishSched(
+                #           user = form_fields['user']
+                #         , destSite = form_fields['destSite']
+                #         , publishOptions = form_fields['publishOptions']
+                #         , status = "Scheduled"
+                #         , assetOptions = form_fields['assetOptions']
+                #         , destSiteName = form_fields['destSiteName']
+                #         , dateScheduled = datetime.now()
+                #         , freqOption = form_fields['freqOption']
+                #         , time = form_fields['time']
+                #         , timezone = form_fields['timezone']['value']
+                #         , dayOfMonth = form_fields['dayOfMonth']
+                #     )
+                # elif (form_fields['freqOption'] == "Monthly(Day)"):
+                #     new_scheduled_job = main.PublishSched(
+                #           user = form_fields['user']
+                #         , destSite = form_fields['destSite']
+                #         , publishOptions = form_fields['publishOptions']
+                #         , status = "Scheduled"
+                #         , assetOptions = form_fields['assetOptions']
+                #         , destSiteName = form_fields['destSiteName']
+                #         , dateScheduled = datetime.now()
+                #         , freqOption = form_fields['freqOption']
+                #         , time = form_fields['time']
+                #         , timezone = form_fields['timezone']['value']
+                #         , daysOfWeeks = form_fields['daysOfWeeks']
+                #         , weekOfMonth = form_fields['weekOfMonth']
+                #     )
+                # else:   # "Daily" or "Weekly" by default
+                #     new_scheduled_job = main.PublishSched(
+                #           user = form_fields['user']
+                #         , destSite = form_fields['destSite']
+                #         , publishOptions = form_fields['publishOptions']
+                #         , status = "Scheduled"
+                #         , assetOptions = form_fields['assetOptions']
+                #         , destSiteName = form_fields['destSiteName']
+                #         , dateScheduled = datetime.now()
+                #         , freqOption = form_fields['freqOption']
+                #         , time = form_fields['time']
+                #         , timezone = form_fields['timezone']['value']
+                #         , daysOfWeeks = form_fields['daysOfWeeks']
+                #     )
+                #
+                # main.session.add(new_scheduled_job)
+                # main.session.commit()
+                # main.session.flush()
+                #
+                # write_crontab()
 
                 return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed scheduling publish job.', 'class': 'alert alert-success'}}
             # new_entry = main.SomeModel(

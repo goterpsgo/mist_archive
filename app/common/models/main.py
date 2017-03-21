@@ -208,6 +208,7 @@ class RepoPublishTimes(Base.Model):
     iavmLast = Column(TIMESTAMP)
 
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
+# connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@10.11.1.241:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist/mist_base/certificates/mist-interface.crt',
                     'key': '/opt/mist/mist_base/certificates/mist-interface.key',
                     'ca': '/opt/mist/mist_base/certificates/si_ca.crt'}}
