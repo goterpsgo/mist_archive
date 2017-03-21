@@ -120,6 +120,22 @@
                 .then(
                     function(results) {
                         $scope.publish_sched_list = results.publish_sched_list;
+
+                        for (var _cnt_jobs in $scope.publish_sched_list) {
+                            var _row = $scope.publish_sched_list[_cnt_jobs];
+                            console.log(_row);
+                            console.log(_row.timezone);
+                        }
+
+
+
+
+
+
+
+
+
+
                         vm.loading = false;
                       }
                     , function(err) {

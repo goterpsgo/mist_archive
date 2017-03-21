@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32687be2-0be4-4b42-8ecd-0f232cddf2ab" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/endpoints_v2.py" afterPath="$PROJECT_DIR$/app/endpoints_v2.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mist.sh" afterPath="$PROJECT_DIR$/mist.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nginx/1.11.10/logs/access.log" afterPath="$PROJECT_DIR$/nginx/1.11.10/logs/access.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/js/controllers/publish.controller.js" afterPath="$PROJECT_DIR$/static/js/controllers/publish.controller.js" />
     </list>
     <ignored path="mist_base.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -116,10 +118,10 @@
             <file leaf-file-name="publish.controller.js" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/static/js/controllers/publish.controller.js">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="440">
-                    <caret line="306" column="23" lean-forward="false" selection-start-line="306" selection-start-column="23" selection-end-line="306" selection-end-column="23" />
+                  <state relative-caret-position="240">
+                    <caret line="125" column="44" lean-forward="false" selection-start-line="125" selection-start-column="44" selection-end-line="125" selection-end-column="44" />
                     <folding>
-                      <element signature="e#35893#38837#0" expanded="false" />
+                      <element signature="e#36185#39129#0" expanded="false" />
                     </folding>
                   </state>
                 </provider>
@@ -194,8 +196,8 @@
       <file leaf-file-name="endpoints_v2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/endpoints_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="193">
-              <caret line="118" column="20" lean-forward="false" selection-start-line="118" selection-start-column="20" selection-end-line="118" selection-end-column="20" />
+            <state relative-caret-position="358">
+              <caret line="120" column="42" lean-forward="false" selection-start-line="120" selection-start-column="42" selection-end-line="120" selection-end-column="42" />
               <folding>
                 <element signature="e#0#90#0" expanded="true" />
               </folding>
@@ -316,7 +318,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>weekOfMonth</find>
       <find>form_fields.weeksOfMonth</find>
       <find>form_fields</find>
       <find>EDT</find>
@@ -346,6 +347,7 @@
       <find>def put</find>
       <find>def write_cron</find>
       <find>Eastern Standard Time</find>
+      <find>time</find>
     </findStrings>
     <replaceStrings>
       <replace>, mistUsers</replace>
@@ -416,8 +418,8 @@
         <option value="$PROJECT_DIR$/app/config.py" />
         <option value="$PROJECT_DIR$/mist.sh" />
         <option value="$PROJECT_DIR$/static/html/publish_on_demand.view.html" />
-        <option value="$PROJECT_DIR$/static/js/controllers/publish.controller.js" />
         <option value="$PROJECT_DIR$/app/endpoints_v2.py" />
+        <option value="$PROJECT_DIR$/static/js/controllers/publish.controller.js" />
       </list>
     </option>
   </component>
@@ -2304,16 +2306,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/controllers/publish.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="306" column="23" lean-forward="false" selection-start-line="306" selection-start-column="23" selection-end-line="306" selection-end-column="23" />
-          <folding>
-            <element signature="e#35893#38837#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mist.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -2324,10 +2316,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/endpoints_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="118" column="20" lean-forward="false" selection-start-line="118" selection-start-column="20" selection-end-line="118" selection-end-column="20" />
+        <state relative-caret-position="358">
+          <caret line="120" column="42" lean-forward="false" selection-start-line="120" selection-start-column="42" selection-end-line="120" selection-end-column="42" />
           <folding>
             <element signature="e#0#90#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/controllers/publish.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="125" column="44" lean-forward="false" selection-start-line="125" selection-start-column="44" selection-end-line="125" selection-end-column="44" />
+          <folding>
+            <element signature="e#36185#39129#0" expanded="false" />
           </folding>
         </state>
       </provider>

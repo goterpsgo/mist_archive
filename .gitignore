@@ -1,0 +1,6 @@
+.pyc
+node_modules
+curl_rest_calls.txt
+gulpfile.js
+package.json
+.idea/

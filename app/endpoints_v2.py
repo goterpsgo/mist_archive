@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 import base64
 import os
 from datetime import datetime, timedelta
-import time
+import calendar
 from socket import inet_aton, inet_ntoa
 import netaddr
 import config
@@ -114,9 +114,11 @@ def write_crontab():
     for r_publish_sched in rs_publish_sched().order_by(main.PublishSched.destSiteName):
 
         print ("[116] this_app.config['TIMEZONE_VALUE']: %r" % this_app.config['TIMEZONE_VALUE'])
-        print ("[117] datetime.utcnow(): %r" % datetime.utcnow())
-        print ("[118] datetime.now(): %r" % datetime.now())
-        print ("[119] datetime.now(): %r" % time.mktime(datetime.now()))
+        epoch_utc = int(calendar.timegm(datetime.utcnow().timetuple()))
+        epoch_now = int(calendar.timegm(datetime.now().timetuple()))
+        print ("[119] epoch_utc: %r" % epoch_utc)
+        print ("[120] epoch_now: %r" % epoch_now)
+        print ("[121] epoch_diff: %r" % (epoch_now - epoch_utc))
 
         _this_hour = int(r_publish_sched.time.split(":")[0])
         _this_minute = int(r_publish_sched.time.split(":")[1])
