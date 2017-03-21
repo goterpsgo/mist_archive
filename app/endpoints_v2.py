@@ -111,6 +111,12 @@ def write_crontab():
     # write publishSched entries to crontab
     f = open("/tmp/mist_crontab.txt", "w")
     for r_publish_sched in rs_publish_sched().order_by(main.PublishSched.destSiteName):
+
+        print ("[115] this_app.config['TIMEZONE_VALUE']: %r" % this_app.config['TIMEZONE_VALUE'])
+        print ("[116] datetime.utcnow(): %r" % datetime.utcnow())
+        print ("[117] datetime.now(): %r" % datetime.now())
+        print ("[116] datetime.utcoffset(): %r" % datetime.utcoffset)
+
         _this_hour = int(r_publish_sched.time.split(":")[0])
         _this_minute = int(r_publish_sched.time.split(":")[1])
 
@@ -1987,7 +1993,7 @@ class PublishJobs(Resource):
                 # main.session.commit()
                 # main.session.flush()
                 #
-                # write_crontab()
+                write_crontab()
 
                 return {'response': {'method': 'POST', 'result': 'success', 'message': 'Executed scheduling publish job.', 'class': 'alert alert-success'}}
             # new_entry = main.SomeModel(
