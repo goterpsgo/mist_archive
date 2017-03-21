@@ -132,7 +132,6 @@
                                 }
                             }
                         }
-                        console.log($scope.publish_sched_list);
                         vm.loading = false;
                       }
                     , function(err) {
@@ -399,6 +398,8 @@
                     vm.form_fields.id = _id;    // set ID
                     vm.form_fields.freqOption = _job.freqOption;    // set frequency
                     vm.form_fields.time = _job.time;    // set time
+                    vm.form_fields.offset = _job.offset;
+                    vm.form_fields.isdst = _job.isdst;
 
                     for (var _cnt2 in vm.publish_sites_list) {  // set location
                         var _site = vm.publish_sites_list[_cnt2];

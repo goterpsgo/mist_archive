@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32687be2-0be4-4b42-8ecd-0f232cddf2ab" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nginx/1.11.10/logs/access.log" afterPath="$PROJECT_DIR$/nginx/1.11.10/logs/access.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/html/publish_on_demand.view.html" afterPath="$PROJECT_DIR$/static/html/publish_on_demand.view.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/js/controllers/publish.controller.js" afterPath="$PROJECT_DIR$/static/js/controllers/publish.controller.js" />
     </list>
     <ignored path="mist_base.iws" />
@@ -114,14 +113,12 @@
       <content type="file-editors">
         <state>
           <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file leaf-file-name="publish.controller.js" pinned="false" current-in-tab="true">
+            <file leaf-file-name="publish.controller.js" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/static/js/controllers/publish.controller.js">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="316">
-                    <caret line="128" column="36" lean-forward="true" selection-start-line="128" selection-start-column="36" selection-end-line="128" selection-end-column="36" />
-                    <folding>
-                      <element signature="e#36668#39612#0" expanded="false" />
-                    </folding>
+                  <state relative-caret-position="170">
+                    <caret line="400" column="11" lean-forward="false" selection-start-line="400" selection-start-column="11" selection-end-line="400" selection-end-column="11" />
+                    <folding />
                   </state>
                 </provider>
               </entry>
@@ -146,11 +143,11 @@
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="publish_on_demand.view.html" pinned="false" current-in-tab="false">
+            <file leaf-file-name="publish_on_demand.view.html" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/static/html/publish_on_demand.view.html">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="15">
-                    <caret line="1" column="29" lean-forward="false" selection-start-line="1" selection-start-column="29" selection-end-line="1" selection-end-column="29" />
+                  <state relative-caret-position="192">
+                    <caret line="93" column="225" lean-forward="false" selection-start-line="93" selection-start-column="225" selection-end-line="93" selection-end-column="225" />
                     <folding>
                       <element signature="n#style#0;n#select#0;n#div#0;n#md-card-content#0;n#md-card#0;n#div#1;n#form#0;n#div#0;n#!!top" expanded="true" />
                       <element signature="n#style#0;n#select#0;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
@@ -160,7 +157,7 @@
                       <element signature="n#style#0;n#select#4;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
                       <element signature="n#style#0;n#select#5;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
                       <element signature="n#style#0;n#select#6;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-                      <element signature="e#7100#7106#1" expanded="true" />
+                      <element signature="e#7128#7134#1" expanded="true" />
                     </folding>
                   </state>
                 </provider>
@@ -317,7 +314,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>form_fields</find>
       <find>EDT</find>
       <find>utc[0]</find>
       <find>vm.form_fields.timezone</find>
@@ -331,7 +327,6 @@
       <find>$scope.publish_sched_list</find>
       <find>break</find>
       <find>weeksOfMonth</find>
-      <find>publish_sched_list</find>
       <find>switch_job_type</find>
       <find>switch_freq</find>
       <find>update_job</find>
@@ -347,6 +342,8 @@
       <find>Eastern Standard Time</find>
       <find>time</find>
       <find>$scope.pub</find>
+      <find>publish_sched_list</find>
+      <find>timezone</find>
     </findStrings>
     <replaceStrings>
       <replace>, mistUsers</replace>
@@ -416,9 +413,9 @@
         <option value="$PROJECT_DIR$/app/common/models/main.py" />
         <option value="$PROJECT_DIR$/app/config.py" />
         <option value="$PROJECT_DIR$/mist.sh" />
-        <option value="$PROJECT_DIR$/static/html/publish_on_demand.view.html" />
         <option value="$PROJECT_DIR$/app/endpoints_v2.py" />
         <option value="$PROJECT_DIR$/static/js/controllers/publish.controller.js" />
+        <option value="$PROJECT_DIR$/static/html/publish_on_demand.view.html" />
       </list>
     </option>
   </component>
@@ -2287,24 +2284,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/html/publish_on_demand.view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="29" lean-forward="false" selection-start-line="1" selection-start-column="29" selection-end-line="1" selection-end-column="29" />
-          <folding>
-            <element signature="n#style#0;n#select#0;n#div#0;n#md-card-content#0;n#md-card#0;n#div#1;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#0;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#1;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#2;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#3;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#4;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#5;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#6;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="e#7100#7106#1" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mist.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -2325,10 +2304,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/static/js/controllers/publish.controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="128" column="36" lean-forward="true" selection-start-line="128" selection-start-column="36" selection-end-line="128" selection-end-column="36" />
+        <state relative-caret-position="170">
+          <caret line="400" column="11" lean-forward="false" selection-start-line="400" selection-start-column="11" selection-end-line="400" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/html/publish_on_demand.view.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="93" column="225" lean-forward="false" selection-start-line="93" selection-start-column="225" selection-end-line="93" selection-end-column="225" />
           <folding>
-            <element signature="e#36668#39612#0" expanded="false" />
+            <element signature="n#style#0;n#select#0;n#div#0;n#md-card-content#0;n#md-card#0;n#div#1;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#0;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#1;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#2;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#3;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#4;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#5;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#6;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="e#7128#7134#1" expanded="true" />
           </folding>
         </state>
       </provider>
