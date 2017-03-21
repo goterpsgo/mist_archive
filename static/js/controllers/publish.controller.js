@@ -66,7 +66,7 @@
         initController();
 
         function initController() {
-            vm.loading = 0
+            vm.loading = 0;
             load_repo_publish_times();
 
             for (var _cnt = 1; _cnt <= 31; _cnt++) {
@@ -94,7 +94,7 @@
                 vm.form_fields.weekOfMonth = vm.weeks_of_month[0];
                 vm.form_fields.time = vm.times[0];
                 vm.form_fields.timezone = vm.timezones[14];
-                vm.form_fields.http_method = 'POST';
+                vm.form_fields.id = -1;
 
             }
             if ($state.current.name == 'publish.schedule') {
@@ -218,35 +218,6 @@
                 );
         }
 
-        function switch_job_type() {
-            var _freq = vm.form_fields.freqOption;
-            switch (_freq) {
-                case 'Weekly':
-                    vm.days_of_weeks_show = false;
-                    vm.weekdays_show = true;
-                    vm.days_of_month_show = false;
-                    vm.weeks_of_month_show = false;
-                    break;
-                case 'Monthly(Date)':
-                    vm.days_of_weeks_show = false;
-                    vm.weekdays_show = false;
-                    vm.days_of_month_show = true;
-                    vm.weeks_of_month_show = false;
-                    break;
-                case 'Monthly(Day)':
-                    vm.days_of_weeks_show = false;
-                    vm.weekdays_show = true;
-                    vm.days_of_month_show = false;
-                    vm.weeks_of_month_show = true;
-                    break;
-                default:
-                    vm.days_of_weeks_show = true;
-                    vm.weekdays_show = false;
-                    vm.days_of_month_show = false;
-                    vm.weeks_of_month_show = false;
-            }
-        }
-
         $scope.delete_job = function(_id) {
             return PublishJobsService
                 ._delete_publishjobs(_id)
@@ -270,20 +241,6 @@
                         $scope.status_class = '';
                     }, 5000);
                 });
-        };
-
-        // NOTE: will need to have conditional field loading similar to that in .switch_freq()
-        $scope.update_job = function (_id) {
-            for (var _cnt in $scope.publish_sched_list) {
-                var _job = $scope.publish_sched_list[_cnt];
-                if (_job.id == _id) {
-                    vm.form_fields.freqOption = _job.freqOption;
-                    vm.form_fields.time = _job.time;
-                    vm.form_fields.selected_site = _job.destSite;
-                    break;
-                }
-            }
-            switch_job_type();
         };
 
         $scope.publish = function() {
@@ -370,8 +327,126 @@
 
         vm.switch_job_type = function() {
             vm.form_fields.job_type = (vm.scheduled_job) ? 'on demand' : 'scheduled job';
+            console.log(vm.form_fields);
         };
 
-        vm.switch_job_type = switch_job_type();
+        function switch_freq() {
+            var _freq = vm.form_fields.freqOption;
+            switch (_freq) {
+                case 'Weekly':
+                    vm.days_of_weeks_show = false;
+                    vm.weekdays_show = true;
+                    vm.days_of_month_show = false;
+                    vm.weeks_of_month_show = false;
+                    break;
+                case 'Monthly(Date)':
+                    vm.days_of_weeks_show = false;
+                    vm.weekdays_show = false;
+                    vm.days_of_month_show = true;
+                    vm.weeks_of_month_show = false;
+                    break;
+                case 'Monthly(Day)':
+                    vm.days_of_weeks_show = false;
+                    vm.weekdays_show = true;
+                    vm.days_of_month_show = false;
+                    vm.weeks_of_month_show = true;
+                    break;
+                default:
+                    vm.days_of_weeks_show = true;
+                    vm.weekdays_show = false;
+                    vm.days_of_month_show = false;
+                    vm.weeks_of_month_show = false;
+            }
+        }
+
+        // unchecks option checkboxes
+        function reset_options() {
+            for (var _item in $scope.asset_options) {
+                $scope.asset_options[_item] = false;
+            }
+            for (var _item in $scope.scan_options) {
+                $scope.scan_options[_item] = false;
+            }
+        }
+
+        vm.switch_freq = function() {
+            switch_freq();
+        }
+
+        $scope.update_job = function (_id) {
+            for (var _cnt in $scope.publish_sched_list) {
+                var _job = $scope.publish_sched_list[_cnt];
+                console.log(_job);
+                if (_job.id == _id) {
+                    vm.form_fields.id = _id;    // set ID
+                    vm.form_fields.freqOption = _job.freqOption;    // set frequency
+                    vm.form_fields.time = _job.time;    // set time
+
+                    for (var _cnt2 in vm.publish_sites_list) {  // set location
+                        var _site = vm.publish_sites_list[_cnt2];
+                        if (_job.destSite == _site.location) {
+                            vm.form_fields.selected_site = vm.publish_sites_list[_cnt2];
+                            break;
+                        }
+                    }
+
+                    // set options
+                    reset_options();
+                    var _asset_options = _job.assetOptions.trim().split(' ');
+                    for (var _cnt2 in _asset_options) {
+                        var _length = _asset_options[_cnt2].length;
+                        var _asset_option = _asset_options[_cnt2].substring(2, _length);
+                        $scope.asset_options[_asset_option] = true;
+                    }
+
+                    console.log(_job.publishOptions.trim().split(' '));
+                    var _publish_options = _job.publishOptions.trim().split(' ');
+                    for (var _cnt2 in _publish_options) {
+                        var _length = _publish_options[_cnt2].length;
+                        var _publish_option = _publish_options[_cnt2].substring(2, _length);
+                        $scope.scan_options[_publish_option] = true;
+                    }
+
+                    // set schedule pulldowns
+                    switch (_job.freqOption) {
+                        case 'Weekly':
+                            vm.form_fields.daysOfWeeks = _job.daysOfWeeks;
+                            break;
+                        case 'Monthly(Date)':
+                            vm.form_fields.dayOfMonth = parseInt(_job.dayOfMonth);
+                            break;
+                        case 'Monthly(Day)':
+                            vm.form_fields.weekOfMonth = _job.weekOfMonth;
+                            vm.form_fields.daysOfWeeks = _job.daysOfWeeks;
+                            break;
+                        default:
+                            vm.form_fields.daysOfWeeks = _job.daysOfWeeks;
+                    }
+
+                    // set timezone
+                    for (var _cnt2 in vm.timezones) {
+                        var _timezone = vm.timezones[_cnt2];
+                        if (_timezone.value == _job.timezone) {
+                            vm.form_fields.timezone = vm.timezones[_cnt2];
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+            switch_freq();
+        };
+
+        $scope.reset_form = function() {
+            reset_options();
+            vm.form_fields.selected_site = vm.publish_sites_list[0];
+            vm.form_fields.id = -1;
+            vm.form_fields.freqOption = vm.freq_option[0];
+            vm.form_fields.daysOfWeeks = vm.days_of_weeks[0];
+            vm.form_fields.time = vm.times[0];
+            vm.form_fields.timezone = vm.timezones[14];
+            switch_freq();
+        }
     }
 })();
