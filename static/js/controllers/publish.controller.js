@@ -87,9 +87,9 @@
                 vm.weeks_of_month_show = false;
 
                 vm.form_fields.freqOption = vm.freq_option[0];  // 'Daily'
-                vm.form_fields.daysOfWeek = vm.days_of_weeks[0];
+                vm.form_fields.daysOfWeeks = vm.days_of_weeks[0];
                 console.log(vm.days_of_weeks[0]);
-                vm.form_fields.weekdays = vm.days_of_weeks[0];
+                // vm.form_fields.daysOfWeeks = vm.days_of_weeks[0];
                 vm.form_fields.dayOfMonth = vm.days_of_month[0];
                 vm.form_fields.weekOfMonth = vm.weeks_of_month[0];
                 vm.form_fields.time = vm.times[0];
@@ -338,6 +338,7 @@
                     vm.weekdays_show = true;
                     vm.days_of_month_show = false;
                     vm.weeks_of_month_show = false;
+                    vm.form_fields.daysOfWeeks = vm.weekdays[0];
                     break;
                 case 'Monthly(Date)':
                     vm.days_of_weeks_show = false;
@@ -350,12 +351,14 @@
                     vm.weekdays_show = true;
                     vm.days_of_month_show = false;
                     vm.weeks_of_month_show = true;
+                    vm.form_fields.daysOfWeeks = vm.weekdays[0];
                     break;
                 default:
                     vm.days_of_weeks_show = true;
                     vm.weekdays_show = false;
                     vm.days_of_month_show = false;
                     vm.weeks_of_month_show = false;
+                    vm.form_fields.daysOfWeeks = vm.days_of_weeks[0];
             }
         }
 
