@@ -10,8 +10,7 @@
         $scope._task = '';
         var obj_tasks = [];
         obj_tasks['publish.list'] = 'List Available Publications';
-        obj_tasks['publish.on_demand'] = 'Publish On Demand';
-        obj_tasks['publish.schedule'] = 'Schedule A Job';
+        obj_tasks['publish.on_demand'] = 'Publish On Demand or By Schedule';
         $scope.publish_sched_list = {};
         $scope.repo_publish_times = {};
         $scope.publish_jobs_list = {};
