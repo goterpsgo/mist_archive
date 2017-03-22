@@ -48,7 +48,7 @@
                 if (result === true) {
                     $location.path('/');
                 } else {
-                    vm.error = 'Username or password is incorrect';
+                    vm.error = 'Username or password is incorrect. Accounts are locked after three (3) failed attempts.';
                     vm.loading = false;
                 }
             });

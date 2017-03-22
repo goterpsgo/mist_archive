@@ -220,8 +220,13 @@ def authenticate(username, password):
     if not all([username, password]):
         raise JWTError('Bad Request', 'Invalid credentials')
 
+    print ("[223] Got here")
     user = (main.session.query(main.MistUser)
-            .filter(main.MistUser.username == username, main.MistUser.password == hashlib.sha256(password).hexdigest())
+            .filter(
+                  main.MistUser.username == username
+                , main.MistUser.password == hashlib.sha256(password).hexdigest()
+                , main.MistUser.lockout == "No"
+            )
             .first())
 
     # Will return None if nothing matched the query
