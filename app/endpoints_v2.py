@@ -819,7 +819,7 @@ class Signup(Resource):
                 firstName=form_fields['first_name'],
                 lastName=form_fields['last_name'],
                 organization=form_fields['organization'],
-                lockout="No",
+                lockout="Yes",
                 permission=0,
                 permission_id=1
             )
