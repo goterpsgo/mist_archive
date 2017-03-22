@@ -15,31 +15,35 @@
 
     // all providers need to be defined in config()
     function config($stateProvider, $httpProvider, $urlRouterProvider, $authProvider, $locationProvider) {
+
+        // You can also use regex for the match parameter
+        $urlRouterProvider.when('', '/publish/publish.list');
+
         // default route
-        $urlRouterProvider.otherwise("/");
+        $urlRouterProvider.otherwise("/publish/publish.list");
 
         // app routes
         $stateProvider
-            .state('home', {
-              url: '/',
-              views : {
-                  '_main' : {
-                  templateUrl: 'static/html/home.view.html',
-                    controller: 'Home.IndexController',
-                    controllerAs: 'vm'
-                  }
-                , '_nav' : {
-                  templateUrl: 'static/html/nav.view.html',
-                    controller: 'Nav.IndexController',
-                    controllerAs: 'vm'
-                  }
-                , '_classification' : {
-                  templateUrl: 'static/html/classification.view.html',
-                    controller: 'Classification.IndexController',
-                    controllerAs: 'vm'
-                  }
-              }
-            })
+            // .state('home', {
+            //   url: '/',
+            //   views : {
+            //       '_main' : {
+            //       templateUrl: 'static/html/home.view.html',
+            //         controller: 'Home.IndexController',
+            //         controllerAs: 'vm'
+            //       }
+            //     , '_nav' : {
+            //       templateUrl: 'static/html/nav.view.html',
+            //         controller: 'Nav.IndexController',
+            //         controllerAs: 'vm'
+            //       }
+            //     , '_classification' : {
+            //       templateUrl: 'static/html/classification.view.html',
+            //         controller: 'Classification.IndexController',
+            //         controllerAs: 'vm'
+            //       }
+            //   }
+            // })
             .state('login', {
               url: '/login',
               views : {
@@ -186,31 +190,6 @@
                   }
                 , '_main@publish' : {
                   templateUrl: 'static/html/publish_on_demand.view.html',
-                    controller: 'Publish.IndexController',
-                    controllerAs: 'vm'
-                  }
-              }
-            })
-            .state('publish.schedule', {
-              url: '/publish.schedule',
-              views : {
-                '_main' : {
-                  templateUrl: 'static/html/publish.view.html',
-                  controller: 'Publish.IndexController',
-                  controllerAs: 'vm'
-                }
-                , '_nav' : {
-                  templateUrl: 'static/html/nav.view.html',
-                    controller: 'Nav.IndexController',
-                    controllerAs: 'vm'
-                  }
-                , '_classification' : {
-                  templateUrl: 'static/html/classification.view.html',
-                    controller: 'Classification.IndexController',
-                    controllerAs: 'vm'
-                  }
-                , '_main@publish' : {
-                  templateUrl: 'static/html/publish_schedule.view.html',
                     controller: 'Publish.IndexController',
                     controllerAs: 'vm'
                   }
