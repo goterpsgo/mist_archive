@@ -88,8 +88,6 @@
 
                 vm.form_fields.freqOption = vm.freq_option[0];  // 'Daily'
                 vm.form_fields.daysOfWeeks = vm.days_of_weeks[0];
-                console.log(vm.days_of_weeks[0]);
-                // vm.form_fields.daysOfWeeks = vm.days_of_weeks[0];
                 vm.form_fields.dayOfMonth = vm.days_of_month[0];
                 vm.form_fields.weekOfMonth = vm.weeks_of_month[0];
                 vm.form_fields.time = vm.times[0];
@@ -347,7 +345,6 @@
 
         vm.switch_job_type = function() {
             vm.form_fields.job_type = (vm.scheduled_job) ? 'on demand' : 'scheduled job';
-            console.log(vm.form_fields);
         };
 
         function switch_freq() {
@@ -399,7 +396,6 @@
         $scope.update_job = function (_id) {
             for (var _cnt in $scope.publish_sched_list) {
                 var _job = $scope.publish_sched_list[_cnt];
-                console.log(_job);
                 if (_job.id == _id) {
                     vm.form_fields.id = _id;    // set ID
                     vm.form_fields.freqOption = _job.freqOption;    // set frequency
@@ -424,7 +420,6 @@
                         $scope.asset_options[_asset_option] = true;
                     }
 
-                    console.log(_job.publishOptions.trim().split(' '));
                     var _publish_options = _job.publishOptions.trim().split(' ');
                     for (var _cnt2 in _publish_options) {
                         var _length = _publish_options[_cnt2].length;
