@@ -264,19 +264,25 @@
             vm.scan_options_checked = false;
             vm.asset_options_checked = false;
 
+            vm.scan_options_checked = false;
             for (var _node in $scope.scan_options) {
                 if ($scope.scan_options[_node]) {
                     vm.options += ' --' + _node;
                     vm.form_fields.publishOptions += ' --' + _node;
-                    vm.scan_options_checked = (_node.substring(0,4) != 'all_'); // marked true if at least one scan result option is checked
+                    if (_node.substring(0,4) != 'all_') {
+                        vm.scan_options_checked = true; // marked true if at least one scan result option is checked
+                    }
                 }
             }
 
+            vm.asset_options_checked = false;
             for (var _node in $scope.asset_options) {
                 if ($scope.asset_options[_node]) {
                     vm.options += ' --' + _node;
                     vm.form_fields.assetOptions += ' --' + _node;
-                    vm.asset_options_checked = (_node.substring(0,4) != 'all_');    // marked true if at least one tagged asset option is checked
+                    if (_node.substring(0,4) != 'all_') {
+                        vm.asset_options_checked = true;    // marked true if at least one tagged asset option is checked
+                    }
                 }
             }
 
@@ -466,6 +472,6 @@
             vm.form_fields.time = vm.times[0];
             vm.form_fields.timezone = vm.timezones[14];
             switch_freq();
-        }
+        };
     }
 })();
