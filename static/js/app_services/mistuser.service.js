@@ -46,6 +46,12 @@
                         for (var _cnt in response.data.users_list) {
                             response.data.users_list[_cnt]['status'] = _status[response.data.users_list[_cnt].permission];
                             response.data.users_list[_cnt]['status_class'] = _status_class[response.data.users_list[_cnt].permission];
+                            console.log(response.data.users_list[_cnt].username);
+                            console.log(response.data.users_list[_cnt].lockout);
+                            if (response.data.users_list[_cnt].lockout == 'Yes') {
+                                response.data.users_list[_cnt]['status'] = _status[0];
+                                response.data.users_list[_cnt]['status_class'] = _status_class[0];
+                            }
                         }
                         deferred.resolve(response.data);
                     }

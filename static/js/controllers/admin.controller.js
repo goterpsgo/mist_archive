@@ -50,7 +50,7 @@
                         $scope._form_fields = {};
                     }
                 );
-        }
+        };
 
         $scope.repo_assign = function(user, repo, permission, cnt_repos) {
             var form_data = {'permission': permission, 'repo': repo, 'cnt_repos': cnt_repos};
@@ -129,7 +129,7 @@
                               }
                         )
                 );
-        };
+        }
 
 
         function get_users() {

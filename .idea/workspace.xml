@@ -2,8 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="32687be2-0be4-4b42-8ecd-0f232cddf2ab" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/html/publish_on_demand.view.html" afterPath="$PROJECT_DIR$/static/html/publish_on_demand.view.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/js/controllers/publish.controller.js" afterPath="$PROJECT_DIR$/static/js/controllers/publish.controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dataSources/9e82ba1a-9bf4-4315-bda2-67027eb67d29/_metadata_/metadata" afterPath="$PROJECT_DIR$/.idea/dataSources/9e82ba1a-9bf4-4315-bda2-67027eb67d29/_metadata_/metadata" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dataSources/9e82ba1a-9bf4-4315-bda2-67027eb67d29/_metadata_/metadata.values.at" afterPath="$PROJECT_DIR$/.idea/dataSources/9e82ba1a-9bf4-4315-bda2-67027eb67d29/_metadata_/metadata.values.at" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dataSources/9e82ba1a-9bf4-4315-bda2-67027eb67d29/_src_/schema/MIST.zip" afterPath="$PROJECT_DIR$/.idea/dataSources/9e82ba1a-9bf4-4315-bda2-67027eb67d29/_src_/schema/MIST.zip" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/mist_base.iml" afterPath="$PROJECT_DIR$/.idea/mist_base.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config.py" afterPath="$PROJECT_DIR$/app/config.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/endpoints_v2.py" afterPath="$PROJECT_DIR$/app/endpoints_v2.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/templates/index.html" afterPath="$PROJECT_DIR$/app/templates/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/env/lib/python2.7/site-packages/flask_jwt/__init__.py" afterPath="$PROJECT_DIR$/env/lib/python2.7/site-packages/flask_jwt/__init__.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nginx/1.11.10/logs/access.log" afterPath="$PROJECT_DIR$/nginx/1.11.10/logs/access.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nginx/1.11.10/logs/error.log" afterPath="$PROJECT_DIR$/nginx/1.11.10/logs/error.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/js/app.js" afterPath="$PROJECT_DIR$/static/js/app.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/js/app_services/mistuser.service.js" afterPath="$PROJECT_DIR$/static/js/app_services/mistuser.service.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/js/controllers/admin.controller.js" afterPath="$PROJECT_DIR$/static/js/controllers/admin.controller.js" />
     </list>
     <ignored path="mist_base.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -107,6 +121,24 @@
         <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
       </PATH_ELEMENT>
     </PATH>
+    <PATH>
+      <PATH_ELEMENT>
+        <option name="myItemId" />
+        <option name="myItemType" value="com.intellij.database.view.DatabaseStructure$Root" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="MIST@.239" />
+        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" />
+        <option name="myItemType" value="com.intellij.database.view.DatabaseStructure$GroupNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="mistUsers" />
+        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
+      </PATH_ELEMENT>
+    </PATH>
   </component>
   <component name="DockManager">
     <window id="1">
@@ -116,9 +148,38 @@
             <file leaf-file-name="publish.controller.js" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/static/js/controllers/publish.controller.js">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="170">
-                    <caret line="400" column="11" lean-forward="false" selection-start-line="400" selection-start-column="11" selection-end-line="400" selection-end-column="11" />
+                  <state relative-caret-position="15">
+                    <caret line="21" column="55" lean-forward="false" selection-start-line="21" selection-start-column="55" selection-end-line="21" selection-end-column="55" />
                     <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/static/js/app.js">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="355">
+                    <caret line="480" column="35" lean-forward="false" selection-start-line="480" selection-start-column="35" selection-end-line="480" selection-end-column="35" />
+                    <folding>
+                      <element signature="e#1646#2387#0" expanded="false" />
+                      <element signature="e#2418#3160#0" expanded="false" />
+                      <element signature="e#3193#3929#0" expanded="false" />
+                      <element signature="e#3963#4702#0" expanded="false" />
+                      <element signature="e#4734#5463#0" expanded="false" />
+                      <element signature="e#5542#6501#0" expanded="false" />
+                      <element signature="e#6543#7512#0" expanded="false" />
+                      <element signature="e#7544#8273#0" expanded="false" />
+                      <element signature="e#8303#9026#0" expanded="false" />
+                      <element signature="e#9166#9892#0" expanded="false" />
+                      <element signature="e#9983#10962#0" expanded="false" />
+                      <element signature="e#11009#11984#0" expanded="false" />
+                      <element signature="e#12040#13033#0" expanded="false" />
+                      <element signature="e#13088#14079#0" expanded="false" />
+                      <element signature="e#14131#15116#0" expanded="false" />
+                      <element signature="e#15170#16159#0" expanded="false" />
+                      <element signature="e#16197#16944#0" expanded="false" />
+                      <element signature="e#16978#17713#0" expanded="false" />
+                    </folding>
                   </state>
                 </provider>
               </entry>
@@ -143,11 +204,11 @@
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="publish_on_demand.view.html" pinned="false" current-in-tab="true">
+            <file leaf-file-name="publish_on_demand.view.html" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/static/html/publish_on_demand.view.html">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="192">
-                    <caret line="93" column="225" lean-forward="false" selection-start-line="93" selection-start-column="225" selection-end-line="93" selection-end-column="225" />
+                  <state relative-caret-position="1170">
+                    <caret line="78" column="14" lean-forward="false" selection-start-line="78" selection-start-column="14" selection-end-line="78" selection-end-column="14" />
                     <folding>
                       <element signature="n#style#0;n#select#0;n#div#0;n#md-card-content#0;n#md-card#0;n#div#1;n#form#0;n#div#0;n#!!top" expanded="true" />
                       <element signature="n#style#0;n#select#0;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
@@ -163,6 +224,31 @@
                 </provider>
               </entry>
             </file>
+            <file leaf-file-name="publish.view.html" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/static/html/publish.view.html">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="360">
+                    <caret line="24" column="27" lean-forward="false" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="MIST.mistUsers" pinned="false" current-in-tab="true">
+              <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.mistUsers">
+                <provider editor-type-id="text-editor">
+                  <state relative-caret-position="0">
+                    <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                    <folding />
+                  </state>
+                </provider>
+                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+                  <state>
+                    <filtering enabled="true" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
           </leaf>
         </state>
       </content>
@@ -174,26 +260,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="MIST.publishSched" pinned="false" current-in-tab="false">
-        <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.publishSched">
-          <provider editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="endpoints_v2.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="endpoints_v2.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/endpoints_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="358">
-              <caret line="120" column="42" lean-forward="false" selection-start-line="120" selection-start-column="42" selection-end-line="120" selection-end-column="42" />
+            <state relative-caret-position="508">
+              <caret line="998" column="50" lean-forward="true" selection-start-line="998" selection-start-column="50" selection-end-line="998" selection-end-column="50" />
               <folding>
                 <element signature="e#0#90#0" expanded="true" />
               </folding>
@@ -201,11 +272,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mist.sh" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mist.sh">
+      <file leaf-file-name="mistuser.service.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/static/js/app_services/mistuser.service.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="32" column="9" lean-forward="true" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
+            <state relative-caret-position="540">
+              <caret line="48" column="73" lean-forward="false" selection-start-line="48" selection-start-column="73" selection-end-line="48" selection-end-column="73" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="admin.controller.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/static/js/controllers/admin.controller.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="119" column="22" lean-forward="true" selection-start-line="119" selection-start-column="22" selection-end-line="119" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="admin.view.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/static/html/admin.view.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-405">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -214,78 +305,9 @@
       <file leaf-file-name="config.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="21" column="10" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="10" />
+            <state relative-caret-position="420">
+              <caret line="28" column="26" lean-forward="true" selection-start-line="28" selection-start-column="26" selection-end-line="28" selection-end-column="26" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MIST.publishJobs" pinned="false" current-in-tab="false">
-        <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.publishJobs">
-          <provider editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="db_schema_updates.sql" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/db_schema_updates.sql">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="615">
-              <caret line="41" column="53" lean-forward="false" selection-start-line="41" selection-start-column="53" selection-end-line="41" selection-end-column="53" />
-              <folding>
-                <marker date="1490026413000" expanded="true" signature="1199:1266" ph="create index... idx_tags_tag_definition_id" />
-                <marker date="1490026413000" expanded="true" signature="1268:1328" ph="create index... idx_tags_nameid_rollup" />
-                <marker date="1490026413000" expanded="true" signature="1330:1415" ph="create index... idx_taggedrepos_scid_repoid_status" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MIST.Tags" pinned="false" current-in-tab="false">
-        <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.Tags">
-          <provider editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="console.sql" pinned="false" current-in-tab="false">
-        <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/9e82ba1a-9bf4-4315-bda2-67027eb67d29/console.sql">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="16" lean-forward="false" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MIST.tagDefinition" pinned="false" current-in-tab="false">
-        <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.tagDefinition">
-          <provider editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
             </state>
           </provider>
         </entry>
@@ -293,8 +315,48 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/common/models/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="79">
-              <caret line="185" column="45" lean-forward="true" selection-start-line="185" selection-start-column="45" selection-end-line="185" selection-end-column="45" />
+            <state relative-caret-position="611">
+              <caret line="209" column="40" lean-forward="true" selection-start-line="209" selection-start-column="35" selection-end-line="209" selection-end-column="50" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="login.controller.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/static/js/controllers/login.controller.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="174">
+              <caret line="21" column="37" lean-forward="false" selection-start-line="21" selection-start-column="37" selection-end-line="21" selection-end-column="37" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="nav.controller.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/static/js/controllers/nav.controller.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="765">
+              <caret line="51" column="34" lean-forward="false" selection-start-line="51" selection-start-column="34" selection-end-line="51" selection-end-column="34" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="home.view.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/static/html/home.view.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="18" column="40" lean-forward="false" selection-start-line="18" selection-start-column="40" selection-end-line="18" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/templates/index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="15">
+              <caret line="44" column="70" lean-forward="false" selection-start-line="44" selection-start-column="70" selection-end-line="44" selection-end-column="70" />
               <folding />
             </state>
           </provider>
@@ -314,23 +376,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>EDT</find>
-      <find>utc[0]</find>
-      <find>vm.form_fields.timezone</find>
-      <find>localStorage</find>
-      <find>publishOptions</find>
-      <find>timestamp</find>
-      <find>.add</find>
-      <find>main.MistUser</find>
-      <find>delete</find>
-      <find>update</find>
-      <find>$scope.publish_sched_list</find>
-      <find>break</find>
-      <find>weeksOfMonth</find>
-      <find>switch_job_type</find>
-      <find>switch_freq</find>
-      <find>update_job</find>
-      <find>tag_definition_id</find>
       <find>tags</find>
       <find>CategorizedTags</find>
       <find>split</find>
@@ -340,10 +385,27 @@
       <find>def put</find>
       <find>def write_cron</find>
       <find>Eastern Standard Time</find>
-      <find>time</find>
       <find>$scope.pub</find>
       <find>publish_sched_list</find>
       <find>timezone</find>
+      <find>time</find>
+      <find>zone</find>
+      <find>datetime.datetime</find>
+      <find>rs_dict['Authorization']</find>
+      <find>$scope.publish</find>
+      <find>time.</find>
+      <find>version</find>
+      <find>on_demand</find>
+      <find>JWT</find>
+      <find>/auth</find>
+      <find>auth_request_handler</find>
+      <find>auth_request_callback</find>
+      <find>pdb</find>
+      <find>Bad Request</find>
+      <find>.update</find>
+      <find>class Users</find>
+      <find>D</find>
+      <find>status_class</find>
     </findStrings>
     <replaceStrings>
       <replace>, mistUsers</replace>
@@ -365,12 +427,7 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/static/js/directives/dhxTreeView.js" />
-        <option value="$PROJECT_DIR$/static/js/directives/test.directive.js" />
-        <option value="$PROJECT_DIR$/static/js/directives/dhxTree.js" />
-        <option value="$PROJECT_DIR$/static/js/app_services/dhxutils.service.js" />
         <option value="$PROJECT_DIR$/static/js/directives/dhxTree.directive.js" />
-        <option value="$PROJECT_DIR$/static/js/controllers/admin.controller.js" />
         <option value="$PROJECT_DIR$/static/html/modal.view.html" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/9e82ba1a-9bf4-4315-bda2-67027eb67d29/console_2.sql" />
         <option value="$PROJECT_DIR$/static/js/app_services/categorizedtags.service.js" />
@@ -383,7 +440,6 @@
         <option value="$PROJECT_DIR$/static/html/assetstag.view.html" />
         <option value="$PROJECT_DIR$/static/html/nav.view.html" />
         <option value="$PROJECT_DIR$/static/html/publish_schedule.view.html" />
-        <option value="$PROJECT_DIR$/static/html/publish.view.html" />
         <option value="$PROJECT_DIR$/static/html/repostag.view.html" />
         <option value="$PROJECT_DIR$/static/html/login.view.html" />
         <option value="$PROJECT_DIR$/static/html/nav_auth_none.view.html" />
@@ -396,7 +452,6 @@
         <option value="$PROJECT_DIR$/static/html/tooltip_template_tag.html" />
         <option value="$PROJECT_DIR$/static/css/app_content/app.css" />
         <option value="$PROJECT_DIR$/static/js/controllers/mistusers.controller.js" />
-        <option value="$PROJECT_DIR$/app/templates/index.html" />
         <option value="$PROJECT_DIR$/static/html/locallogs.view.html" />
         <option value="$PROJECT_DIR$/static/js/app_services/locallogs.service.js" />
         <option value="$PROJECT_DIR$/static/js/controllers/locallogs.controller.js" />
@@ -406,16 +461,23 @@
         <option value="$PROJECT_DIR$/static/html/signup.view.html" />
         <option value="$PROJECT_DIR$/static/js/controllers/signup.controller.js" />
         <option value="$PROJECT_DIR$/static/html/config_manage_security_centers.view.html" />
-        <option value="$PROJECT_DIR$/static/js/app.js" />
         <option value="$PROJECT_DIR$/static/js/app_services/publishjobs.service.js" />
         <option value="$PROJECT_DIR$/db_schema_updates.sql" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/9e82ba1a-9bf4-4315-bda2-67027eb67d29/console.sql" />
         <option value="$PROJECT_DIR$/app/common/models/main.py" />
-        <option value="$PROJECT_DIR$/app/config.py" />
         <option value="$PROJECT_DIR$/mist.sh" />
-        <option value="$PROJECT_DIR$/app/endpoints_v2.py" />
-        <option value="$PROJECT_DIR$/static/js/controllers/publish.controller.js" />
         <option value="$PROJECT_DIR$/static/html/publish_on_demand.view.html" />
+        <option value="$PROJECT_DIR$/static/js/controllers/publish.controller.js" />
+        <option value="$PROJECT_DIR$/static/html/publish.view.html" />
+        <option value="$PROJECT_DIR$/static/html/home.view.html" />
+        <option value="$PROJECT_DIR$/app/templates/index.html" />
+        <option value="$PROJECT_DIR$/static/js/controllers/nav.controller.js" />
+        <option value="$PROJECT_DIR$/env/lib/python2.7/site-packages/flask_jwt/__init__.py" />
+        <option value="$PROJECT_DIR$/app/config.py" />
+        <option value="$PROJECT_DIR$/static/js/app.js" />
+        <option value="$PROJECT_DIR$/app/endpoints_v2.py" />
+        <option value="$PROJECT_DIR$/static/js/controllers/admin.controller.js" />
+        <option value="$PROJECT_DIR$/static/js/app_services/mistuser.service.js" />
       </list>
     </option>
   </component>
@@ -429,10 +491,10 @@
     <handled-path value="$PROJECT_DIR$/node_modules" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1931" />
-    <option name="y" value="226" />
-    <option name="width" value="1598" />
-    <option name="height" value="810" />
+    <option name="x" value="4145" />
+    <option name="y" value="180" />
+    <option name="width" value="1587" />
+    <option name="height" value="823" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -471,6 +533,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -670,13 +733,12 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/env/bin/python" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
     <property name="js-jscs-nodeInterpreter" value="/usr/bin/node" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
@@ -1731,20 +1793,18 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1931" y="226" width="1598" height="810" extended-state="0" />
+    <frame x="4145" y="180" width="1587" height="823" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16860466" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11326861" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958803" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38814995" sideWeight="0.50449437" order="10" side_tool="true" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13994169" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3254902" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25938967" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.105501615" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32488823" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="WINDOWED" visible="false" show_stripe_button="true" weight="0.42411923" sideWeight="0.49550563" order="13" side_tool="false" content_ui="tabs" x="2262" y="185" width="1381" height="684" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298122" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16348314" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.3298122" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" x="12" y="398" width="1003" height="625" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39906102" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1752,10 +1812,12 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="FLOATING" visible="false" show_stripe_button="true" weight="0.3298122" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="16" y="247" width="1586" height="785" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25938967" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Database Console" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.45156482" sideWeight="0.49438202" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24969697" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Concurrent Activities Diagram" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32848486" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39906102" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958803" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -1851,85 +1913,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/static/js/controllers/tagactivities.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" column="48" lean-forward="false" selection-start-line="31" selection-start-column="48" selection-end-line="31" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="dbDummy://dbtable:/dca324a8/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.published" />
-    <entry file="dbDummy://dbtable:/dca324a8/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.publishJobs" />
-    <entry file="file://$PROJECT_DIR$/static/html/tagactivities.view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="19" lean-forward="false" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/templates/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1020">
-          <caret line="68" column="71" lean-forward="false" selection-start-line="68" selection-start-column="71" selection-end-line="68" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/html/nav.view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="74" lean-forward="false" selection-start-line="10" selection-start-column="57" selection-end-line="10" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/html/publish_list.view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="30" lean-forward="false" selection-start-line="17" selection-start-column="30" selection-end-line="17" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/controllers/config.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="239" column="29" lean-forward="false" selection-start-line="239" selection-start-column="12" selection-end-line="239" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/controllers/signup.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/app_services/securitycenters.service.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="28" column="49" lean-forward="true" selection-start-line="28" selection-start-column="48" selection-end-line="28" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/app_services/mistuser.service.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1421">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/html/signup.view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="18" lean-forward="false" selection-start-line="35" selection-start-column="18" selection-end-line="35" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/html/config_manage_security_centers.view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="43" column="89" lean-forward="false" selection-start-line="43" selection-start-column="89" selection-end-line="43" selection-end-column="89" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/js/config.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
@@ -2102,20 +2085,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/html/publish.view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="18" column="22" lean-forward="true" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7335">
-          <caret line="489" column="40" lean-forward="false" selection-start-line="489" selection-start-column="40" selection-end-line="489" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.publishSites">
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -2151,20 +2120,6 @@
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.mistUsers">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
@@ -2177,7 +2132,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
           <caret line="14" column="16" lean-forward="false" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2185,11 +2139,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="615">
           <caret line="41" column="53" lean-forward="false" selection-start-line="41" selection-start-column="53" selection-end-line="41" selection-end-column="53" />
-          <folding>
-            <marker date="1490026413000" expanded="true" signature="1199:1266" ph="create index... idx_tags_tag_definition_id" />
-            <marker date="1490026413000" expanded="true" signature="1268:1328" ph="create index... idx_tags_nameid_rollup" />
-            <marker date="1490026413000" expanded="true" signature="1330:1415" ph="create index... idx_taggedrepos_scid_repoid_status" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2204,7 +2153,6 @@
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
@@ -2217,7 +2165,6 @@
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
@@ -2226,7 +2173,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/mist.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="32" column="9" lean-forward="false" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
     <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.publishSched">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.Tags">
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -2236,6 +2202,32 @@
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
           <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/html/index.html" />
+    <entry file="file://$PROJECT_DIR$/static/js/lib/angular.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="41" lean-forward="true" selection-start-line="6" selection-start-column="41" selection-end-line="6" selection-end-column="41" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/html/login.view.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/controllers/nav.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="51" column="34" lean-forward="false" selection-start-line="51" selection-start-column="34" selection-end-line="51" selection-end-column="34" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2255,7 +2247,160 @@
         </state>
       </provider>
     </entry>
-    <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.Tags">
+    <entry file="file://$PROJECT_DIR$/static/html/publish_on_demand.view.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1170">
+          <caret line="78" column="14" lean-forward="false" selection-start-line="78" selection-start-column="14" selection-end-line="78" selection-end-column="14" />
+          <folding>
+            <element signature="n#style#0;n#select#0;n#div#0;n#md-card-content#0;n#md-card#0;n#div#1;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#0;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#1;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#2;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#3;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#4;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#5;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#select#6;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="e#7128#7134#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/html/publish.view.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="24" column="27" lean-forward="false" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/env/lib/python2.7/site-packages/flask_jwt/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="21" lean-forward="false" selection-start-line="23" selection-start-column="21" selection-end-line="23" selection-end-column="21" />
+          <folding>
+            <element signature="e#83#97#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/controllers/publish.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="21" column="55" lean-forward="false" selection-start-line="21" selection-start-column="55" selection-end-line="21" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/html/_index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-225">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/templates/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="44" column="70" lean-forward="false" selection-start-line="44" selection-start-column="70" selection-end-line="44" selection-end-column="70" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/common/models/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="611">
+          <caret line="209" column="40" lean-forward="true" selection-start-line="209" selection-start-column="35" selection-end-line="209" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/app/js/controllers/login.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="43" column="32" lean-forward="false" selection-start-line="43" selection-start-column="32" selection-end-line="43" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/controllers/login.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="21" column="37" lean-forward="false" selection-start-line="21" selection-start-column="37" selection-end-line="21" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/html/home.view.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="40" lean-forward="false" selection-start-line="18" selection-start-column="40" selection-end-line="18" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="28" column="26" lean-forward="true" selection-start-line="28" selection-start-column="26" selection-end-line="28" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="480" column="35" lean-forward="false" selection-start-line="480" selection-start-column="35" selection-end-line="480" selection-end-column="35" />
+          <folding>
+            <element signature="e#1646#2387#0" expanded="false" />
+            <element signature="e#2418#3160#0" expanded="false" />
+            <element signature="e#3193#3929#0" expanded="false" />
+            <element signature="e#3963#4702#0" expanded="false" />
+            <element signature="e#4734#5463#0" expanded="false" />
+            <element signature="e#5542#6501#0" expanded="false" />
+            <element signature="e#6543#7512#0" expanded="false" />
+            <element signature="e#7544#8273#0" expanded="false" />
+            <element signature="e#8303#9026#0" expanded="false" />
+            <element signature="e#9166#9892#0" expanded="false" />
+            <element signature="e#9983#10962#0" expanded="false" />
+            <element signature="e#11009#11984#0" expanded="false" />
+            <element signature="e#12040#13033#0" expanded="false" />
+            <element signature="e#13088#14079#0" expanded="false" />
+            <element signature="e#14131#15116#0" expanded="false" />
+            <element signature="e#15170#16159#0" expanded="false" />
+            <element signature="e#16197#16944#0" expanded="false" />
+            <element signature="e#16978#17713#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/controllers/admin.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="119" column="22" lean-forward="true" selection-start-line="119" selection-start-column="22" selection-end-line="119" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/html/admin.view.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-405">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/endpoints_v2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="508">
+          <caret line="998" column="50" lean-forward="true" selection-start-line="998" selection-start-column="50" selection-end-line="998" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#90#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/d97eb8c/9e82ba1a-9bf4-4315-bda2-67027eb67d29/MIST.mistUsers">
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -2268,63 +2413,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/common/models/main.py">
+    <entry file="file://$PROJECT_DIR$/static/js/app_services/mistuser.service.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="79">
-          <caret line="185" column="45" lean-forward="true" selection-start-line="185" selection-start-column="45" selection-end-line="185" selection-end-column="45" />
+        <state relative-caret-position="540">
+          <caret line="48" column="73" lean-forward="false" selection-start-line="48" selection-start-column="73" selection-end-line="48" selection-end-column="73" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="10" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mist.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="9" lean-forward="true" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/endpoints_v2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="120" column="42" lean-forward="false" selection-start-line="120" selection-start-column="42" selection-end-line="120" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#90#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/controllers/publish.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="400" column="11" lean-forward="false" selection-start-line="400" selection-start-column="11" selection-end-line="400" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/html/publish_on_demand.view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="93" column="225" lean-forward="false" selection-start-line="93" selection-start-column="225" selection-end-line="93" selection-end-column="225" />
-          <folding>
-            <element signature="n#style#0;n#select#0;n#div#0;n#md-card-content#0;n#md-card#0;n#div#1;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#0;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#1;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#2;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#3;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#4;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#5;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#select#6;n#div#1;n#div#0;n#div#4;n#form#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="e#7128#7134#1" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
