@@ -207,6 +207,7 @@ class User(object):
 
 
 def authenticate(username, password):
+    print('[211] request: !!!%r!!!' % request.headers.get('Attempts'))
     main.session.rollback()
 
     # First try logging in with PKI, if cert was sent
@@ -219,6 +220,20 @@ def authenticate(username, password):
     # Now try logging in with username password
     if not all([username, password]):
         raise JWTError('Bad Request', 'Invalid credentials')
+
+    user = (main.session.query(main.MistUser)
+            .filter(
+                  main.MistUser.username == username
+            ))
+    user_query = user.first()
+
+    if (user_query.username is not None):
+        if (int(request.headers.get('Attempts')) >= this_app.config['NUMBER_OF_LOGIN_ATTEMPTS']):
+            upd_form = {
+                "lockout": "Yes"
+            }
+            user.update(upd_form)
+            return None
 
     print ("[223] Got here")
     user = (main.session.query(main.MistUser)
@@ -234,17 +249,18 @@ def authenticate(username, password):
 
 
 def identity(payload):
+    print('[237] Got here')
     user_id = payload['identity']
     return User(id=user_id).get()
 
 
-jwt = JWT(this_app, authenticate, identity)
 
 def auth_request_handler():
     """
     Override flask_jwt's default auth_request_handler() to not require username and password. In the case of logging
     in with PKI, no username and password will be passed in
     """
+    print('[248] Got here')
     data = request.get_json()
     username = data.get(this_app.config.get('JWT_AUTH_USERNAME_KEY'))
     password = data.get(this_app.config.get('JWT_AUTH_PASSWORD_KEY'))
@@ -264,11 +280,16 @@ def auth_response_handler(access_token, ident):
     token but also the username. In the case of logging in with PKI, you won't already know the username,
     you'll have to get it from the DB and return it here, to pass back to the client.
     """
+    print('[267] Got here')
     return jsonify({'access_token': access_token.decode('utf-8'), 'username': ident.username})
+
+
+jwt = JWT(this_app, authenticate, identity)
 
 # Override defaults for these two methods
 jwt.auth_request_handler(auth_request_handler)
 jwt.auth_response_handler(auth_response_handler)
+# jwt.request_handler()
 
 
 # NOTE: only used with flask_jwt.jwt_encode_callback()
