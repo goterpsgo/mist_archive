@@ -27,4 +27,4 @@ JWT_REQUIRED_CLAIMS = ['exp', 'iat', 'nbf']
 
 UPLOAD_FOLDER = '/opt/mist/mist_base/app/sc_certs'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf'])
-TIMEZONE_VALUE='Eastern Standard Time'
+NUMBER_OF_LOGIN_ATTEMPTS = 3
