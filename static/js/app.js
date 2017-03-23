@@ -8,7 +8,7 @@
     }
 
     angular
-        .module('app', ['ui.router', 'ngMessages', 'ngStorage', 'ngAnimate', 'ngTouch', 'ui.bootstrap', 'satellizer', 'ngFileUpload', 'webix', 'ngMaterial', 'ui.grid'])
+        .module('app', ['ui.router', 'ngCookies', 'ngMessages', 'ngStorage', 'ngAnimate', 'ngTouch', 'ui.bootstrap', 'satellizer', 'ngFileUpload', 'webix', 'ngMaterial', 'ui.grid'])
         .config(config)
         .constant('__env', env)
         .run(run);
@@ -453,11 +453,36 @@
         // https://docs.angularjs.org/api/ng/service/$http
         // https://docs.angularjs.org/api/ng/provider/$httpProvider
         // https://www.toptal.com/web/cookie-free-authentication-with-json-web-tokens-an-example-in-laravel-and-angularjs
-        $httpProvider.interceptors.push(['$q', '$location', '$localStorage', '$sessionStorage',
-            function ($q, $location, $localStorage, $sessionStorage) {
+        $httpProvider.interceptors.push(['$cookies', '$q', '$location', '$localStorage', '$sessionStorage',
+            function ($cookies, $q, $location, $localStorage, $sessionStorage) {
                 return {
                    'request': function (config) {
                        config.headers = config.headers || {};
+
+                       if (config.data !== undefined) {
+                           console.log('[463] Got here');
+                           if ($cookies.get('attempts') === undefined) {
+                               var _expire_date = new Date();
+                               console.log('[465] Date ' + _expire_date);
+                               _expire_date.setMinutes(_expire_date.getMinutes() + 20);
+                               console.log('[467] Date ' + _expire_date);
+                               // _expire_date.setDate(_expire_date.get)
+                               // var _attempts = {'username': config.data.username, 'bad_attempts': 0};
+                               $cookies.put('attempts', 0,{expiry: _expire_date});
+                               console.log($cookies.get('attempts'));
+                           }
+
+                           if ($cookies.get('attempts') !== undefined) {
+                               console.log(config.headers);
+                               config.headers.attempts = $cookies.get('attempts');
+                               console.log($cookies.get('attempts'));
+                               if ($cookies.get('attempts') >= 3) {
+                                   console.log('Remove cookie');
+                                   $cookies.remove('attempts');
+                               }
+                           }
+                       }
+
                        if ($localStorage.currentUser && $sessionStorage.currentUser) {
                            config.headers.Authorization = 'JWT ' + $localStorage.currentUser.token.split(' ').pop();
                            // console.log('[52] currentUser: ' + $sessionStorage.currentUser.username);
@@ -468,13 +493,23 @@
                        // best practice should be using response.headers('Authorization'), not response.data.Authorization
                        if ((typeof(response.data.Authorization) !== 'undefined') && (typeof($localStorage.currentUser) !== 'undefined')) {
                             $localStorage.currentUser.token = 'JWT ' + response.data.Authorization.split(' ').pop();
+                            $cookies.remove('attempts');
                        }
                        return response;
                    },
                    'responseError': function (response) {
                        console.log('[status] ' + response.status);
+                       if (response.config.data.username !== undefined) {
+                           console.log('[483] bad username: ' + response.config.data.username);
+
+                           console.log($cookies.get('attempts'));
+                           $cookies.put('attempts', parseInt($cookies.get('attempts')) + 1);
+                           console.log($cookies.get('attempts'));
+
+                       }
+
                        if (response.status === 401 || response.status === 403) {
-                           $location.path('/login');
+                           $location.path('/#/login');
                        }
                        return $q.reject(response);
                    }
