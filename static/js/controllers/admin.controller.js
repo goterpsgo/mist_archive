@@ -162,5 +162,26 @@
                 repo.Checked = $scope.check_all_repos_state;
             })
         };
+
+
+        $scope.toggle_enable = function(user, permission, switch_to) {
+            var form_data = {'lockout': switch_to};
+            console.log(user);
+            console.log(switch_to);
+            MistUsersService._update_user(user, form_data)
+                .then(
+                      function(users) {
+                          $scope.users = users.users_list;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                )
+                .then(
+                    function() {
+                        get_users();
+                    }
+                );
+        }
     }
 })();
