@@ -16,6 +16,18 @@
 
         var _status = ['Disabled', 'User', 'Admin'];
         var _status_class = ['btn btn-danger', 'btn btn-info', 'btn btn-primary'];
+        var _lockout_modes = {
+              "No": {
+                  "class": "btn-info glyphicon-ok"
+                , "switch_to": "Yes"
+                , "desc": "Unlocked"
+              }
+            , "Yes": {
+                  "class": "btn-danger glyphicon-lock"
+                , "switch_to": "No"
+                , "desc": "Locked"
+              }
+        };
 
         return factory;
 
@@ -46,12 +58,13 @@
                         for (var _cnt in response.data.users_list) {
                             response.data.users_list[_cnt]['status'] = _status[response.data.users_list[_cnt].permission];
                             response.data.users_list[_cnt]['status_class'] = _status_class[response.data.users_list[_cnt].permission];
-                            console.log(response.data.users_list[_cnt].username);
-                            console.log(response.data.users_list[_cnt].lockout);
-                            if (response.data.users_list[_cnt].lockout == 'Yes') {
-                                response.data.users_list[_cnt]['status'] = _status[0];
-                                response.data.users_list[_cnt]['status_class'] = _status_class[0];
-                            }
+                            response.data.users_list[_cnt]['lockout_class'] = _lockout_modes[response.data.users_list[_cnt].lockout].class;
+                            response.data.users_list[_cnt]['lockout_desc'] = _lockout_modes[response.data.users_list[_cnt].lockout].desc;
+                            response.data.users_list[_cnt]['lockout_switch_to'] = _lockout_modes[response.data.users_list[_cnt].lockout].switch_to;
+                            // if (response.data.users_list[_cnt].lockout == 'Yes') {
+                            //     response.data.users_list[_cnt]['status'] = _status[0];
+                            //     response.data.users_list[_cnt]['status_class'] = _status_class[0];
+                            // }
                         }
                         deferred.resolve(response.data);
                     }

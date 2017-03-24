@@ -55,7 +55,8 @@
                                 <button ng-click="delete_user(user.id)" class="btn btn-danger glyphicon glyphicon-trash" title="Delete User {{user.username}}"></button>
                                 <!--<span ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline" ng-init="value = (user.permission >= 2 ? 'Admin' : 'User')" ng-switch="value">-->
                                     <!--[{{value}}] [{{user.permission}}]-->
-                                    <button title="Press button to toggle user state." class="{{user.status_class}}" style="width: 100px;" ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline">{{user.status}}</button>
+                                    <button type="button" title="Press button to toggle user state." class="{{user.status_class}}" style="width: 100px;" ng-click="user_admin_toggle(user.id,user.permission,user.cnt_repos)" class="checkbox-inline">{{user.status}}</button>
+                                    <button type="button" ng-click="toggle_enable(user.id,user.permission,user.lockout_switch_to)" class="btn glyphicon {{user.lockout_class}}" title="User {{user.username}} {{user.lockout_desc}}"></button>
                                 </span>
                                 &nbsp;<strong>{{user.first_name}} {{user.last_name}} (<em>{{user.username}}</em>)</strong>
                             </td>
