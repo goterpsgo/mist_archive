@@ -553,6 +553,9 @@
                     $location.path('/login');
                 }
             }
+            else {
+                $location.path('/login');
+            }
         });
     }
 })();
