@@ -460,24 +460,15 @@
                        config.headers = config.headers || {};
 
                        if (config.data !== undefined) {
-                           console.log('[463] Got here');
                            if ($cookies.get('attempts') === undefined) {
                                var _expire_date = new Date();
-                               console.log('[465] Date ' + _expire_date);
                                _expire_date.setMinutes(_expire_date.getMinutes() + 20);
-                               console.log('[467] Date ' + _expire_date);
-                               // _expire_date.setDate(_expire_date.get)
-                               // var _attempts = {'username': config.data.username, 'bad_attempts': 0};
                                $cookies.put('attempts', 0,{expiry: _expire_date});
-                               console.log($cookies.get('attempts'));
                            }
 
                            if ($cookies.get('attempts') !== undefined) {
-                               console.log(config.headers);
                                config.headers.attempts = $cookies.get('attempts');
-                               console.log($cookies.get('attempts'));
                                if ($cookies.get('attempts') >= 3) {
-                                   console.log('Remove cookie');
                                    $cookies.remove('attempts');
                                }
                            }
@@ -498,14 +489,10 @@
                        return response;
                    },
                    'responseError': function (response) {
-                       console.log('[status] ' + response.status);
-                       if (response.config.data.username !== undefined) {
-                           console.log('[483] bad username: ' + response.config.data.username);
-
-                           console.log($cookies.get('attempts'));
-                           $cookies.put('attempts', parseInt($cookies.get('attempts')) + 1);
-                           console.log($cookies.get('attempts'));
-
+                       if (response.config.data !== undefined) {
+                           if ($cookies.get('attempts') !== undefined) {
+                               $cookies.put('attempts', parseInt($cookies.get('attempts')) + 1);
+                           }
                        }
 
                        if (response.status === 401 || response.status === 403) {
