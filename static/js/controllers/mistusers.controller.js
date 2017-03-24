@@ -41,7 +41,7 @@
             // Cache results in $localStorage to minimize calls to database-driven RESTful endpoint
             if (typeof $localStorage.user === 'undefined') {
                 // populate $scope.user to provide user status and state to be used in the nav view.
-                MistUsersService._get_user(username)
+                MistUsersService._get_user(id)
                     .then(
                           function(user) {
                               $localStorage.user = user.users_list[0];
