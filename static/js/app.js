@@ -553,9 +553,10 @@
                     $location.path('/login');
                 }
             }
-            else {
-                $location.path('/login');
-            }
+            // else {
+            //     console.log($localStorage.authWithCertAttempted);
+            //     $location.path('/login');
+            // }
         });
     }
 })();
