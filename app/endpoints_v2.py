@@ -241,6 +241,7 @@ def authenticate(username, password):
                   main.MistUser.username == username
                 , main.MistUser.password == hashlib.sha256(password).hexdigest()
                 , main.MistUser.lockout == "No"
+                , main.MistUser.permission != "0"
             )
             .first())
 
@@ -249,7 +250,6 @@ def authenticate(username, password):
 
 
 def identity(payload):
-    print('[237] Got here')
     user_id = payload['identity']
     return User(id=user_id).get()
 
@@ -551,7 +551,9 @@ class Users(Resource):
     def put(self, _user):
         try:
             form_fields = request.get_json(force=True)
-            permission = int(form_fields['permission'])
+            permission = None
+            if ("permission" in form_fields):
+                permission = int(form_fields.pop("permission"))
 
             # Note whether or not data was from form submission (eg <form> in admin.view.html vs JSON data params)
             assign_submit = None
@@ -575,6 +577,7 @@ class Users(Resource):
                 form_fields["subjectDN"] = form_fields.pop("subject_dn")
             if ("repos" in form_fields):
                 del form_fields["repos"]
+
 
             # ==================================================
             # Set aside any non-MistUser-specific values
