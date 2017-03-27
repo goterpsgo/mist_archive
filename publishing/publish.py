@@ -269,7 +269,8 @@ def main():
         files = [f for f in os.listdir(temp_directory) if os.path.isfile(os.path.join(temp_directory, f))]
         if files:
             if site == 'localhost':
-                directory = '/opt/mist/frontend/app/MIST/Users/' + username
+                #directory = '/opt/mist/frontend/app/MIST/Users/' + username
+		directory = '/opt/mist/publishing/published_files/' + username
                 if not os.path.exists(directory):
                     os.makedirs(directory)
                 zip_file_name = 'MIST_' + str(ref_number) + '_' + \
