@@ -21,9 +21,9 @@
 
         function get_this_user() {
             // populate $scope.user to provide user status and state to be used in the nav view.
-            if (typeof $localStorage.currentUser !== 'undefined') {
+            if ($localStorage.currentUser !== undefined) {
                 // Cache results in $localStorage to minimize calls to database-driven RESTful endpoint
-                if (typeof $localStorage.user === 'undefined') {
+                if (($localStorage.user === undefined) || ($scope.user === undefined)) {
                     var username = $localStorage.currentUser.username;
                     MistUsersService._get_user(username)
                         .then(
