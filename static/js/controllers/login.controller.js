@@ -25,7 +25,12 @@
                 ._get_bannertext()
                 .then(
                       function(banner_text) {
-                          $scope.banner_text['banner_text'] = banner_text.banner_text;
+                          if (banner_text.banner_text.length > 0) {
+                            $scope.banner_text['banner_text'] = banner_text.banner_text;
+                          }
+                          else {
+                              $scope.banner_text['banner_text'] = 'Unauthorized access is prohibited.';
+                          }
                           vm.loading = false;
                       }
                     , function(err) {

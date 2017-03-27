@@ -119,16 +119,12 @@
         };
 
         $scope.submit_banner_text= function() {
-            console.log('[96] Got here insert');
-            console.log($scope.banner_text);
-
             BannerTextService._delete_bannertext()
                 .then(function() {
                     return BannerTextService._insert_bannertext($scope.banner_text)
                         .then(function(result) {
                             $scope.banner_text['status'] = result.data.response.message;
                             $scope.banner_text['status_class'] = result.data.response.class;
-                            console.log('[105] Got here');
                         })
                         .then(function() {
                             load_banner_text();
