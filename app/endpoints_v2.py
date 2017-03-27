@@ -2218,7 +2218,7 @@ class PublicationDownloader(Resource):
     def get(self, _name=None):
         if (_name is not None):
             _dir, _filename = _name.split("_", 1)
-            _fullpath = "/opt/mist/frontend/app/MIST/Users/%s/%s" % (_dir, _filename)
+            _fullpath = "/opt/mist/publishing/published_files/%s/%s" % (_dir, _filename)
             response = make_response(open(_fullpath).read())
             response.headers["Content-Type"] = "application/zip"
             response.headers["Content-Disposition"] = "attachment; filename=" + _filename
