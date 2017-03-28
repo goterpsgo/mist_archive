@@ -513,7 +513,8 @@
 
         // redirect to login page if not logged in and trying to access a restricted page
         $rootScope.$on('$locationChangeStart', function (event, next, current) {
-            var publicPages = ['/login', '/signup'];    // add path to array if it's not to be protected
+            var publicPages = ['', '/', '/login', '/signup'];    // add path to array if it's not to be protected
+            console.log('location: ' + $location.path());
             var restrictedPage = publicPages.indexOf($location.path()) === -1;
             if (restrictedPage && !$localStorage.currentUser && !$sessionStorage.currentUser) {
 
@@ -549,6 +550,8 @@
                         });
                 }
                 else {
+                    delete $localStorage.authWithCertAttempted;
+                    delete $sessionStorage.authWithCertAttempted;
                     console.log($localStorage.authWithCertAttempted);
                     $location.path('/login');
                 }

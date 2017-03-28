@@ -54,8 +54,10 @@
             // remove user from local storage and clear http auth header
             delete $localStorage.currentUser;
             delete $localStorage.user;
+            delete $localStorage.authWithCertAttempted;
             // remove user from session
             delete $sessionStorage.currentUser;
+            delete $sessionStorage.authWithCertAttempted;
             $http.defaults.headers.common.Authorization = '';
         }
     }
