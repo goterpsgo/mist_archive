@@ -111,8 +111,16 @@ def write_crontab():
         , "4th": "22-28"
     }
 
+    now = datetime.now()
+
     # write publishSched entries to crontab
     f = open("/tmp/mist_crontab.txt", "w")
+
+    for r_mist_param in rs_mist_params():
+        _pull_freq = int(r_mist_param.scPullFreq)
+        _row = "%r %r */%r * * python /opt/mist/assets/pull_assets.py > /dev/null 2>&1\n" % (now.minute, now.hour, (_pull_freq/24))
+        f.write(_row)
+
     for r_publish_sched in rs_publish_sched().order_by(main.PublishSched.destSiteName):
         _offset = None
 
@@ -1225,14 +1233,19 @@ class MistParams(Resource):
             upd_form[_field_name] = _value
 
             rs_mist_params().update(upd_form)
-
             main.session.commit()
             main.session.flush()
+
+            if (_field_name == "scPullFreq"):
+                # 1. Call initial pull command
+                subprocess.Popen(["python /opt/mist/assets/pull_assets.py"], shell=True, stdout=subprocess.PIPE)
+                # 2. Update cron job
+                write_crontab()
 
             return {'response': {'method': 'PUT', 'result': 'success', 'message': 'Parameter successfully updated.', 'class': 'alert alert-success', '_value': int(_value)}}
 
         except (main.ProgrammingError) as e:
-            print ("[ProgrammingError] PUT /api/v2/securitycenter/%s / %s" % (_id,e))
+            print ("[ProgrammingError] PUT /api/v2/params/%s/%s / %s" % (_field_name, _value, e))
             main.session.rollback()
             return {'response': {'method': 'PUT', 'result': 'ProgrammingError', 'message': e, 'class': 'alert alert-danger'}}
 
@@ -1983,7 +1996,7 @@ class PublishJobs(Resource):
             form_fields = request.get_json(force=True)
 
             if (form_fields['job_type'] == 'on demand'):
-                subprocess.Popen(["/opt/mist/publishing/publish.py %s" % form_fields["options"]], shell=True, stdout=subprocess.PIPE)
+                subprocess.Popen(["python /opt/mist/publishing/publish.py %s" % form_fields["options"]], shell=True, stdout=subprocess.PIPE)
 
                 rs_dict['response'] = {'method': 'POST', 'result': 'success', 'message': 'Executed publish command on demand.', 'class': 'alert alert-success'}
                 return jsonify(rs_dict)  # return rs_dict
