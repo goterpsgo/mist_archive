@@ -1030,6 +1030,9 @@ class SecurityCenter(Resource):
             main.session.commit()
             main.session.flush()
 
+            # pull assets from newly added Security Center appliance
+            subprocess.Popen(["python /opt/mist/assets/pull_assets.py"], shell=True, stdout=subprocess.PIPE)
+
             return {'response': {'method': 'POST', 'result': 'success', 'message': 'New SecurityCenter entry submitted.', 'class': 'alert alert-success', 'user_id': int(new_sc.id)}}
 
         except (TypeError) as e:
@@ -1075,6 +1078,9 @@ class SecurityCenter(Resource):
                 this_sc.update(form_fields)
                 main.session.commit()
                 main.session.flush()
+
+            # pull assets from newly updated Security Center appliance
+            subprocess.Popen(["python /opt/mist/assets/pull_assets.py"], shell=True, stdout=subprocess.PIPE)
 
             return {'response': {'method': 'PUT', 'result': 'success', 'message': 'SecurityCenter successfully updated.', 'class': 'alert alert-success', '_id': int(_id)}}
 
