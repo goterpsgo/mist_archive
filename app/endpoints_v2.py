@@ -215,7 +215,6 @@ class User(object):
 
 
 def authenticate(username, password):
-    print('[211] request: !!!%r!!!' % request.headers.get('Attempts'))
     main.session.rollback()
 
     # First try logging in with PKI, if cert was sent
@@ -2231,7 +2230,7 @@ class LocalLogs(Resource):
 #         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Some item successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
 
 
-# PublishJobs model class template
+# PublicationDownloader class
 class PublicationDownloader(Resource):
     # @jwt_required()   # users will access this resource directly, not through Angular - request will not contain token
     def get(self, _name=None):
@@ -2244,6 +2243,19 @@ class PublicationDownloader(Resource):
             return response
         else:
             return "No such file."
+
+# SubjectDN class
+class SubjectDN(Resource):
+    # @jwt_required()   # users will access this resource directly, not through Angular - request will not contain token
+    def get(self):
+        rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
+
+        subject_dn = ""
+        if (request.environ.get('SSL_CLIENT_S_DN') is not None):
+            subject_dn = request.environ.get('SSL_CLIENT_S_DN')
+            rs_dict['subject_dn'] = subject_dn
+
+        return jsonify(rs_dict)  # return rs_dict
 
 api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(Signup, '/user/signup')
@@ -2262,3 +2274,4 @@ api.add_resource(PublishJobs, '/publishjobs', '/publishjob/<int:_id>')
 api.add_resource(RepoPublishTimes, '/repopublishtimes')
 api.add_resource(LocalLogs, '/locallogs', '/locallog/<string:_name>')
 api.add_resource(PublicationDownloader, '/publicationdownloader/<string:_name>')
+api.add_resource(SubjectDN, '/subjectdn')
