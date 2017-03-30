@@ -584,6 +584,10 @@ class Users(Resource):
                 form_fields["subjectDN"] = form_fields.pop("subject_dn")
             if ("repos" in form_fields):
                 del form_fields["repos"]
+            if ("status" in form_fields):
+                del form_fields["status"]
+            if ("status_class" in form_fields):
+                del form_fields["status_class"]
 
 
             # ==================================================
