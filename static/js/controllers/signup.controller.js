@@ -16,9 +16,9 @@
         $scope.submit_signup = function() {
             return MistUsersService._signup_user($scope._user)
                 .then(function(result) {
-                    $scope.response_message = result.response.message;
-                    $scope.result = result.response.result;
-                    $scope.class = result.response.class;
+                    $scope.response_message = result.data.response.message;
+                    $scope.result = result.data.response.result;
+                    $scope.class = result.data.response.class;
             });
         }
         var vm = this;
