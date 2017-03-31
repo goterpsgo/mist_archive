@@ -178,6 +178,9 @@ def main():
     parser.add_option('--all_scan', action='store_true', dest='allScan', default=False,
                       help="use this option to publish all scan data per asset instead of just newly discovered data "
                            "since last published")
+    parser.add_option('--all_opattr', action='store_true', dest='allOpattr', default=False,
+                      help="use this option to publish all tags  per asset instead of just newly discovered data "
+                           "since last published")
     parser.add_option('--site', action='store', dest="site", type="string", default=None,
                       help="sets the cmrs site to publish to, if this option is not selected it will save locally")
     options, remainder = parser.parse_args()
@@ -238,8 +241,9 @@ def main():
 
         if options.opattr:
             # Build the Operational Attributes
-            attr = OpAttributes(file_chunk_size)
+            attr = OpAttributes(file_chunk_size, options.allOpattr)
             attr.buildXML(asset_id_list, ref_number, temp_directory)
+	    insert_last_published(db, asset_dict, 'opattrLast') 
 
         # Build CVE ASR
         if options.cve:

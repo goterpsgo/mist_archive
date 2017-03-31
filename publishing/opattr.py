@@ -21,11 +21,14 @@ from tzlocal import get_localzone
 
 class OpAttributes:
 
-    def __init__(self, file_chunk_size):
+    def __init__(self, file_chunk_size, publish_all):
 
         # Set max size of xml
         self.max_size = file_chunk_size
         self.doc_count = 1
+
+	#Set wether or not to publish all
+	self.publishAll = publish_all
         
         #Static Name Defs
         wsnt = "http://docs.oasis-open.org/wsn/b-2"
@@ -68,7 +71,10 @@ class OpAttributes:
         #main element
         self.notificationMessage = ET.SubElement(self.root, self.nsWSNT + "NotificationMessage")
         #Topic Always static
-        ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.opsattrs.complete"
+	if self.publishAll:
+        	ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.opsattrs.complete"
+	else:
+		ET.SubElement(self.notificationMessage, self.nsWSNT + "Topic", Dialect="docs.oasis-open.org/wsn/t-1/TopicExpression/Simple").text = "acas.opsattrs.delta"
 
     def buildProducerReference(self, refNumber):
         producerReference = ET.SubElement(self.notificationMessage, self.nsWSNT + "ProducerReference")
@@ -88,11 +94,33 @@ class OpAttributes:
         return exists, definition
 
     def getTagList(self, assetID):
-        tags = self.db.execute("SELECT tagID, rollup, category, timestamp, status from taggedAssets WHERE assetID = " + str(assetID))
+	if self.publishAll:
+       	    tags = self.db.execute("SELECT tagID, rollup, category, timestamp, status from taggedAssets WHERE assetID = " + str(assetID))
+	else:
+	    opattr_last_time = self.db.execute('SELECT opattrLast FROM assetPublishTimes WHERE assetID = ' + str(assetID))
+	    for timestamp in opattr_last_time:
+		if timestamp:
+                    opattr_timestamp = timestamp[0]
+	    if not opattr_timestamp:
+	        opattr_timestamp= '0000-00-00 00:00:00'
+            if opattr_timestamp:
+	        tags = self.db.execute("SELECT tagID, rollup, category, timestamp, status from taggedAssets WHERE assetID = %s AND timestamp > '%s'" % (str(assetID), str(opattr_timestamp)))    
+		   
         tagList = []
         for tag in tags:
             tagList.append([tag[0], tag[1], tag[2], tag[3], tag[4]])
         return tagList
+
+    def updateOpAttrPublishDate(self, assetID, currentTime):
+        #insert or update the arf timestamp
+        assetResult = self.db.execute("SELECT assetID from assetPublishTimes WHERE assetID = " + str(assetID))
+        exists = False
+        for result in assetResult:
+            exists = True
+        if not exists:
+                   self.db.execute("INSERT INTO assetPublishTimes (assetID, opattrLast) VALUES (" + str(assetID) + ", '" + currentTime + "')")
+        else:
+            self.db.execute("UPDATE assetPublishTimes Set opattrLast = '" + currentTime + "' WHERE assetID = " + str(assetID))
 
     def get_required_tags(self):
         #Pull the require tags
@@ -108,7 +136,7 @@ class OpAttributes:
             tagList.append([tag[2], tag[1], tag[0], timestamp, 'True'])
         return tagList
 
-    def add_missing_required(self, tagList, required_tags):
+    def add_missing_required(self, tagList, required_tags, assetID):
         #['27', 'http://owner.dod.mil', 'organization', datetime.datetime(2015, 12, 17, 17, 14, 7), 'False']
         missing_tags = []
         for required_tag in required_tags:
@@ -124,10 +152,19 @@ class OpAttributes:
                 #mark tag to be added
                 missing_tags.append(required_tag)
 
-        #add the missing tags to the tagList
-        if missing_tags:
-            tagList = self.insert_required_tags(missing_tags, tagList)
-        
+	if self.publishAll:
+        	#add the missing tagsif missing_tags:
+            if missing_tags:
+                tagList = self.insert_required_tags(missing_tags, tagList)
+	else:
+	    opattr_last_time = self.db.execute('SELECT opattrLast FROM assetPublishTimes WHERE assetID = ' + str(assetID))
+            for timestamp in opattr_last_time:
+                opattr_timestamp = timestamp[0]
+            if not opattr_timestamp:
+		#add the missing tagsif missing_tags:
+                if missing_tags:
+                    tagList = self.insert_required_tags(missing_tags, tagList)
+
         return tagList
 
     def get_xml_size(self):
@@ -142,7 +179,7 @@ class OpAttributes:
         for assetID in assetIDList:
             tagList = self.getTagList(assetID)
             #Get Missing required tags
-            tagList = self.add_missing_required(tagList, required_tags)
+            tagList = self.add_missing_required(tagList, required_tags, assetID)
             #build openining report opbject tags
             reportObject = ET.SubElement(assessmentReport, self.nsAR + "reportObject")
             device = ET.SubElement(reportObject, self.nsAR + "device")
@@ -169,6 +206,10 @@ class OpAttributes:
             if print_file:
                 self.write_file(tempDirectory, refNumber)
                 assessmentReport = self.build_xml_header(refNumber)
+	   
+	    timeFormat = '%Y-%m-%d %H:%M:%S' 
+	    currentTime = datetime.datetime.now().strftime(timeFormat)
+	    self.updateOpAttrPublishDate(assetID, currentTime)
                 
     def build_xml_header(self, refNumber):
         #build the static portion
