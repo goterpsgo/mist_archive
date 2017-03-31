@@ -33,6 +33,9 @@ WHERE username = 'admin';
 alter table mistUsers add unique (username);
 alter table securityCenters add UNIQUE (fqdn_IP, serverName);
 
+ALTER TABLE repoPublishTimes ADD opattrLast timestamp NOT NULL DEFAULT '0000-00-00 00:00:00';
+ALTER TABLE assetPublishTimes ADD opattrLast timestamp NOT NULL DEFAULT '0000-00-00 00:00:00';
+
 alter table userAccess add is_assigned timestamp;
 
 # Add tag_definition_id to Tags table

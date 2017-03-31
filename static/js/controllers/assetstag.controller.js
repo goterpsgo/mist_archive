@@ -137,6 +137,7 @@
             .then(
                   function(result) {
                     $scope.assets_list = result.assets_list;
+                    console.log($scope.assets_list);
 
                     for (var _cnt_assets = 0; _cnt_assets < $scope.assets_list.length; _cnt_assets++) {
                         var _asset = $scope.assets_list[_cnt_assets];
@@ -305,6 +306,10 @@
                     manual_tag();
                 }
             }
+        }
+
+        vm.check_all = function() {
+            console.log(vm.is_check_all);
         }
     }
 })();

@@ -70,6 +70,12 @@
                                     <input class="form-control" type="text" ng-model="search_form.search_value" title="{{search_form.search_description}}">
                                 </td>
                             </tr>
+                            <tr>
+                                <td style="padding: 5px;">Check All Assets</td>
+                                <td style="padding: 5px;">
+                                    <input type="checkbox" ng-model="vm.is_check_all" ng-click="vm.check_all()">
+                                </td>
+                            </tr>
                         </table>
 
                         <table class="table table-hover">

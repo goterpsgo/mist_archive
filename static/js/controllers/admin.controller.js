@@ -166,8 +166,6 @@
 
         $scope.toggle_enable = function(user, permission, switch_to) {
             var form_data = {'lockout': switch_to};
-            console.log(user);
-            console.log(switch_to);
             MistUsersService._update_user(user, form_data)
                 .then(
                       function(users) {
