@@ -149,6 +149,8 @@
                                 $scope.rollup_track_by_asset[_asset.assetID].push(_asset.tags[key].rollup);
                             })
                         }
+                        console.log('rollup_track_by_asset:');
+                        console.log($scope.rollup_track_by_asset);
                     }
                   }
                 , function(err) {
@@ -196,6 +198,7 @@
             $scope.search_form.search_description = $scope.search_form.category.desc;
         };
 
+        // TODO: remove affected keys from $scope.rollup_track_by_asset
         $scope.delete_tagging = function(_id) {
             AssetsService
                 ._delete_asset_tag(_id)
