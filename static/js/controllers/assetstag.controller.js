@@ -44,6 +44,7 @@
             promise
                 .then(function(val) {
                     get_this_user();
+                    console.log($scope.assets_list);
                 })
                 .then(function(val) {
                     get_repos();
@@ -80,6 +81,7 @@
                 );
         }
 
+        // loading tags into tag tree in left window
         function load_categorized_tags(_id) {
             vm.loading = true;
             $scope.treeData = {"value": "Loading..."};
@@ -147,6 +149,12 @@
                         if ((Object.keys(_asset.tags).length > 0)) {
                             angular.forEach(_asset.tags, function(tag, key) {
                                 $scope.rollup_track_by_asset[_asset.assetID].push(_asset.tags[key].rollup);
+
+                                // Remove duplicate values from $scope.rollup_track_by_asset[_asset.assetID]
+                                // http://mikeheavers.com/tutorials/removing_duplicates_in_an_array_using_javascript/
+                                $scope.rollup_track_by_asset[_asset.assetID] = $scope.rollup_track_by_asset[_asset.assetID].filter(function(elem, pos) {
+                                    return $scope.rollup_track_by_asset[_asset.assetID].indexOf(elem) == pos;
+                                });
                             })
                         }
                         console.log('rollup_track_by_asset:');
@@ -199,7 +207,15 @@
         };
 
         // TODO: remove affected keys from $scope.rollup_track_by_asset
-        $scope.delete_tagging = function(_id) {
+        $scope.delete_tagging = function(_id, _assetID, rollup) {
+            console.log($scope.rollup_track_by_asset);
+            for (var _cnt in $scope.rollup_track_by_asset[_assetID]) {
+                var _this_rollup = $scope.rollup_track_by_asset[_assetID][_cnt]
+                if (_this_rollup == rollup) {
+                    $scope.rollup_track_by_asset[_assetID].splice(_cnt);
+                }
+            }
+            console.log(_id);
             AssetsService
                 ._delete_asset_tag(_id)
                 .then(
@@ -219,6 +235,7 @@
                         }, 5000);
                     }
                 );
+            console.log($scope.rollup_track_by_asset);
         };
 
         function manual_tag() {
@@ -273,24 +290,30 @@
             }
             else {
                 // note all checked off assets and save them to _checked_assets
+                console.log($scope.rollup_track_by_asset);
                 var _checked_assets = [];
+                var _checked_asset_ids = [];
                 for (var _cnt = 0; _cnt < $scope.assets_list.length; _cnt++) {
                     if ($scope.assets_list[_cnt].is_checked == true) {
-                        var _asset = $scope.assets_list[_cnt].assetID;
+                        var _asset = $scope.assets_list[_cnt];
                         _checked_assets.push(_asset);
+                        _checked_asset_ids.push(_asset.assetID);
                     }
                 }
 
                 // if one or more checked repo is in list of repo with tags then mark found_key as true
                 var found_key = false;
                 for (var _cnt = 0; _cnt < _checked_assets.length; _cnt++) {
-                    var _checked_asset = _checked_assets[_cnt];
-                    if ($scope.rollup_track_by_asset[_checked_asset] != undefined) {
+                    var _checked_asset_id = _checked_assets[_cnt].assetID;
+                    // Need to track $scope.rollup_track_by_asset[_checked_asset_id].length
+                    // since it still exists if the tag is deleted but the array length is now zero
+                    if (($scope.rollup_track_by_asset[_checked_asset_id] != undefined) && ($scope.rollup_track_by_asset[_checked_asset_id].length != 0)) {
                         found_key = true;
                         break;
                     }
                 }
 
+                console.log($scope.rollup_track_by_asset);
                 // print user confirm modal window
                 if (found_key) {
                     var confirm = $mdDialog.confirm()

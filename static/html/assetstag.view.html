@@ -83,7 +83,7 @@
                                 <td>
                                     <input type="checkbox" ng-model="asset.is_checked"> <span style="cursor: default;" title="ID: {{asset.assetID}}&#013;OS: {{asset.osCPE}}&#013;macAddress: {{asset.macAddress}}&#013;biosGUID: {{asset.biosGUID}}&#013;Last Publish: {{asset.published}}">{{asset.dnsName}} ({{asset.ip}})</span>
                                     <div ng-repeat="(key, tag) in asset.tags">
-                                        &nbsp;<button ng-click="delete_tagging(key)" class="btn btn-danger glyphicon glyphicon-trash" title="Delete Asset Tag"></button> {{tag.dname}}
+                                        &nbsp;<button type="button" ng-click="delete_tagging(key, asset.assetID, tag.rollup)" class="btn btn-danger glyphicon glyphicon-trash" title="Delete Asset Tag"></button> {{tag.dname}}
                                     </div>
                                     <br />
                                 </td>
