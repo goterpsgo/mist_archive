@@ -906,11 +906,11 @@ class Repos(Resource):
             rs_repos_handle = rs_repos().group_by(main.Repos.repoID, main.Repos.scID, main.Repos.repoName, main.Repos.serverName)\
                 .order_by(main.Repos.serverName, main.Repos.repoName)
 
-            # add results to users_list[]
+            # add results to repos_list[]
             repos_list = []
             for r_repo in rs_repos_handle:
                 repos_list.append(create_repo_dict(r_repo))
-            rs_dict['repos_list'] = repos_list  # add users_list[] to rs_dict
+            rs_dict['repos_list'] = repos_list  # add repos_list[] to rs_dict
 
             return jsonify(rs_dict) # return rs_dict
 
@@ -1644,7 +1644,11 @@ class Assets(Resource):
         tagged_assets_list = []
 
         handle_tagged_assets = main.session.query(main.TaggedAssets, main.Tags)\
-            .join(main.Tags, main.TaggedAssets.tagID == main.Tags.nameID)\
+            .join(
+                main.Tags, main.and_(
+                    main.TaggedAssets.tagID == main.Tags.nameID, main.TaggedAssets.category == main.Tags.category, main.TaggedAssets.rollup == main.Tags.rollup
+                )
+            )\
             .filter(main.TaggedAssets.status == "true")\
             .order_by(main.TaggedAssets.timestamp.desc())\
             .all()
