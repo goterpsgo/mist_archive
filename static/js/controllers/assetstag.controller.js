@@ -335,7 +335,6 @@
         }
 
         vm.check_all = function() {
-            console.log(vm.is_check_all);
             for (var _cnt in $scope.assets_list) {
                 $scope.assets_list[_cnt].is_checked = vm.is_check_all;
             }
