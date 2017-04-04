@@ -183,6 +183,8 @@ def main():
                            "since last published")
     parser.add_option('--site', action='store', dest="site", type="string", default=None,
                       help="sets the cmrs site to publish to, if this option is not selected it will save locally")
+    parser.add_option('--cleartext', action='store_true', dest='cleartext', default=False,
+                      help="publishes document in clear text to remote site")
     options, remainder = parser.parse_args()
 
     # if they did not use program right print help and exit
@@ -325,24 +327,40 @@ def main():
                         requests.packages.urllib3.disable_warnings()
 
                         # Try connection and catch responses
-                        try:
-                            resp = requests.post(url, cert=cert_and_key, data=payload, headers=headers, verify=ca)
-                        except requests.exceptions.SSLError as e:
-                            error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
-                            log.error_publishing(error)
-                            publish_error(db, "SSL Error: " + str(e).split("SSL routines:", 1)[1], job_id)
-                        except requests.exceptions.ConnectTimeout as e:
-                            error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
-                            log.error_publishing(error)
-                            publish_error(db, "Connection Timeout", job_id)
-                        except requests.exceptions.ConnectionError as e:
-                            error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
-                            log.error_publishing(error)
-                            publish_error(db, "Could Not Connect: " + str(e), job_id)
-                        except Exception, e:
-                            error = ['Error with publishing to ', url, ": ", repr(e), "\n"]
-                            log.error_publishing(error)
-                            publish_error(db, "Error publishing to site " + str(e), job_id)
+                        if options.cleartext:
+                            try:
+                                resp = requests.post(url, data=payload, headers=headers, verify=ca)
+                            except requests.exceptions.ConnectTimeout as e:
+                                error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
+                                log.error_publishing(error)
+                                publish_error(db, "Connection Timeout", job_id)
+                            except requests.exceptions.ConnectionError as e:
+                                error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
+                                log.error_publishing(error)
+                                publish_error(db, "Could Not Connect: " + str(e), job_id)
+                            except Exception, e:
+                                error = ['Error with publishing to ', url, ": ", repr(e), "\n"]
+                                log.error_publishing(error)
+                                publish_error(db, "Error publishing to site " + str(e), job_id)
+                        else:
+                            try:
+                                resp = requests.post(url, cert=cert_and_key, data=payload, headers=headers, verify=ca)
+                            except requests.exceptions.SSLError as e:
+                                error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
+                                log.error_publishing(error)
+                                publish_error(db, "SSL Error: " + str(e).split("SSL routines:", 1)[1], job_id)
+                            except requests.exceptions.ConnectTimeout as e:
+                                error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
+                                log.error_publishing(error)
+                                publish_error(db, "Connection Timeout", job_id)
+                            except requests.exceptions.ConnectionError as e:
+                                error = ["Error with  publishing to ", url, ": ", repr(e), "\n"]
+                                log.error_publishing(error)
+                                publish_error(db, "Could Not Connect: " + str(e), job_id)
+                            except Exception, e:
+                                error = ['Error with publishing to ', url, ": ", repr(e), "\n"]
+                                log.error_publishing(error)
+                                publish_error(db, "Error publishing to site " + str(e), job_id)
 
                         # Handle errors sent via the web
                         try:
