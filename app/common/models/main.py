@@ -206,6 +206,7 @@ class RepoPublishTimes(Base.Model):
     pluginLast = Column(TIMESTAMP)
     benchmarkLast = Column(TIMESTAMP)
     iavmLast = Column(TIMESTAMP)
+    opattrLast = Column(TIMESTAMP)
 
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 # connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@10.11.1.241:3306/MIST'

@@ -1960,6 +1960,8 @@ class RepoPublishTimes(Resource):
             repo_publish_times['benchmarkLast'] = r_repo_publish_times.benchmarkLast.strftime("%m/%d/%Y %H:%M:%S")
         for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.iavmLast).order_by(main.RepoPublishTimes.iavmLast.desc()).limit(1).all():
             repo_publish_times['iavmLast'] = r_repo_publish_times.iavmLast.strftime("%m/%d/%Y %H:%M:%S")
+        for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.opattrLast).order_by(main.RepoPublishTimes.opattrLast.desc()).limit(1).all():
+            repo_publish_times['opattrLast'] = r_repo_publish_times.opattrLast.strftime("%m/%d/%Y %H:%M:%S")
 
         rs_dict['repo_publish_times'] = repo_publish_times
         return jsonify(rs_dict)  # return rs_dict

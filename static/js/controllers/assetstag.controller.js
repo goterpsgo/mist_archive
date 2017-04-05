@@ -157,8 +157,6 @@
                                 });
                             })
                         }
-                        console.log('rollup_track_by_asset:');
-                        console.log($scope.rollup_track_by_asset);
                     }
                   }
                 , function(err) {

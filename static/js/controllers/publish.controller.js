@@ -18,8 +18,8 @@
         $scope.status = '';
         $scope.this_date = new Date();
 
-        $scope.scan_options = {"cve": false, "benchmark": false, "iavm": false, "plugin": false, "all_scan": false};
-        $scope.asset_options = {"assets": false, "opattr": false, "all_asset": false};
+        $scope.scan_options = {"cve": false, "benchmark": false, "iavm": false, "plugin": false, "all_scan": false, "cleartext": false};
+        $scope.asset_options = {"assets": false, "opattr": false, "all_asset": false, "all_opattr": false};
 
         $scope.grid_options = {
             columnDefs: $scope.column_names,
