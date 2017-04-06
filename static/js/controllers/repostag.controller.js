@@ -17,6 +17,7 @@
         $scope.assign_repos = [];
         $scope.form_fields = {'tagMode': 'Repo', 'cardinality': 1};
         $scope.rollup_track_by_repo = {};
+        $scope.status = {};
 
         initController();
 
@@ -191,6 +192,12 @@
                     );
                 }
             }
+
+            if (($scope.form_fields['tree_nodes'].length == 0) || ($scope.form_fields['tree_nodes'][0] == '')) {
+                check_values_warning();
+                return;
+            }
+
             $scope.form_fields['username'] = $scope.profile.username;
             $scope.form_fields['cardinality'] = $scope.cardinality[$scope.assigned_tag_definition.id];
 
@@ -230,6 +237,11 @@
                     }
                 }
 
+                if (_checked_repos.length == 0) {
+                    check_values_warning();
+                    return;
+                }
+
                 // if one or more checked repo is in list of repo with tags then mark found_key as true
                 var found_key = false;
                 for (var _cnt = 0; _cnt < _checked_repos.length; _cnt++) {
@@ -258,6 +270,19 @@
                     auto_tag();
                 }
             }
+        };
+
+        function check_values_warning() {
+            $scope.status.result = 'Error:';
+            $scope.status.message = 'Please make one or more selections from both panes and click Save.';
+            $scope.status.class = 'alert alert-warning';
+
+            // clear status message after five seconds
+            $timeout(function () {
+                $scope.status.result = '';
+                $scope.status.message = '';
+                $scope.status.class = '';
+            }, 5000);
         }
     }
 })();
