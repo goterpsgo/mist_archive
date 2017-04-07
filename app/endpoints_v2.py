@@ -1531,35 +1531,34 @@ class TaggedRepos(Resource):
                                 "status": 'False'
                             }
 
-                            # if (num_of_tagged_repos > cardinality):
+                            if (num_of_tagged_repos > cardinality):
+                                # Extract IDs of tagged repos to be deleted
+                                tagged_repo_ids = []
+                                for _tagged_repo in handle_tagged_repos \
+                                    .order_by(main.TaggedRepos.timestamp.desc(), main.TaggedRepos.id.desc()) \
+                                    .slice(cardinality, num_of_tagged_repos):
 
-                            # Extract IDs of tagged repos to be deleted
-                            tagged_repo_ids = []
-                            for _tagged_repo in handle_tagged_repos \
-                                .order_by(main.TaggedRepos.timestamp.desc(), main.TaggedRepos.id.desc()) \
-                                .slice(cardinality, num_of_tagged_repos):
+                                    tagged_repo_ids.append(int(_tagged_repo.id))
 
-                                tagged_repo_ids.append(int(_tagged_repo.id))
+                                    rs_tagged_assets().filter(main.and_
+                                            (
+                                                  main.TaggedAssets.status == 'True'
+                                                , main.TaggedAssets.tagID == _tagged_repo.tagID
+                                                , main.TaggedAssets.rollup == _tagged_repo.rollup
+                                                , main.TaggedAssets.category == _tagged_repo.category
+                                            )
+                                        ).update(upd_form)
 
-                                rs_tagged_assets().filter(main.and_
-                                        (
-                                              main.TaggedAssets.status == 'True'
-                                            , main.TaggedAssets.tagID == _tagged_repo.tagID
-                                            , main.TaggedAssets.rollup == _tagged_repo.rollup
-                                            , main.TaggedAssets.category == _tagged_repo.category
-                                        )
-                                    ).update(upd_form)
+                                    main.session.commit()
+                                    main.session.flush()
 
+                                # Tag all repos with IDs in tagged_repo_ids as false
+                                for _id in tagged_repo_ids:
+                                    handle_tagged_repos.filter(main.TaggedRepos.id == _id).update(upd_form)
+
+                                # once delete is called transaction must actually be run before anything additional can be done
                                 main.session.commit()
                                 main.session.flush()
-
-                            # Tag all repos with IDs in tagged_repo_ids as false
-                            for _id in tagged_repo_ids:
-                                handle_tagged_repos.filter(main.TaggedRepos.id == _id).update(upd_form)
-
-                            # once delete is called transaction must actually be run before anything additional can be done
-                            main.session.commit()
-                            main.session.flush()
 
                             for r_repo in rs_repos().filter(
                                 main.and_(
