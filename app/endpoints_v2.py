@@ -1808,20 +1808,20 @@ class Assets(Resource):
                                 "status": "False"
                             }
 
-                            # if (num_of_tagged_assets > cardinality):
-                            tagged_asset_ids = []
-                            for _tagged_assets in handle_tagged_assets\
-                                .order_by(main.TaggedAssets.timestamp.desc(), main.TaggedAssets.id.desc())\
-                                .slice(cardinality, num_of_tagged_assets):
+                            if (num_of_tagged_assets > cardinality):
+                                tagged_asset_ids = []
+                                for _tagged_assets in handle_tagged_assets\
+                                    .order_by(main.TaggedAssets.timestamp.desc(), main.TaggedAssets.id.desc())\
+                                    .slice(cardinality, num_of_tagged_assets):
 
-                                tagged_asset_ids.append(_tagged_assets.id)
+                                    tagged_asset_ids.append(_tagged_assets.id)
 
-                            rs_tagged_assets()\
-                                .filter(main.TaggedAssets.id.in_(tagged_asset_ids))\
-                                .update(upd_form, synchronize_session='fetch')
+                                rs_tagged_assets()\
+                                    .filter(main.TaggedAssets.id.in_(tagged_asset_ids))\
+                                    .update(upd_form, synchronize_session='fetch')
 
-                            main.session.commit()
-                            main.session.flush()
+                                main.session.commit()
+                                main.session.flush()
 
                     return {'response': {'method': 'POST', 'result': 'success', 'message': 'Asset tagging applied.', 'class': 'alert alert-success', 'id': 1}}
                 else:
