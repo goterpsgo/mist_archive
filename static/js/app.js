@@ -505,7 +505,7 @@
         ]);
     }
 
-    function run($rootScope, $http, $location, $localStorage, $sessionStorage) {
+    function run($rootScope, $http, $location, $localStorage, $sessionStorage, $timeout) {
         // keep user logged in after page refresh
         if ($localStorage.currentUser && $sessionStorage.currentUser) {
             $http.defaults.headers.common.Authorization = 'JWT ' + $localStorage.currentUser.token;
@@ -540,20 +540,35 @@
                             } else {
                                 console.log('error callback');
                                 $localStorage.authWithCertAttempted = true;
-                                $location.path('/login');
+                                if ($location.path() != '/login') {
+                                    console.log('Redirect to /login');
+                                    $timeout(function() {
+                                        $location.path('/login');
+                                    }, 100);
+                                }
                             }
                         })
                         .error(function(data, status) {
                             console.log('error callback');
                             $localStorage.authWithCertAttempted = true;
-                            $location.path('/login');
+                            if ($location.path() != '/login') {
+                                console.log('Redirect to /login');
+                                $timeout(function() {
+                                    $location.path('/login');
+                                }, 100);
+                            }
                         });
                 }
                 else {
                     delete $localStorage.authWithCertAttempted;
                     delete $sessionStorage.authWithCertAttempted;
                     console.log($localStorage.authWithCertAttempted);
-                    $location.path('/login');
+                    if ($location.path() != '/login') {
+                        console.log('Redirect to /login');
+                        $timeout(function() {
+                            $location.path('/login');
+                        }, 100);
+                    }
                 }
             }
             // else {
