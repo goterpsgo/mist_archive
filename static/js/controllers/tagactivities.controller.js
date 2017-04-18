@@ -36,13 +36,19 @@
                           , "displayName": "Asset ID"
                           , "field": "assetID"
                           , "width": 80
-                          , "cellTemplate": '/static/html/tooltip_template_asset.html'
+                          , "cellTooltip":
+                            function(row, col) {
+                              return row.entity.asset_tooltip;
+                            }
                         }, {
                           "name": "Tag ID"
                           , "displayName": "Tag ID"
                           , "field": "full_tag"
                           , "width": 350
-                          , "cellTemplate": '/static/html/tooltip_template_tag.html'
+                          , "cellTooltip":
+                            function(row, col) {
+                              return row.entity.tag_tooltip;
+                            }
                         }, {
                           "name": "Tag Mode"
                           , "displayName": "Tag Mode"
@@ -58,10 +64,6 @@
                         columnDefs: $scope.column_names
                     };
                     $scope.grid_options.data = result.tagged_assets_list;
-                    for (var _cnt = 0; _cnt < $scope.grid_options.data.length; _cnt++) {
-                        var _row = $scope.grid_options.data[_cnt];
-                        _row.full_tag = _row['tagID'] + ' | ' + _row['category'] + ' | ' + _row['rollup'] + ' | ' + _row['dname'];
-                    }
 
                   }
                 , function(err) {

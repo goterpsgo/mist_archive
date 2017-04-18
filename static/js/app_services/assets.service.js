@@ -24,6 +24,13 @@
                 .then(
                     function(response) {
                         deferred.resolve(response.data);
+                        for (var _cnt = 0; _cnt < response.data.tagged_assets_list.length; _cnt++) {
+                            var _row = response.data.tagged_assets_list[_cnt];
+                            _row.full_tag = _row['tagID'] + ' | ' + _row['category'] + ' | ' + _row['rollup'];
+                            _row.tag_tooltip = '[Tag ID] ' +_row['tagID'] + '\n[Category] ' + _row['category'] + '\n[Rollup] ' + _row['rollup'] + '\n[dname] ' + _row['dname'];
+                            response.data.tagged_assets_list[_cnt].full_data = _row;
+                            _row.asset_tooltip = '[Asset ID] ' +_row['assetID'] + '\n[dnsName] ' + _row['dnsName'] + '\n[ip] ' + _row['ip'] + '\n[biosGUID] ' + _row['biosGUID'] + '\n[macAddress] ' + _row['macAddress'] + '\n[osCPE] ' + _row['osCPE'] + '\n[lastAuthRun] ' + _row['lastAuthRun'] + '\n[lastUnauthRun] ' + _row['lastUnauthRun']
+                        }
                     }
                     , function(data, status, headers, config) {
                         // deferred.resolve(response.data.response);
