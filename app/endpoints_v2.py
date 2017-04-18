@@ -1642,12 +1642,13 @@ class Assets(Resource):
 
         tagged_assets_list = []
 
-        handle_tagged_assets = main.session.query(main.TaggedAssets, main.Tags)\
+        handle_tagged_assets = main.session.query(main.TaggedAssets, main.Tags, main.Assets)\
             .join(
                 main.Tags, main.and_(
                     main.TaggedAssets.tagID == main.Tags.nameID, main.TaggedAssets.category == main.Tags.category, main.TaggedAssets.rollup == main.Tags.rollup
                 )
             )\
+            .join(main.Assets, main.TaggedAssets.assetID == main.Assets.assetID)\
             .filter(main.TaggedAssets.status == "true")\
             .order_by(main.TaggedAssets.timestamp.desc())\
             .all()
@@ -1655,6 +1656,18 @@ class Assets(Resource):
         for r_tagged_asset in handle_tagged_assets:
             _tagged_asset = row_to_dict(r_tagged_asset.TaggedAssets)
             _tagged_asset['dname'] = r_tagged_asset.Tags.dname
+            _tagged_asset['macAddress'] = r_tagged_asset.Assets.macAddress
+            _tagged_asset['biosGUID'] = r_tagged_asset.Assets.biosGUID
+            _tagged_asset['ip'] = r_tagged_asset.Assets.ip
+            _tagged_asset['lastUnauthRun'] = r_tagged_asset.Assets.lastUnauthRun
+            _tagged_asset['state'] = r_tagged_asset.Assets.state
+            _tagged_asset['osCPE'] = r_tagged_asset.Assets.osCPE
+            _tagged_asset['netbiosName'] = r_tagged_asset.Assets.netbiosName
+            _tagged_asset['dnsName'] = r_tagged_asset.Assets.dnsName
+            _tagged_asset['lastAuthRun'] = r_tagged_asset.Assets.lastAuthRun
+            _tagged_asset['published'] = r_tagged_asset.Assets.published
+            _tagged_asset['purged'] = r_tagged_asset.Assets.purged
+            _tagged_asset['mcafeeGUID'] = r_tagged_asset.Assets.mcafeeGUID
             tagged_assets_list.append(_tagged_asset)
 
         rs_dict['tagged_assets_list'] = tagged_assets_list
