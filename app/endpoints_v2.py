@@ -83,6 +83,9 @@ def rs_publish_jobs():
 def rs_repo_publish_times():
     return main.session.query(main.RepoPublishTimes)
 
+def rs_removed_scs():
+    return main.session.query(main.RemovedSCs)
+
 # http://stackoverflow.com/a/1960546/6554056
 def row_to_dict(row):
     d = {}
@@ -1110,6 +1113,71 @@ class SecurityCenter(Resource):
 
     @jwt_required()
     def delete(self, _id):
+        r_sc = main.session.query(main.SecurityCenter).filter(main.SecurityCenter.id == _id).first()
+        _sc = row_to_dict(r_sc)
+
+        # 1. Add SC information to removedSCs table
+        r_removed_sc = main.session.query(main.RemovedSCs).filter(main.RemovedSCs.scName == _sc['serverName'])
+        if (int(r_removed_sc.count()) > 0):
+            upd_form = {}
+            upd_form["removeDate"] = datetime.now()
+            r_removed_sc.update(upd_form)
+        else:
+            new_removed_sc = main.SecurityCenter(
+                  scName = _sc['serverName']
+                , removeDate = datetime.now()
+                , ack = 'No'
+            )
+            main.session.add(new_removed_sc)
+        main.session.commit()
+        main.session.flush()
+
+        # 2. query for Repos based on server name
+        r_repos = rs_repos().filter(main.Repos.serverName == _sc['fqdn_IP']).all()
+
+        # 3. Loop through each repo...
+        for r_repo in r_repos:
+
+            # Use assetID to delete Assets
+            rs_assets().filter(main.Assets.assetID == r_repo.assetID).delete()
+            main.session.begin_nested()
+
+            # Use assetID to delete taggedAssets
+            rs_tagged_assets().filter(main.TaggedAssets.assetID == r_repo.assetID).delete()
+            main.session.begin_nested()
+
+            # Use repoID and scId to delete TaggedRepos
+            rs_tagged_repos().filter(
+                main.and_(
+                    main.TaggedRepos.repoID == r_repo.repoID, main.TaggedRepos.scID == r_repo.scID
+                )
+            )\
+            .delete()
+            main.session.begin_nested()
+
+            # Use repoID and scId to delete UserAccess
+            rs_user_access().filter(
+                main.and_(
+                    main.UserAccess.repoID == r_repo.repoID, main.UserAccess.scID == r_repo.scID
+                )
+            )\
+            .delete()
+            main.session.begin_nested()
+
+            # Use repoID and scId to delete requestedUserAccess
+            rs_request_user_access().filter(
+                main.and_(
+                    main.requestUserAccess.repoID == r_repo.repoID, main.requestUserAccess.scID == r_repo.scID
+                )
+            )\
+            .delete()
+            main.session.begin_nested()
+
+        # 4. Delete selected repos
+        rs_repos().filter(main.Repos.serverName == _sc['fqdn_IP']).delete()
+        main.session.begin_nested()
+
+        # 5. Delete SecurityCenter
         main.session.query(main.SecurityCenter).filter(main.SecurityCenter.id == _id).delete()
         main.session.commit()
         main.session.flush()

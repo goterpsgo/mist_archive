@@ -208,6 +208,15 @@ class RepoPublishTimes(Base.Model):
     iavmLast = Column(TIMESTAMP)
     opattrLast = Column(TIMESTAMP)
 
+class RemovedSCs(Base.Model):
+    __tablename__ = "removedSCs"
+    id = Column(Integer, primary_key=True)
+    scName = Column(String)
+    ack = Column(String)
+    ackUser = Column(String)
+    removeDate = Column(TIMESTAMP)
+    ackDate = Column(TIMESTAMP)
+
 connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@mistDB:3306/MIST'
 # connect_string = 'mysql://mistUser:m1$TD@t@B@$3!@#@10.11.1.241:3306/MIST'
 ssl_args = {'ssl': {'cert': '/opt/mist/mist_base/certificates/mist-interface.crt',
