@@ -21,7 +21,7 @@ THREADS_PER_PAGE = 2
 # Secret key for signing cookies
 SECRET_KEY = "key4Mist!!!"
 
-JWT_EXPIRATION_DELTA = timedelta(seconds=600)
+JWT_EXPIRATION_DELTA = timedelta(seconds=3600)
 JWT_VERIFY_CLAIMS = ['signature', 'exp', 'nbf', 'iat']
 JWT_REQUIRED_CLAIMS = ['exp', 'iat', 'nbf']
 
