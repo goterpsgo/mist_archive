@@ -3,9 +3,9 @@
  
     angular
         .module('app')
-        .controller('Locallogs.IndexController', Controller);
+        .controller('Locallogs.IndexController', Controller, 'FileSaver', 'Blob');
 
-    function Controller($scope, LocalLogsService) {
+    function Controller($scope, LocalLogsService, FileSaver, Blob) {
         var vm = this;
 
         initController();
@@ -29,7 +29,6 @@
 
         this.node_click = function(_id) {
             if ($scope.id_to_path_map[_id] !== undefined) {
-                // save content to $scope.log_content if filename ends in .log
                 if ($scope.id_to_path_map[_id].substr($scope.id_to_path_map[_id].length - 4) == '.log') {
                     LocalLogsService._get_local_log($scope.id_to_path_map[_id])
                         .then(
@@ -41,9 +40,17 @@
                             }
                         );
                 }
-                // show warning message to $scope.log_content if filename does not end in .log
                 else {
-                    $scope.log_content = 'Cannot display non-text content.';
+                    LocalLogsService._get_archived_log($scope.id_to_path_map[_id])
+                        .then(
+                            function (data) {
+                                var my_file = new Blob([data], {type: 'application/gzip'});
+                                FileSaver.saveAs(my_file, $scope.id_to_path_map[_id]);
+                            }
+                            , function (err) {
+                                $scope.status = 'Error loading data: ' + err.message;
+                            }
+                        );
                 }
             }
         }

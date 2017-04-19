@@ -2216,9 +2216,16 @@ class LocalLogs(Resource):
         # NOTE: string format is dir_filename
         if _name is not None:
             _dir, _filename = _name.split("_", 1)
+            _filetype = _filename.split(".", 1)[1]
             _full_filename = _parent_dir + _dir + "/" + _filename
             _contents = open(_full_filename).read()
-            rs_dict['log_content'] = {"content": _contents}
+            if _filetype == "log":
+                rs_dict['log_content'] = {"content": _contents}
+            else:
+                response = make_response(_contents)
+                response.headers["Content-Type"] = "application/gzip"
+                response.headers["Content-Disposition"] = "attachment; filename=" + _filename
+                return response
         else:
             # otherwise list files from each directory from _log_dirs
             _id = 4
@@ -2347,6 +2354,21 @@ class SubjectDN(Resource):
 
         return jsonify(rs_dict)  # return rs_dict
 
+
+# PublicationDownloader class
+class ArchivedLogDownloader(Resource):
+    # @jwt_required()   # users will access this resource directly, not through Angular - request will not contain token
+    def get(self, _name=None):
+        if (_name is not None):
+            _dir, _filename = _name.split("_", 1)
+            _fullpath = "/opt/mist/publishing/published_files/%s/%s" % (_dir, _filename)
+            response = make_response(open(_fullpath).read())
+            response.headers["Content-Type"] = "application/zip"
+            response.headers["Content-Disposition"] = "attachment; filename=" + _filename
+            return response
+        else:
+            return "No such file."
+
 api.add_resource(Users, '/users', '/user/<string:_user>')
 api.add_resource(Signup, '/user/signup')
 api.add_resource(Repos, '/repos')
@@ -2365,3 +2387,4 @@ api.add_resource(RepoPublishTimes, '/repopublishtimes')
 api.add_resource(LocalLogs, '/locallogs', '/locallog/<string:_name>')
 api.add_resource(PublicationDownloader, '/publicationdownloader/<string:_name>')
 api.add_resource(SubjectDN, '/subjectdn')
+api.add_resource(ArchivedLogDownloader, '/archivedlogloader/<string:_name>')
