@@ -7,6 +7,7 @@
             <input type="text" class="form-control" name="fqdn_IP" ng-model="form_data.fqdn_IP" size="25" placeholder="FQDN or IP" title="FQDN or IP">
         </div>
         <div class="col-md-1">
+            SC Version
             <input type="radio" ng-model="form_data.version" name="version" value="4" title="Select for version 4."> 4
             <input type="radio" ng-model="form_data.version" name="version" value="5" title="Select for version 5."> 5
         </div>
@@ -14,9 +15,9 @@
             <input type="text" class="form-control" name="username" ng-model="form_data.username" size="10" placeholder="Username" title="Username">
             <input type="password" class="form-control" name="pw" ng-model="form_data.pw" size="10" placeholder="Password" title="Password">
         </div>
-        <div class="col-md-3">
-            <input type="file" class="form-control" name="certificateFile" ng-model="form_data.certificateFile" ngf-select placeholder="Certificate File" title="Certificate File">
-            <input type="file" class="form-control" name="keyFile" ng-model="form_data.keyFile" ngf-select placeholder="Key File" title="Key File">
+        <div class="col-md-3" style="overflow: hidden; white-space: nowrap;">
+            Cert <input type="file" class="form-control" name="certificateFile" ng-model="form_data.certificateFile" ngf-select placeholder="Certificate File" title="Certificate File">
+            Key <input type="file" class="form-control" name="keyFile" ng-model="form_data.keyFile" ngf-select placeholder="Key File" title="Key File">
         </div>
         <div class="col-md-1">
             <input type="submit" name="submit_insert" value="Insert" class="btn btn-default"> <input type="reset" class="btn btn-default">
@@ -37,6 +38,7 @@
                 <input type="text" class="form-control" name="fqdn_IP" ng-model="sc.fqdn_IP" size="25" placeholder="Update FQDN/IP." title="Update FQDN/IP.">
             </div>
             <div class="col-md-1">
+            SC Version
                 <input type="radio" ng-model="sc.version" name="version" value="4" title="Select for version 4."> 4
                 <input type="radio" ng-model="sc.version" name="version" value="5" title="Select for version 5."> 5
             </div>
@@ -44,9 +46,9 @@
                 <input type="text" class="form-control" name="username" ng-model="sc.username" size="10" placeholder="Update username." title="Update username.">
                 <input type="password" class="form-control" name="pw" ng-model="sc.pw" size="10" placeholder="Update value for update." title="Update value for update.">
             </div>
-            <div class="col-md-3">
-                <input type="file" class="form-control" name="certificateFile" ng-model="sc.certificateFile" ngf-select placeholder="Update certificate file." title="Update certificate file.">
-                <input type="file" class="form-control" name="keyFile" ng-model="sc.keyFile" ngf-select placeholder="Update key file." title="Update key file.">
+            <div class="col-md-3" style="overflow: hidden; white-space: nowrap;">
+                Cert <input type="file" class="form-control" name="certificateFile" ng-model="sc.certificateFile" ngf-select placeholder="Update certificate file." title="Update certificate file.">
+                Key <input type="file" class="form-control" name="keyFile" ng-model="sc.keyFile" ngf-select placeholder="Update key file." title="Update key file.">
             </div>
             <div class="col-md-1">
                 <button class="btn btn-default" ng-click="submit_sc_update($index)">Update</button>
