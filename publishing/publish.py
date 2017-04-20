@@ -54,7 +54,7 @@ def get_assets(db, sc_repo_dict):
 
 def get_access(db, user_id):
     sc_dict = {}
-    results = db.execute("SELECT scID, repoID FROM userAccess WHERE userID = " + str(user_id))
+    results = db.execute("SELECT scID, repoID FROM userAccess WHERE repoID > 0 and userID = " + str(user_id))
     for scRepo in results:
         if not scRepo[0] in sc_dict:
             sc_dict[scRepo[0]] = []
