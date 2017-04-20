@@ -10,4 +10,5 @@ lxml
 jsonschema
 pytz
 requests
+functools32
 
