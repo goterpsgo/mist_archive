@@ -2091,7 +2091,7 @@ class PublishJobs(Resource):
             form_fields = request.get_json(force=True)
 
             if (form_fields['job_type'] == 'on demand'):
-                subprocess.Popen(["python /opt/mist/publishing/publish.py %s" % form_fields["options"]], shell=True, stdout=subprocess.PIPE)
+                subprocess.Popen(["/usr/bin/python /opt/mist/publishing/publish.py %s" % form_fields["options"]], shell=True, stdout=subprocess.PIPE)
 
                 rs_dict['response'] = {'method': 'POST', 'result': 'success', 'message': 'Executed publish command on demand.', 'class': 'alert alert-success'}
                 return jsonify(rs_dict)  # return rs_dict
