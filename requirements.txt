@@ -9,4 +9,5 @@ netaddr
 lxml
 jsonschema
 pytz
+requests
 
