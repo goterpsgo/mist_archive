@@ -467,5 +467,9 @@
             vm.form_fields.timezone = vm.timezones[14];
             switch_freq();
         };
+
+        $scope.refresh_data = function() {
+            load_publish_jobs();
+        };
     }
 })();
