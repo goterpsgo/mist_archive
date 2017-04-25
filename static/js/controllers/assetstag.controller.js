@@ -361,6 +361,10 @@
             for (var _cnt in $scope.assets_list) {
                 $scope.assets_list[_cnt].is_checked = vm.is_check_all;
             }
-        }
+        };
+
+        $scope.refresh_data = function() {
+            get_repos();
+        };
     }
 })();

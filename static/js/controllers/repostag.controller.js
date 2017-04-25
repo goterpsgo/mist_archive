@@ -27,10 +27,10 @@
 
             promise
                 .then(function(val) {
-                    get_this_user();
+                    get_repos();
                 })
                 .then(function(val) {
-                    get_repos();
+                    get_this_user();
                 })
                 .then(function(val) {
                     load_tag_definitions();
@@ -284,5 +284,9 @@
                 $scope.status.class = '';
             }, 5000);
         }
+
+        $scope.refresh_data = function() {
+            get_repos();
+        };
     }
 })();
