@@ -490,7 +490,8 @@
                    },
                    'responseError': function (response) {
                        if (response.config.data !== undefined) {
-                           if ($cookies.get('attempts') !== undefined) {
+                           // Do not tick attempts counter if status is due to system error
+                           if (($cookies.get('attempts') !== undefined) && (response.status !== 502)) {
                                $cookies.put('attempts', parseInt($cookies.get('attempts')) + 1);
                            }
                        }
@@ -519,6 +520,7 @@
             if (restrictedPage && !$localStorage.currentUser && !$sessionStorage.currentUser) {
 
                 // first try to log in with pki, if haven't tried that yet
+                console.log('PKI attempted previously: ' + $localStorage.authWithCertAttempted);
                 if (!$localStorage.authWithCertAttempted) {
                     console.log('attempting');
                     $http.post('/auth', { username: 'xxx', password: 'xxx' })
