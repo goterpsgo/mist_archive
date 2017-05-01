@@ -2023,28 +2023,56 @@ class PublishSched(Resource):
 # RepoPublishTimes model class template
 class RepoPublishTimes(Resource):
     @jwt_required()
-    def get(self):
+    def get(self, _show_repos=None):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
         rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         repo_publish_times = {}
 
-        # return only the very last entry
-        for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.arfLast).order_by(main.RepoPublishTimes.arfLast.desc()).limit(1).all():
-            repo_publish_times['arfLast'] = r_repo_publish_times.arfLast.strftime("%m/%d/%Y %H:%M:%S")
-        for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.cveLast).order_by(main.RepoPublishTimes.cveLast.desc()).limit(1).all():
-            repo_publish_times['cveLast'] = r_repo_publish_times.cveLast.strftime("%m/%d/%Y %H:%M:%S")
-        for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.pluginLast).order_by(main.RepoPublishTimes.pluginLast.desc()).limit(1).all():
-            repo_publish_times['pluginLast'] = r_repo_publish_times.pluginLast.strftime("%m/%d/%Y %H:%M:%S")
-        for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.benchmarkLast).order_by(main.RepoPublishTimes.benchmarkLast.desc()).limit(1).all():
-            repo_publish_times['benchmarkLast'] = r_repo_publish_times.benchmarkLast.strftime("%m/%d/%Y %H:%M:%S")
-        for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.iavmLast).order_by(main.RepoPublishTimes.iavmLast.desc()).limit(1).all():
-            repo_publish_times['iavmLast'] = r_repo_publish_times.iavmLast.strftime("%m/%d/%Y %H:%M:%S")
-        for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.opattrLast).order_by(main.RepoPublishTimes.opattrLast.desc()).limit(1).all():
-            repo_publish_times['opattrLast'] = r_repo_publish_times.opattrLast.strftime("%m/%d/%Y %H:%M:%S")
+        if (_show_repos is None):
+            # return only the very last entry across all repos
+            for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.arfLast).order_by(main.RepoPublishTimes.arfLast.desc()).limit(1).all():
+                repo_publish_times['arfLast'] = r_repo_publish_times.arfLast.strftime("%m/%d/%Y %H:%M:%S")
+            for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.cveLast).order_by(main.RepoPublishTimes.cveLast.desc()).limit(1).all():
+                repo_publish_times['cveLast'] = r_repo_publish_times.cveLast.strftime("%m/%d/%Y %H:%M:%S")
+            for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.pluginLast).order_by(main.RepoPublishTimes.pluginLast.desc()).limit(1).all():
+                repo_publish_times['pluginLast'] = r_repo_publish_times.pluginLast.strftime("%m/%d/%Y %H:%M:%S")
+            for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.benchmarkLast).order_by(main.RepoPublishTimes.benchmarkLast.desc()).limit(1).all():
+                repo_publish_times['benchmarkLast'] = r_repo_publish_times.benchmarkLast.strftime("%m/%d/%Y %H:%M:%S")
+            for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.iavmLast).order_by(main.RepoPublishTimes.iavmLast.desc()).limit(1).all():
+                repo_publish_times['iavmLast'] = r_repo_publish_times.iavmLast.strftime("%m/%d/%Y %H:%M:%S")
+            for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.opattrLast).order_by(main.RepoPublishTimes.opattrLast.desc()).limit(1).all():
+                repo_publish_times['opattrLast'] = r_repo_publish_times.opattrLast.strftime("%m/%d/%Y %H:%M:%S")
 
-        rs_dict['repo_publish_times'] = repo_publish_times
-        return jsonify(rs_dict)  # return rs_dict
+            rs_dict['repo_publish_times'] = repo_publish_times
+            return jsonify(rs_dict)  # return rs_dict
+        else:
+            handle_unique_repos = rs_repos().with_entities(main.Repos.repoID.distinct(), main.Repos.scID, main.Repos.repoName, main.Repos.serverName)
+            _repos_published = {}
+
+            for r_repos_published in handle_unique_repos:
+                _repoID, _scID, _repoName, _serverName = r_repos_published
+                _key = _serverName + " / " + _repoName
+
+                handle_publish_times_per_repo = rs_repo_publish_times().filter(main.RepoPublishTimes.repoID == _repoID)
+
+                if (handle_publish_times_per_repo.count() > 0):
+                    _repos_published[_key] = {}
+                    for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.arfLast).order_by(main.RepoPublishTimes.arfLast.desc()).limit(1).all():
+                        _repos_published[_key]['arfLast'] = r_repo_publish_times.arfLast.strftime("%m/%d/%Y %H:%M:%S")
+                    for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.cveLast).order_by(main.RepoPublishTimes.cveLast.desc()).limit(1).all():
+                        _repos_published[_key]['cveLast'] = r_repo_publish_times.cveLast.strftime("%m/%d/%Y %H:%M:%S")
+                    for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.pluginLast).order_by(main.RepoPublishTimes.pluginLast.desc()).limit(1).all():
+                        _repos_published[_key]['pluginLast'] = r_repo_publish_times.pluginLast.strftime("%m/%d/%Y %H:%M:%S")
+                    for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.benchmarkLast).order_by(main.RepoPublishTimes.benchmarkLast.desc()).limit(1).all():
+                        _repos_published[_key]['benchmarkLast'] = r_repo_publish_times.benchmarkLast.strftime("%m/%d/%Y %H:%M:%S")
+                    for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.iavmLast).order_by(main.RepoPublishTimes.iavmLast.desc()).limit(1).all():
+                        _repos_published[_key]['iavmLast'] = r_repo_publish_times.iavmLast.strftime("%m/%d/%Y %H:%M:%S")
+                    for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.opattrLast).order_by(main.RepoPublishTimes.opattrLast.desc()).limit(1).all():
+                        _repos_published[_key]['opattrLast'] = r_repo_publish_times.opattrLast.strftime("%m/%d/%Y %H:%M:%S")
+
+            rs_dict['repo_publish_times'] = _repos_published
+            return jsonify(rs_dict)  # return rs_dict
 
     # @jwt_required()
     def post(self):
@@ -2383,7 +2411,7 @@ api.add_resource(TaggedRepos, '/taggedrepos', '/taggedrepos/<int:_tagged_repo_id
 api.add_resource(Assets, '/assets', '/assets/<int:_id>')
 api.add_resource(PublishSched, '/publishsched')
 api.add_resource(PublishJobs, '/publishjobs', '/publishjob/<int:_id>')
-api.add_resource(RepoPublishTimes, '/repopublishtimes')
+api.add_resource(RepoPublishTimes, '/repopublishtimes', '/repopublishtimes/<int:_show_repos>')
 api.add_resource(LocalLogs, '/locallogs', '/locallog/<string:_name>')
 api.add_resource(PublicationDownloader, '/publicationdownloader/<string:_name>')
 api.add_resource(SubjectDN, '/subjectdn')
