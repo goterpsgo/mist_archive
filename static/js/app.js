@@ -195,6 +195,31 @@
                   }
               }
             })
+            .state('publish.last_dates', {
+              url: '/publish.last_dates',
+              views : {
+                '_main' : {
+                  templateUrl: 'static/html/publish.view.html',
+                  controller: 'Publish.IndexController',
+                  controllerAs: 'vm'
+                }
+                , '_nav' : {
+                  templateUrl: 'static/html/nav.view.html',
+                    controller: 'Nav.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_classification' : {
+                  templateUrl: 'static/html/classification.view.html',
+                    controller: 'Classification.IndexController',
+                    controllerAs: 'vm'
+                  }
+                , '_main@publish' : {
+                  templateUrl: 'static/html/publish_last_dates.view.html',
+                    controller: 'Publish.IndexController',
+                    controllerAs: 'vm'
+                  }
+              }
+            })
             .state('profile', {
               url: '/profile',
               views : {

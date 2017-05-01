@@ -11,6 +11,7 @@
         var obj_tasks = [];
         obj_tasks['publish.list'] = 'List Available Publications';
         obj_tasks['publish.on_demand'] = 'Publish On Demand or By Schedule';
+        obj_tasks['publish.last_dates'] = 'Publish Options Last Dates';
         $scope.publish_sched_list = {};
         $scope.repo_publish_times = {};
         $scope.publish_jobs_list = {};
@@ -94,11 +95,8 @@
                 vm.form_fields.id = -1;
 
             }
-            if ($state.current.name == 'publish.schedule') {
-                load_publish_sched();
-                // vm.form_fields.selected_time = vm.times[0];
-                // vm.form_fields.selected_day_of_week = vm.days_of_week['Daily'][0];
-                // vm.form_fields.selected_time_zone = vm.time_zones[0];
+            if ($state.current.name == 'publish.last_dates') {
+                load_publish_times_by_repo();
             }
             for (var _index in vm.time_zones) {
                 var time_zone = vm.time_zones[_index];
@@ -142,6 +140,22 @@
             vm.loading += 1;
             RepoPublishTimesService
                 ._get_repopublishtimes()
+                .then(
+                    function(results) {
+                        $scope.repo_publish_times = results.repo_publish_times;
+                        vm.loading = false;
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                        vm.loading -= 1;
+                      }
+                );
+        }
+
+        function load_publish_times_by_repo() {
+            vm.loading += 1;
+            RepoPublishTimesService
+                ._get_publish_times_by_repo()
                 .then(
                     function(results) {
                         $scope.repo_publish_times = results.repo_publish_times;
