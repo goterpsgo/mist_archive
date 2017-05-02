@@ -74,30 +74,32 @@
             }
 
             $scope._task = obj_tasks[$state.current.name];
-            if ($state.current.name == 'publish.list') {
-                load_publish_jobs();
-                load_mist_params();
-            }
-            if ($state.current.name == 'publish.on_demand') {
-                load_publish_sites();
-                load_publish_sched();
-                vm.days_of_weeks_show = true;
-                vm.weekdays_show = false;
-                vm.days_of_month_show = false;
-                vm.weeks_of_month_show = false;
 
-                vm.form_fields.freqOption = vm.freq_option[0];  // 'Daily'
-                vm.form_fields.daysOfWeeks = vm.days_of_weeks[0];
-                vm.form_fields.dayOfMonth = vm.days_of_month[0];
-                vm.form_fields.weekOfMonth = vm.weeks_of_month[0];
-                vm.form_fields.time = vm.times[0];
-                vm.form_fields.timezone = vm.timezones[14];
-                vm.form_fields.id = -1;
+            switch($state.current.name) {
+                case 'publish.on_demand':
+                    load_publish_sites();
+                    load_publish_sched();
+                    vm.days_of_weeks_show = true;
+                    vm.weekdays_show = false;
+                    vm.days_of_month_show = false;
+                    vm.weeks_of_month_show = false;
 
+                    vm.form_fields.freqOption = vm.freq_option[0];  // 'Daily'
+                    vm.form_fields.daysOfWeeks = vm.days_of_weeks[0];
+                    vm.form_fields.dayOfMonth = vm.days_of_month[0];
+                    vm.form_fields.weekOfMonth = vm.weeks_of_month[0];
+                    vm.form_fields.time = vm.times[0];
+                    vm.form_fields.timezone = vm.timezones[14];
+                    vm.form_fields.id = -1;
+                    break;
+                case 'publish.last_dates':
+                    load_publish_times_by_repo();
+                    break;
+                default:    // publish.list
+                    load_publish_jobs();
+                    load_mist_params();
             }
-            if ($state.current.name == 'publish.last_dates') {
-                load_publish_times_by_repo();
-            }
+
             for (var _index in vm.time_zones) {
                 var time_zone = vm.time_zones[_index];
             }
@@ -159,7 +161,16 @@
                 .then(
                     function(results) {
                         $scope.repo_publish_times = results.repo_publish_times;
-                        vm.loading = false;
+
+                        // Remove "..Last" from all the repo keys.
+                        for (var _repo in results.repo_publish_times) {
+                            for (var _key in results.repo_publish_times[_repo]) {
+                                var _new_key = _key.substring(0, _key.length - 4);
+                                results.repo_publish_times[_repo][_new_key] = results.repo_publish_times[_repo][_key];
+                                delete results.repo_publish_times[_repo][_key];
+                            }
+                        }
+                        vm.loading -= 1;
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
@@ -484,6 +495,10 @@
 
         $scope.refresh_data = function() {
             load_publish_jobs();
+        };
+
+        $scope.reload_publish_last_dates = function() {
+            load_publish_times_by_repo();
         };
     }
 })();

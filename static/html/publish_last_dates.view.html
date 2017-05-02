@@ -1,3 +1,16 @@
 <div class="col-md-12">
-    {{repo_publish_times}}
+    <div class="row">
+        <form>
+            <input type="button" class="btn btn-primary" ng-click="reload_publish_last_dates()" style="font-size: 18px;" value="Reload Data" title="Reload Data">
+        </form>
+    </div>
+    <div class="row" ng-repeat="(_repo, _times) in repo_publish_times">
+        <h4>{{_repo}}</h4>
+        <div class="row" ng-repeat="(_name, _value) in _times">
+            <ul>
+
+            </ul>
+            {{_name}} - {{_value}}
+        </div>
+    </h4>
 </div>
