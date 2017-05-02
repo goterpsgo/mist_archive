@@ -1,5 +1,5 @@
 import base64
-from sqlalchemy import Column, Enum, DateTime, String, Integer, func, ForeignKey, create_engine, join, and_, distinct, between
+from sqlalchemy import Column, Enum, DateTime, String, Integer, func, ForeignKey, create_engine, join, and_, distinct, between, select, event, exc
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import select, func
@@ -226,9 +226,47 @@ ssl_args = {'ssl': {'cert': '/opt/mist/mist_base/certificates/mist-interface.crt
 # ========== NOTE ==========
 # MySQL times out after 8 hours of inactivity by default:
 # http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_wait_timeout
-# added pool_recycle param (set to 1 week) to create_engine to prevent connections from timing out
+# added pool_recycle param (set to 24 hours) to create_engine to prevent connections from timing out
 # http://docs.sqlalchemy.org/en/latest/core/engines.html?highlight=pool_recycle#sqlalchemy.create_engine.params.pool_recycle
-engine = create_engine(connect_string, connect_args=ssl_args, echo=False, pool_recycle=604800)
+# In /etc/my.cnf, set wait_timeout and interactive_timeout values to > pool_recycle value.
+# https://support.rackspace.com/how-to/how-to-change-the-mysql-timeout-on-a-server/
+engine = create_engine(connect_string, connect_args=ssl_args, echo=False, pool_recycle=86400)
 Session = sessionmaker(bind=engine)
 session = Session()
+
+# http://docs.sqlalchemy.org/en/latest/core/pooling.html#custom-legacy-pessimistic-ping
+@event.listens_for(engine, "engine_connect")
+def ping_connection(connection, branch):
+    if branch:
+        # "branch" refers to a sub-connection of a connection,
+        # we don't want to bother pinging on these.
+        return
+
+    # turn off "close with result".  This flag is only used with
+    # "connectionless" execution, otherwise will be False in any case
+    save_should_close_with_result = connection.should_close_with_result
+    connection.should_close_with_result = False
+
+    try:
+        # run a SELECT 1.   use a core select() so that
+        # the SELECT of a scalar value without a table is
+        # appropriately formatted for the backend
+        connection.scalar(select([1]))
+    except exc.DBAPIError as err:
+        # catch SQLAlchemy's DBAPIError, which is a wrapper
+        # for the DBAPI's exception.  It includes a .connection_invalidated
+        # attribute which specifies if this connection is a "disconnect"
+        # condition, which is based on inspection of the original exception
+        # by the dialect in use.
+        if err.connection_invalidated:
+            # run the same SELECT again - the connection will re-validate
+            # itself and establish a new connection.  The disconnect detection
+            # here also causes the whole connection pool to be invalidated
+            # so that all stale connections are discarded.
+            connection.scalar(select([1]))
+        else:
+            raise
+    finally:
+        # restore "close with result"
+        connection.should_close_with_result = save_should_close_with_result
 
