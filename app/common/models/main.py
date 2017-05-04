@@ -226,11 +226,11 @@ ssl_args = {'ssl': {'cert': '/opt/mist/mist_base/certificates/mist-interface.crt
 # ========== NOTE ==========
 # MySQL times out after 8 hours of inactivity by default:
 # http://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_wait_timeout
-# added pool_recycle param (set to 24 hours) to create_engine to prevent connections from timing out
+# added pool_recycle param (set to 1 hour) to create_engine to prevent connections from timing out
 # http://docs.sqlalchemy.org/en/latest/core/engines.html?highlight=pool_recycle#sqlalchemy.create_engine.params.pool_recycle
 # In /etc/my.cnf, set wait_timeout and interactive_timeout values to > pool_recycle value.
 # https://support.rackspace.com/how-to/how-to-change-the-mysql-timeout-on-a-server/
-engine = create_engine(connect_string, connect_args=ssl_args, echo=False, pool_recycle=86400)
+engine = create_engine(connect_string, connect_args=ssl_args, echo=False, pool_recycle=3600)
 Session = sessionmaker(bind=engine)
 session = Session()
 
