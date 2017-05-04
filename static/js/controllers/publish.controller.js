@@ -14,6 +14,7 @@
         obj_tasks['publish.last_dates'] = 'Publish Options Last Dates';
         $scope.publish_sched_list = {};
         $scope.repo_publish_times = {};
+        $scope.repo_publish_times_by_repo = {};
         $scope.publish_jobs_list = {};
         vm.publish_sites_list = {};
         $scope.status = '';
@@ -140,10 +141,28 @@
 
         function load_repo_publish_times() {
             vm.loading += 1;
+
+            // expected fields from table repoPublishTimes
+            var _fields = ['arfLast', 'benchmarkLast', 'cveLast', 'iavmLast', 'opattrLast', 'pluginLast'];
             RepoPublishTimesService
                 ._get_repopublishtimes()
                 .then(
                     function(results) {
+                        // Add results.repo_publish_times if it's not defined and returned from API
+                        if (results.repo_publish_times === undefined) {
+                            results.repo_publish_times = {};
+                            for (var _field in _fields) {
+                                results.repo_publish_times[_fields[_field]] = 'None';
+                            }
+                        }
+                        // Add individual values to results.repo_publish_times if they're not defined and returned from API
+                        else {
+                            for (var _field in _fields) {
+                                if (results.repo_publish_times[_fields[_field]] === undefined) {
+                                    results.repo_publish_times[_fields[_field]] = 'None';
+                                }
+                            }
+                        }
                         $scope.repo_publish_times = results.repo_publish_times;
                         vm.loading = false;
                       }
@@ -160,7 +179,6 @@
                 ._get_publish_times_by_repo()
                 .then(
                     function(results) {
-                        $scope.repo_publish_times = results.repo_publish_times;
 
                         // Remove "..Last" from all the repo keys.
                         for (var _repo in results.repo_publish_times) {
@@ -170,6 +188,7 @@
                                 delete results.repo_publish_times[_repo][_key];
                             }
                         }
+                        $scope.repo_publish_times_by_repo = results.repo_publish_times;
                         vm.loading -= 1;
                       }
                     , function(err) {

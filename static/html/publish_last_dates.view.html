@@ -1,18 +1,25 @@
 <div class="col-md-12">
     <div class="row">
         <form>
-            <input type="button" class="btn btn-primary" ng-click="reload_publish_last_dates()" style="font-size: 18px;" value="Reload Data" title="Reload Data">
+            <input type="button" class="btn btn-primary" ng-click="reload_publish_last_dates()" style="font-size: 18px;" value="Reload Data" title="Reload Data"> {{status}}
         </form>
     </div>
-    <div class="row" ng-repeat="(_repo, _times) in repo_publish_times">
-        <table class="table table-hover">
-            <thead>
-                <th colspan="2">{{_repo}}</th>
-            </thead>
-            <tr ng-repeat="(_name, _value) in _times">
-                <td>{{_name}}</td>
-                <td>{{_value}}</td>
-            </tr>
-        </table>
+    <div ng-if="repo_publish_times_by_repo !== undefined">
+        <div class="row" ng-repeat="(_repo, _times) in repo_publish_times_by_repo">
+            <table class="table table-hover">
+                <thead>
+                    <th colspan="2">{{_repo}}</th>
+                </thead>
+                <tr ng-repeat="(_name, _value) in _times">
+                    <td>{{_name}}</td>
+                    <td>{{_value}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div ng-if="repo_publish_times_by_repo === undefined">
+        <div class="row">
+            No publish times available.
+        </div>
     </div>
 </div>
