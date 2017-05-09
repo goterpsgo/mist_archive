@@ -466,7 +466,8 @@ class Users(Resource):
     def get(self, _user=None):
         try:
             rs_dict = {}    # used to hold and eventually return users_list[] recordset and associated metadata
-            rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+            _new_token = create_new_token(request)
+            rs_dict['Authorization'] = _new_token   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
             # query for user/users
             rs_users_handle = rs_users()
@@ -487,7 +488,7 @@ class Users(Resource):
                 users_list.append(create_user_dict(r_single_user))
             rs_dict['users_list'] = users_list  # add users_list[] to rs_dict
 
-            return jsonify(rs_dict) # return rs_dict
+            return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
         except (main.NoResultFound) as e:
             print ("[NoResultFound] GET /api/v2/user %s" % e)
@@ -896,13 +897,14 @@ class Signup(Resource):
 
 
 class Repos(Resource):
-    # @jwt_required()
+    @jwt_required()
     def get(self):
         try:
             # returns list of repos from Repos table
             # (NOTE: since there's no dedicated normalized table for just repos, all combinations of returned fields from Repos are distinct)
             rs_dict = {}    # used to hold and eventually return repos_list[] recordset and associated metadata
-            # rs_dict['Authorization'] = create_new_token(request)   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+            _new_token = create_new_token(request)
+            rs_dict['Authorization'] = _new_token   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
             # NOTE: main.Repos.id is not being returned since Repos table is not properly normalized and including id will result in returning duplicates - JWT 7 Nov 2016
             main.session.rollback()
@@ -915,7 +917,7 @@ class Repos(Resource):
                 repos_list.append(create_repo_dict(r_repo))
             rs_dict['repos_list'] = repos_list  # add repos_list[] to rs_dict
 
-            return jsonify(rs_dict) # return rs_dict
+            return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
         except (AttributeError) as e:
             print ("[AttributeError] GET /api/v2/repos / %s" % e)
@@ -959,7 +961,8 @@ class SecurityCenter(Resource):
     def get(self, _id=None):
         try:
             rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-            rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+            _new_token = create_new_token(request)
+            rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
             rs_sc_handle = rs_security_centers().order_by(main.SecurityCenter.serverName)
             r_single_sc = None
@@ -978,7 +981,7 @@ class SecurityCenter(Resource):
 
             rs_dict['sc_list'] = sc_list  # add users_list[] to rs_dict
 
-            return jsonify(rs_dict) # return rs_dict
+            return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
         except (main.NoResultFound) as e:
             print ("[NoResultFound] GET /api/v2/securitycenter %s" % e)
@@ -1290,7 +1293,8 @@ class MistParams(Resource):
     @jwt_required()
     def get(self):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        _new_token = create_new_token(request)
+        rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         # add results to mist_params_list[]
         mist_params_list = []
@@ -1298,7 +1302,7 @@ class MistParams(Resource):
             mist_params_list.append(row_to_dict(r_mist_param))
         rs_dict['mist_params_list'] = mist_params_list  # add mist_params_list[] to rs_dict
 
-        return jsonify(rs_dict)  # return rs_dict
+        return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
     def post(self):
         return {'response': {'method': 'POST', 'result': 'success', 'message': 'No POST method for this endpoint.', 'class': 'alert alert-warning'}}
@@ -1334,7 +1338,8 @@ class TagDefinitions(Resource):
     # @jwt_required()
     def get(self):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        _new_token = create_new_token(request)
+        rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         tag_definitions_list = []
 
@@ -1348,7 +1353,7 @@ class TagDefinitions(Resource):
                     tag_definitions_list[_index][key] = int(value)
 
         rs_dict['tag_definitions'] = tag_definitions_list
-        return jsonify(rs_dict)  # return rs_dict
+        return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
     @jwt_required()
     def post(self):
@@ -1416,9 +1421,9 @@ class TagDefinitions(Resource):
 class PublishSites(Resource):
     @jwt_required()
     def get(self):
-        new_token = create_new_token(request)
+        _new_token = create_new_token(request)
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        rs_dict['Authorization'] = new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         publish_sites_list = []
 
@@ -1431,7 +1436,7 @@ class PublishSites(Resource):
         rs_dict['publish_sites_list'] = publish_sites_list
         resp = jsonify(rs_dict)
         resp.status_code = 200
-        resp.headers['Authorization'] = new_token
+        resp.headers['Authorization'] = _new_token
         return resp  # return rs_dict
 
     @jwt_required()
@@ -1501,7 +1506,8 @@ class CategorizedTags(Resource):
     @jwt_required()
     def get(self, _td_id):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        _new_token = create_new_token(request)
+        rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         _top = {"treeData": {"id": 0, "data": []}}
         raw_tags_list = []
@@ -1524,7 +1530,7 @@ class CategorizedTags(Resource):
 
         rs_dict['tags'] = _top
 
-        return jsonify(rs_dict)  # return rs_dict
+        return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
     # @jwt_required()
     def post(self):
@@ -1706,7 +1712,8 @@ class Assets(Resource):
     @jwt_required()
     def get(self):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        _new_token = create_new_token(request)
+        rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         tagged_assets_list = []
 
@@ -1739,7 +1746,7 @@ class Assets(Resource):
             tagged_assets_list.append(_tagged_asset)
 
         rs_dict['tagged_assets_list'] = tagged_assets_list
-        return jsonify(rs_dict)  # return rs_dict
+        return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
     @jwt_required()
     def post(self):
@@ -1750,7 +1757,8 @@ class Assets(Resource):
             # and a GET request does not contain data. - JWT 14 Feb 2017
             if ((form_fields['action'] == "search_assets") or ('cardinality' not in form_fields)):
                 rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-                rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+                _new_token = create_new_token(request)
+                rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
                 assets_list = []
                 asset_filters = {}
@@ -1838,7 +1846,7 @@ class Assets(Resource):
                             assets_list[_index_asset]["tags"][r_tagged_asset.id] = _tag
 
                 rs_dict['assets_list'] = assets_list
-                return jsonify(rs_dict)  # return rs_dict
+                return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
             # Handling regular form POST
             else:
@@ -1952,7 +1960,8 @@ class PublishSched(Resource):
     @jwt_required()
     def get(self):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        _new_token = create_new_token(request)
+        rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         publish_sched_list = []
 
@@ -1960,7 +1969,7 @@ class PublishSched(Resource):
             publish_sched_list.append(row_to_dict(r_publish_sched))
 
         rs_dict['publish_sched_list'] = publish_sched_list
-        return jsonify(rs_dict)  # return rs_dict
+        return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
     # @jwt_required()
     # def post(self):
@@ -2025,7 +2034,8 @@ class RepoPublishTimes(Resource):
     @jwt_required()
     def get(self, _show_repos=None):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        _new_token = create_new_token(request)
+        rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         repo_publish_times = {}
 
@@ -2045,7 +2055,7 @@ class RepoPublishTimes(Resource):
                 repo_publish_times['opattrLast'] = r_repo_publish_times.opattrLast.strftime("%m/%d/%Y %H:%M:%S")
 
             rs_dict['repo_publish_times'] = repo_publish_times
-            return jsonify(rs_dict)  # return rs_dict
+            return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
         else:
             handle_unique_repos = rs_repos().with_entities(main.Repos.repoID.distinct(), main.Repos.scID, main.Repos.repoName, main.Repos.serverName)
             _repos_published = {}
@@ -2072,7 +2082,7 @@ class RepoPublishTimes(Resource):
                         _repos_published[_key]['opattrLast'] = r_repo_publish_times.opattrLast.strftime("%m/%d/%Y %H:%M:%S")
 
             rs_dict['repo_publish_times'] = _repos_published
-            return jsonify(rs_dict)  # return rs_dict
+            return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
     # @jwt_required()
     def post(self):
@@ -2092,7 +2102,8 @@ class PublishJobs(Resource):
     @jwt_required()
     def get(self):
         rs_dict = {}  # used to hold and eventually return publish_jobs_list[] recordset and associated metadata
-        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        _new_token = create_new_token(request)
+        rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         publish_jobs_list = []
 
@@ -2109,12 +2120,13 @@ class PublishJobs(Resource):
             publish_jobs_list.append(row_to_dict(r_publish_jobs))
 
         rs_dict['publish_jobs_list'] = publish_jobs_list
-        return jsonify(rs_dict)  # return rs_dict
+        return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
     @jwt_required()
     def post(self):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        _new_token = create_new_token(request)
+        rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
         try:
             form_fields = request.get_json(force=True)
 
@@ -2122,7 +2134,7 @@ class PublishJobs(Resource):
                 subprocess.Popen(["/usr/bin/python /opt/mist/publishing/publish.py %s" % form_fields["options"]], shell=True, stdout=subprocess.PIPE)
 
                 rs_dict['response'] = {'method': 'POST', 'result': 'success', 'message': 'Executed publish command on demand.', 'class': 'alert alert-success'}
-                return jsonify(rs_dict)  # return rs_dict
+                return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
             else:
                 if (form_fields['id'] != -1):
@@ -2182,7 +2194,7 @@ class PublishJobs(Resource):
                 write_crontab()
 
                 rs_dict['response'] = {'method': 'POST', 'result': 'success', 'message': 'Executed scheduling publish job.', 'class': 'alert alert-success'}
-                return jsonify(rs_dict)  # return rs_dict
+                return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
         except (TypeError) as e:
             print ("[TypeError] POST /api/v2/publishjobs / %s" % e)
@@ -2223,14 +2235,12 @@ class PublishJobs(Resource):
         return {'response': {'method': 'DELETE', 'result': 'success', 'message': 'Scheduled job successfully deleted.', 'class': 'alert alert-success', 'id': int(_id)}}
 
 
-
-
-# Generic model class template
 class LocalLogs(Resource):
     @jwt_required()
     def get(self, _name=None):
         rs_dict = {}  # used to hold and eventually return users_list[] recordset and associated metadata
-        rs_dict['Authorization'] = create_new_token(request)  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+        _new_token = create_new_token(request)
+        rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
         _parent_dir = "/var/log/MIST/"
         _log_dirs = [
@@ -2270,7 +2280,7 @@ class LocalLogs(Resource):
             rs_dict['local_logs_list'] = _log_dirs
             rs_dict['id_to_path_map'] = _id_to_path_map
 
-        return jsonify(rs_dict)  # return rs_dict
+        return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
 
     def post(self):
         return {'message': 'No POST method for this endpoint.'}
