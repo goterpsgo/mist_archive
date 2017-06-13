@@ -56,7 +56,7 @@ More condensed:
 
 # This tuple and __get_builtin_constructor() must be modified if a new
 # always available algorithm is added.
-__always_supported = ('md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512')
+__always_supported = ('sha1', 'sha224', 'sha256', 'sha384', 'sha512')
 
 algorithms = __always_supported
 
@@ -68,9 +68,6 @@ def __get_builtin_constructor(name):
         if name in ('SHA1', 'sha1'):
             import _sha
             return _sha.new
-        elif name in ('MD5', 'md5'):
-            import _md5
-            return _md5.new
         elif name in ('SHA256', 'sha256', 'SHA224', 'sha224'):
             import _sha256
             bs = name[3:]
