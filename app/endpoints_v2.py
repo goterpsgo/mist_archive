@@ -13,9 +13,7 @@ from datetime import datetime, timedelta
 import calendar
 from socket import inet_aton, inet_ntoa
 import netaddr
-import config
 import json
-import requests
 import subprocess
 
 import os
