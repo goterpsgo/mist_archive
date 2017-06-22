@@ -105,5 +105,9 @@
                     });
                 });
         };
+
+        $scope.refresh_data = function() {
+            get_repos();
+        };
     }
 })();
