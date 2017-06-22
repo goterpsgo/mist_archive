@@ -895,14 +895,14 @@ class Signup(Resource):
 
 
 class Repos(Resource):
-    @jwt_required()
+    # @jwt_required()
     def get(self):
         try:
             # returns list of repos from Repos table
             # (NOTE: since there's no dedicated normalized table for just repos, all combinations of returned fields from Repos are distinct)
             rs_dict = {}    # used to hold and eventually return repos_list[] recordset and associated metadata
-            _new_token = create_new_token(request)
-            rs_dict['Authorization'] = _new_token   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+            # _new_token = create_new_token(request)
+            # rs_dict['Authorization'] = _new_token   # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
 
             # NOTE: main.Repos.id is not being returned since Repos table is not properly normalized and including id will result in returning duplicates - JWT 7 Nov 2016
             main.session.rollback()
@@ -915,7 +915,7 @@ class Repos(Resource):
                 repos_list.append(create_repo_dict(r_repo))
             rs_dict['repos_list'] = repos_list  # add repos_list[] to rs_dict
 
-            return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
+            return rs_dict  # return rs_dict
 
         except (AttributeError) as e:
             print ("[AttributeError] GET /api/v2/repos / %s" % e)
