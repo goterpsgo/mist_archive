@@ -69,12 +69,18 @@ def set_mysql_pass():
     # Ask For the Creds
     while True:
         password = getpass.getpass("\nEnter a password to be used by root for the mysqldb: ")
-        pw_complexity = PasswordCheck(password)
-        error = pw_complexity.check_password()
-        if error:
-            print error
+        confirm_password = getpass.getpass("Confirm root password: ")
+
+        if password == confirm_password:
+            # Check the complexity
+            pw_complexity = PasswordCheck(password)
+            error = pw_complexity.check_password()
+            if error:
+                print error
+            else:
+                break
         else:
-            break
+            print "\nThe admin passwords do not match please try again\n"
     process_call("/usr/bin/mysqladmin -u root password " + password)     
 
 
