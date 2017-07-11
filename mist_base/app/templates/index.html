@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>MIST :: Home</title>
+
+    <!-- bootstrap css -->
+    <link href="static/css/bootstrap.css" rel="stylesheet" />
+    <link href="static/css/dhtmlxtree.css" rel="stylesheet" />
+    <link href="static/css/webix.css" rel="stylesheet" />
+
+    <!-- Angular material css -->
+    <link href="static/css/angular-material.min.css" rel="stylesheet" />
+    <link href="static/css/ui-grid.css" rel="stylesheet" />
+
+    <!-- application css -->
+    <link href="static/css/app_content/app.css" rel="stylesheet" />
+
+    <!-- angular scripts -->
+    <script src="static/js/lib/angular.min.js"></script>
+    <script src="static/js/lib/FileSaver.js"></script>
+    <script src="static/js/lib/Blob.js"></script>
+    <script src="static/js/lib/angular-messages.min.js"></script>
+    <script src="static/js/lib/angular-cookies.js"></script>
+    <script src="static/js/lib/angular-ui-router.min.js"></script>
+    <script src="static/js/lib/ngStorage.min.js"></script>
+    <script src="static/js/lib/ag-grid.min.js"></script>
+
+    <script src="static/js/lib/angular-touch.min.js"></script>
+    <script src="static/js/lib/ui-bootstrap-tpls.min.js"></script>
+    <script src="static/js/lib/angular-jwt.js"></script>
+    <script src="static/js/lib/satellizer.js"></script>
+    <script src="static/js/lib/ng-file-input.js"></script>
+    <script src="static/js/lib/ng-file-upload.js"></script>
+    <script src="static/js/lib/webix.js"></script>
+    <script src="static/js/lib/angular-animate.min.js"></script>
+    <script src="static/js/lib/angular-aria.min.js"></script>
+    <script src="static/js/lib/angular-material.min.js"></script>
+    <script src="static/js/lib/ui-grid.min.js"></script>
+    <!-- https://github.com/alferov/angular-file-saver/issues/7#issuecomment-228464254 -->
+    <!-- https://github.com/alferov/angular-file-saver/tree/master/dist -->
+    <script src="static/js/lib/angular-file-saver.bundle.js"></script>
+
+    <!-- main app script -->
+    <script src="static/js/config.js"></script>
+    <script src="static/js/app.js"></script>
+
+    <!-- services -->
+    <script src="static/js/app_services/classification.service.js"></script>
+    <script src="static/js/app_services/authentication.service.js"></script>
+    <script src="static/js/app_services/mistuser.service.js"></script>
+    <script src="static/js/app_services/repos.service.js"></script>
+    <script src="static/js/app_services/securitycenters.service.js"></script>
+    <script src="static/js/app_services/bannertext.service.js"></script>
+    <script src="static/js/app_services/mistparams.service.js"></script>
+    <script src="static/js/app_services/tagdefinitions.service.js"></script>
+    <script src="static/js/app_services/publishsites.service.js"></script>
+    <script src="static/js/app_services/categorizedtags.service.js"></script>
+    <script src="static/js/app_services/taggedrepos.service.js"></script>
+    <script src="static/js/app_services/assets.service.js"></script>
+    <script src="static/js/app_services/publishsched.service.js"></script>
+    <script src="static/js/app_services/publishjobs.service.js"></script>
+    <script src="static/js/app_services/repopublishtimes.service.js"></script>
+    <script src="static/js/app_services/locallogs.service.js"></script>
+    <script src="static/js/app_services/subject_dn.service.js"></script>
+
+    <!-- directives -->
+
+    <!-- application scripts -->
+    <script src="static/js/controllers/home.controller.js"></script>
+    <script src="static/js/controllers/classification.controller.js"></script>
+    <script src="static/js/controllers/login.controller.js"></script>
+    <script src="static/js/controllers/nav.controller.js"></script>
+    <script src="static/js/controllers/admin.controller.js"></script>
+    <script src="static/js/controllers/mistusers.controller.js"></script>
+    <script src="static/js/controllers/publish.controller.js"></script>
+    <script src="static/js/controllers/profile.controller.js"></script>
+    <script src="static/js/controllers/signup.controller.js"></script>
+    <script src="static/js/controllers/repostag.controller.js"></script>
+    <script src="static/js/controllers/assetstag.controller.js"></script>
+    <script src="static/js/controllers/locallogs.controller.js"></script>
+    <script src="static/js/controllers/tagactivities.controller.js"></script>
+    <script src="static/js/controllers/config.controller.js"></script>
+</head>
+<body ng-controller="MistController">
+
+    <!--<nav class="navbar navbar-inverse navbar-fixed-top">-->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div ui-view="_classification"></div>
+        <div class="container-fluid" style="height: 80px; font-size: 20px;">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/"><img src="/static/img/mist-PNG_small_dark.png"></a>
+            </div>
+            <div ui-view="_nav"></div>
+        </div>
+    </nav>
+
+    <!-- main app container -->
+    <div class="jumbotron">
+        <div class="container-fluid">
+            <div ui-view="_main"></div>
+        </div>
+    </div>
+
+    <!-- credits -->
+    <div class="text-center">
+        <p>
+            MIST v2.0.1
+        </p>
+    </div>
+
+
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div ui-view="_classification"></div>
+    </nav>
+</body>
+</html>
+
+<!--
+v2.0.2 - 22 Jun 2017
+ - Fixed bug causing new user sign up form to not properly display
+ - Added repos refresh buttons for profile and admin tabs
+
+v2.0.1-2 - 15 Jun 2017
+ - Updated python RESTful API to operate in a FIPS-hardened server environment
+
+v2.0.1 - 2 May 2017
+ - Added publish options last dates
+ - [main.py] Decreased pool_recycle value
+   In /etc/my.cnf, set wait_timeout and interactive_timeout values to > pool_recycle value.
+   https://support.rackspace.com/how-to/how-to-change-the-mysql-timeout-on-a-server/
+ - Minor page formatting
+
+v2.0 - 26 Apr 2017
+Initial release
+-->

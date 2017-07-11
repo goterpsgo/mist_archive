@@ -1,0 +1,10 @@
+#!/opt/mist/mist_base/env/bin/python2.7
+# EASY-INSTALL-ENTRY-SCRIPT: 'jsonschema==2.6.0','console_scripts','jsonschema'
+__requires__ = 'jsonschema==2.6.0'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('jsonschema==2.6.0', 'console_scripts', 'jsonschema')()
+    )

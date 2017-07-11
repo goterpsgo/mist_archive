@@ -1,0 +1,14 @@
+Flask
+Flask-SQLAlchemy
+flask-restful
+Flask-JWT
+MySQL-python
+uwsgi
+flask-cors
+netaddr
+lxml
+jsonschema
+pytz
+requests
+functools32
+

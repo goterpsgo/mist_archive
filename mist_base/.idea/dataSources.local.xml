@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="MIST@.239" uuid="9e82ba1a-9bf4-4315-bda2-67027eb67d29">
+      <database-info product="MySQL" version="5.1.73-log" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+        <extra-name-characters>#@</extra-name-characters>
+        <identifier-quote-string>`</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>mistUser</user-name>
+      <resolve-scope>information_schema:|MIST:*</resolve-scope>
+      <ssl-config>
+        <ca-cert>$PROJECT_DIR$/certificates/si_ca.crt</ca-cert>
+        <client-cert>$PROJECT_DIR$/certificates/mist-interface.crt</client-cert>
+        <client-key>$PROJECT_DIR$/certificates/mist-interface.key</client-key>
+        <enabled>true</enabled>
+      </ssl-config>
+    </data-source>
+    <data-source name="MIST@.202" uuid="7bfeafbb-86ff-4ab2-b9a9-bed7e7cd8f4e">
+      <database-info product="MySQL" version="5.1.73-log" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+        <extra-name-characters>#@</extra-name-characters>
+        <identifier-quote-string>`</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>mistUser</user-name>
+      <resolve-scope>MIST:</resolve-scope>
+      <ssl-config>
+        <ca-cert>$PROJECT_DIR$/certificates/si_ca.crt</ca-cert>
+        <client-cert>$PROJECT_DIR$/certificates/mist-interface.crt</client-cert>
+        <client-key>$PROJECT_DIR$/certificates/mist-interface.key</client-key>
+        <enabled>true</enabled>
+      </ssl-config>
+    </data-source>
+  </component>
+</project>

@@ -1,0 +1,995 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="MIST@.239">
+  <database-model serializer="dbm" rdbms="MYSQL" format-version="4.0">
+    <root id="1"/>
+    <schema id="2" parent="1" name="MIST">
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <schema id="3" parent="1" name="information_schema"/>
+    <table id="4" parent="2" name="Assets"/>
+    <table id="5" parent="2" name="Repos"/>
+    <table id="6" parent="2" name="Tags"/>
+    <table id="7" parent="2" name="assetPublishTimes"/>
+    <table id="8" parent="2" name="bannerText"/>
+    <table id="9" parent="2" name="classifications"/>
+    <table id="10" parent="2" name="keepAlive"/>
+    <table id="11" parent="2" name="loginFails"/>
+    <table id="12" parent="2" name="mistParams"/>
+    <table id="13" parent="2" name="mistUsers"/>
+    <table id="14" parent="2" name="publishJobs"/>
+    <table id="15" parent="2" name="publishSched"/>
+    <table id="16" parent="2" name="publishSites"/>
+    <table id="17" parent="2" name="published"/>
+    <table id="18" parent="2" name="removedRepos"/>
+    <table id="19" parent="2" name="removedSCs"/>
+    <table id="20" parent="2" name="repoPublishTimes"/>
+    <table id="21" parent="2" name="requestUserAccess"/>
+    <table id="22" parent="2" name="scUsers"/>
+    <table id="23" parent="2" name="securityCenters"/>
+    <table id="24" parent="2" name="tagDefinition"/>
+    <table id="25" parent="2" name="taggedAssets"/>
+    <table id="26" parent="2" name="taggedRepos"/>
+    <table id="27" parent="2" name="userAccess"/>
+    <table id="28" parent="2" name="userCollision"/>
+    <table id="29" parent="2" name="userPermissions"/>
+    <routine id="30" parent="2" name="sp_get_newest_tagged_repos">
+      <RoutineKind>procedure</RoutineKind>
+    </routine>
+    <column id="31" parent="4" name="assetID">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="32" parent="4" name="biosGUID">
+      <Position>2</Position>
+      <DataType>varchar(50)|0</DataType>
+    </column>
+    <column id="33" parent="4" name="macAddress">
+      <Position>3</Position>
+      <DataType>varchar(17)|0</DataType>
+    </column>
+    <column id="34" parent="4" name="ip">
+      <Position>4</Position>
+      <DataType>varchar(39)|0</DataType>
+    </column>
+    <column id="35" parent="4" name="lastUnauthRun">
+      <Position>5</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="36" parent="4" name="lastAuthRun">
+      <Position>6</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="37" parent="4" name="netbiosName">
+      <Position>7</Position>
+      <DataType>varchar(100)|0</DataType>
+    </column>
+    <column id="38" parent="4" name="osCPE">
+      <Position>8</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="39" parent="4" name="dnsName">
+      <Position>9</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="40" parent="4" name="mcafeeGUID">
+      <Position>10</Position>
+      <DataType>varchar(100)|0</DataType>
+    </column>
+    <column id="41" parent="4" name="state">
+      <Position>11</Position>
+      <DataType>char(1)|0</DataType>
+    </column>
+    <column id="42" parent="4" name="published">
+      <Position>12</Position>
+      <DataType>char(1)|0</DataType>
+    </column>
+    <column id="43" parent="4" name="purged">
+      <Position>13</Position>
+      <DataType>char(1)|0</DataType>
+    </column>
+    <column id="44" parent="4" name="ipAsInt">
+      <Position>14</Position>
+      <DataType>varbinary(16)|0</DataType>
+    </column>
+    <key id="45" parent="4" name="PRIMARY">
+      <ColNames>assetID</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="46" parent="5" name="repoID">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="47" parent="5" name="scID">
+      <Position>2</Position>
+      <DataType>varchar(150)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="48" parent="5" name="repoName">
+      <Position>3</Position>
+      <DataType>varchar(500)|0</DataType>
+    </column>
+    <column id="49" parent="5" name="serverName">
+      <Position>4</Position>
+      <DataType>varchar(300)|0</DataType>
+    </column>
+    <column id="50" parent="5" name="assetID">
+      <Position>5</Position>
+      <DataType>mediumint(9)|0</DataType>
+    </column>
+    <column id="51" parent="5" name="id">
+      <Position>6</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <key id="52" parent="5" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="53" parent="6" name="id">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="54" parent="6" name="nameID">
+      <Position>2</Position>
+      <DataType>varchar(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="55" parent="6" name="category">
+      <Position>3</Position>
+      <DataType>varchar(50)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="56" parent="6" name="rollup">
+      <Position>4</Position>
+      <DataType>varchar(300)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="57" parent="6" name="parentID">
+      <Position>5</Position>
+      <DataType>varchar(20)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="58" parent="6" name="hname">
+      <Position>6</Position>
+      <DataType>varchar(1000)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="59" parent="6" name="dname">
+      <Position>7</Position>
+      <DataType>varchar(1000)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="60" parent="6" name="tagType">
+      <Position>8</Position>
+      <DataType>char(1)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="61" parent="6" name="depth">
+      <Position>9</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="62" parent="6" name="tag_definition_id">
+      <Position>10</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="63" parent="6" name="dname_full_path">
+      <Position>11</Position>
+      <DataType>varchar(2000)|0</DataType>
+    </column>
+    <column id="64" parent="6" name="hname_full_path">
+      <Position>12</Position>
+      <DataType>varchar(2000)|0</DataType>
+    </column>
+    <index id="65" parent="6" name="idx_tags_tag_definition_id">
+      <ColNames>tag_definition_id</ColNames>
+    </index>
+    <index id="66" parent="6" name="idx_tags_nameid_rollup">
+      <ColNames>nameID
+rollup</ColNames>
+    </index>
+    <key id="67" parent="6" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="68" parent="7" name="assetID">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="69" parent="7" name="arfLast">
+      <Position>2</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    </column>
+    <key id="70" parent="7" name="PRIMARY">
+      <ColNames>assetID</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="71" parent="8" name="index">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="72" parent="8" name="BannerText">
+      <Position>2</Position>
+      <DataType>text|0</DataType>
+    </column>
+    <key id="73" parent="8" name="PRIMARY">
+      <ColNames>index</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="74" parent="9" name="index">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="75" parent="9" name="level">
+      <Position>2</Position>
+      <DataType>varchar(45)|0</DataType>
+    </column>
+    <column id="76" parent="9" name="color">
+      <Position>3</Position>
+      <DataType>varchar(45)|0</DataType>
+    </column>
+    <column id="77" parent="9" name="selected">
+      <Position>4</Position>
+      <DataType>char(1)|0</DataType>
+      <DefaultExpression>&apos;N&apos;</DefaultExpression>
+    </column>
+    <column id="78" parent="9" name="display">
+      <Position>5</Position>
+      <DataType>varchar(100)|0</DataType>
+    </column>
+    <key id="79" parent="9" name="PRIMARY">
+      <ColNames>index</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="80" parent="10" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="81" parent="10" name="value">
+      <Position>2</Position>
+      <DataType>varchar(45)|0</DataType>
+      <DefaultExpression>&apos;OK&apos;</DefaultExpression>
+    </column>
+    <key id="82" parent="10" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="83" parent="11" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="84" parent="11" name="username">
+      <Position>2</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="85" parent="11" name="failedOn1">
+      <Position>3</Position>
+      <DataType>timestamp|0</DataType>
+    </column>
+    <column id="86" parent="11" name="numTimes">
+      <Position>4</Position>
+      <DataType>int(11)|0</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
+    </column>
+    <column id="87" parent="11" name="failedOn2">
+      <Position>5</Position>
+      <DataType>timestamp|0</DataType>
+    </column>
+    <key id="88" parent="11" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="89" parent="12" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="90" parent="12" name="chunkSize">
+      <Position>2</Position>
+      <DataType>int(9)|0</DataType>
+    </column>
+    <column id="91" parent="12" name="scPullFreq">
+      <Position>3</Position>
+      <DataType>int(12)|0</DataType>
+    </column>
+    <column id="92" parent="12" name="logsRollOverPeriod">
+      <Position>4</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="93" parent="12" name="pubsRollOverPeriod">
+      <Position>5</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <key id="94" parent="12" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="95" parent="13" name="id">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="96" parent="13" name="username">
+      <Position>2</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="97" parent="13" name="password">
+      <Position>3</Position>
+      <DataType>varchar(65)|0</DataType>
+    </column>
+    <column id="98" parent="13" name="permission">
+      <Position>4</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <column id="99" parent="13" name="subjectDN">
+      <Position>5</Position>
+      <DataType>varchar(400)|0</DataType>
+    </column>
+    <column id="100" parent="13" name="firstName">
+      <Position>6</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="101" parent="13" name="lastName">
+      <Position>7</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="102" parent="13" name="organization">
+      <Position>8</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="103" parent="13" name="lockout">
+      <Position>9</Position>
+      <DataType>varchar(5)|0</DataType>
+      <DefaultExpression>&apos;No&apos;</DefaultExpression>
+    </column>
+    <column id="104" parent="13" name="permission_id">
+      <Position>10</Position>
+      <DataType>int(10) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>&apos;1&apos;</DefaultExpression>
+    </column>
+    <index id="105" parent="13" name="permission_id">
+      <ColNames>permission_id</ColNames>
+    </index>
+    <index id="106" parent="13" name="username">
+      <ColNames>username</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="107" parent="13" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="108" parent="13" name="username">
+      <ColNames>username</ColNames>
+      <UnderlyingIndexName>username</UnderlyingIndexName>
+    </key>
+    <column id="109" parent="14" name="jobID">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="110" parent="14" name="finishTime">
+      <Position>2</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    </column>
+    <column id="111" parent="14" name="status">
+      <Position>3</Position>
+      <DataType>varchar(9)|0</DataType>
+    </column>
+    <column id="112" parent="14" name="userName">
+      <Position>4</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="113" parent="14" name="filename">
+      <Position>5</Position>
+      <DataType>varchar(700)|0</DataType>
+    </column>
+    <key id="114" parent="14" name="PRIMARY">
+      <ColNames>jobID</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="115" parent="15" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="116" parent="15" name="user">
+      <Position>2</Position>
+      <DataType>varchar(80)|0</DataType>
+    </column>
+    <column id="117" parent="15" name="destSite">
+      <Position>3</Position>
+      <DataType>varchar(128)|0</DataType>
+    </column>
+    <column id="118" parent="15" name="publishOptions">
+      <Position>4</Position>
+      <DataType>varchar(256)|0</DataType>
+    </column>
+    <column id="119" parent="15" name="freqOption">
+      <Position>5</Position>
+      <DataType>varchar(45)|0</DataType>
+    </column>
+    <column id="120" parent="15" name="weekOfMonth">
+      <Position>6</Position>
+      <DataType>char(3)|0</DataType>
+    </column>
+    <column id="121" parent="15" name="dayOfMonth">
+      <Position>7</Position>
+      <DataType>char(2)|0</DataType>
+    </column>
+    <column id="122" parent="15" name="time">
+      <Position>8</Position>
+      <DataType>varchar(20)|0</DataType>
+    </column>
+    <column id="123" parent="15" name="daysOfWeeks">
+      <Position>9</Position>
+      <DataType>varchar(45)|0</DataType>
+    </column>
+    <column id="124" parent="15" name="timezone">
+      <Position>10</Position>
+      <DataType>varchar(45)|0</DataType>
+    </column>
+    <column id="125" parent="15" name="status">
+      <Position>11</Position>
+      <DataType>varchar(10)|0</DataType>
+    </column>
+    <column id="126" parent="15" name="assetOptions">
+      <Position>12</Position>
+      <DataType>varchar(128)|0</DataType>
+    </column>
+    <column id="127" parent="15" name="destSiteName">
+      <Position>13</Position>
+      <DataType>varchar(45)|0</DataType>
+    </column>
+    <column id="128" parent="15" name="dateScheduled">
+      <Position>14</Position>
+      <DataType>timestamp|0</DataType>
+    </column>
+    <key id="129" parent="15" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="130" parent="16" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="131" parent="16" name="location">
+      <Position>2</Position>
+      <DataType>varchar(500)|0</DataType>
+    </column>
+    <column id="132" parent="16" name="name">
+      <Position>3</Position>
+      <DataType>varchar(50)|0</DataType>
+    </column>
+    <key id="133" parent="16" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="134" parent="17" name="id">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="135" parent="17" name="userName">
+      <Position>2</Position>
+      <DataType>varchar(200)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="136" parent="17" name="userID">
+      <Position>3</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="137" parent="17" name="timestamp">
+      <Position>4</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    </column>
+    <key id="138" parent="17" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="139" parent="18" name="id">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="140" parent="18" name="repoName">
+      <Position>2</Position>
+      <DataType>varchar(500)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="141" parent="18" name="serverName">
+      <Position>3</Position>
+      <DataType>varchar(300)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="142" parent="18" name="removeDate">
+      <Position>4</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    </column>
+    <column id="143" parent="18" name="ack">
+      <Position>5</Position>
+      <DataType>varchar(5)|0</DataType>
+    </column>
+    <column id="144" parent="18" name="ackUser">
+      <Position>6</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="145" parent="18" name="ackDate">
+      <Position>7</Position>
+      <DataType>timestamp|0</DataType>
+    </column>
+    <key id="146" parent="18" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="147" parent="19" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="148" parent="19" name="scName">
+      <Position>2</Position>
+      <DataType>varchar(150)|0</DataType>
+    </column>
+    <column id="149" parent="19" name="removeDate">
+      <Position>3</Position>
+      <DataType>timestamp|0</DataType>
+    </column>
+    <column id="150" parent="19" name="ack">
+      <Position>4</Position>
+      <DataType>varchar(5)|0</DataType>
+    </column>
+    <column id="151" parent="19" name="ackUser">
+      <Position>5</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="152" parent="19" name="ackDate">
+      <Position>6</Position>
+      <DataType>timestamp|0</DataType>
+    </column>
+    <key id="153" parent="19" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="154" parent="20" name="scID">
+      <Position>1</Position>
+      <DataType>varchar(150)|0</DataType>
+    </column>
+    <column id="155" parent="20" name="repoID">
+      <Position>2</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="156" parent="20" name="arfLast">
+      <Position>3</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    </column>
+    <column id="157" parent="20" name="cveLast">
+      <Position>4</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>&apos;0000-00-00 00:00:00&apos;</DefaultExpression>
+    </column>
+    <column id="158" parent="20" name="pluginLast">
+      <Position>5</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>&apos;0000-00-00 00:00:00&apos;</DefaultExpression>
+    </column>
+    <column id="159" parent="20" name="benchmarkLast">
+      <Position>6</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>&apos;0000-00-00 00:00:00&apos;</DefaultExpression>
+    </column>
+    <column id="160" parent="20" name="iavmLast">
+      <Position>7</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>&apos;0000-00-00 00:00:00&apos;</DefaultExpression>
+    </column>
+    <column id="161" parent="20" name="id">
+      <Position>8</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <key id="162" parent="20" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="163" parent="21" name="id">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="164" parent="21" name="userID">
+      <Position>2</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="165" parent="21" name="scID">
+      <Position>3</Position>
+      <DataType>varchar(200)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="166" parent="21" name="repoID">
+      <Position>4</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="167" parent="21" name="userName">
+      <Position>5</Position>
+      <DataType>varchar(300)|0</DataType>
+    </column>
+    <key id="168" parent="21" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="169" parent="22" name="id">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="170" parent="22" name="securityCenter">
+      <Position>2</Position>
+      <DataType>varchar(250)|0</DataType>
+    </column>
+    <column id="171" parent="22" name="username">
+      <Position>3</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="172" parent="22" name="password">
+      <Position>4</Position>
+      <DataType>varbinary(300)|0</DataType>
+    </column>
+    <column id="173" parent="22" name="permission">
+      <Position>5</Position>
+      <DataType>int(11)|0</DataType>
+    </column>
+    <key id="174" parent="22" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="175" parent="23" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="176" parent="23" name="fqdn_IP">
+      <Position>2</Position>
+      <DataType>varchar(256)|0</DataType>
+    </column>
+    <column id="177" parent="23" name="serverName">
+      <Position>3</Position>
+      <DataType>varchar(100)|0</DataType>
+    </column>
+    <column id="178" parent="23" name="version">
+      <Position>4</Position>
+      <DataType>varchar(45)|0</DataType>
+    </column>
+    <column id="179" parent="23" name="username">
+      <Position>5</Position>
+      <DataType>varchar(45)|0</DataType>
+    </column>
+    <column id="180" parent="23" name="pw">
+      <Position>6</Position>
+      <DataType>varchar(256)|0</DataType>
+    </column>
+    <column id="181" parent="23" name="certificateFile">
+      <Position>7</Position>
+      <DataType>varchar(512)|0</DataType>
+    </column>
+    <column id="182" parent="23" name="keyFile">
+      <Position>8</Position>
+      <DataType>varchar(512)|0</DataType>
+    </column>
+    <index id="183" parent="23" name="fqdn_IP">
+      <ColNames>fqdn_IP
+serverName</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <key id="184" parent="23" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="185" parent="23" name="fqdn_IP">
+      <ColNames>fqdn_IP
+serverName</ColNames>
+      <UnderlyingIndexName>fqdn_IP</UnderlyingIndexName>
+    </key>
+    <column id="186" parent="24" name="id">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="187" parent="24" name="name">
+      <Position>2</Position>
+      <DataType>varchar(150)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="188" parent="24" name="title">
+      <Position>3</Position>
+      <DataType>varchar(200)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="189" parent="24" name="description">
+      <Position>4</Position>
+      <DataType>varchar(1500)|0</DataType>
+    </column>
+    <column id="190" parent="24" name="required">
+      <Position>5</Position>
+      <DataType>enum(&apos;Y&apos;, &apos;N&apos;)|0</DataType>
+    </column>
+    <column id="191" parent="24" name="defaultValue">
+      <Position>6</Position>
+      <DataType>varchar(25)|0</DataType>
+    </column>
+    <column id="192" parent="24" name="type">
+      <Position>7</Position>
+      <DataType>varchar(100)|0</DataType>
+    </column>
+    <column id="193" parent="24" name="cardinality">
+      <Position>8</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="194" parent="24" name="version">
+      <Position>9</Position>
+      <DataType>varchar(25)|0</DataType>
+    </column>
+    <column id="195" parent="24" name="rollup">
+      <Position>10</Position>
+      <DataType>varchar(250)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="196" parent="24" name="category">
+      <Position>11</Position>
+      <DataType>varchar(150)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="197" parent="24" name="timestamp">
+      <Position>12</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    </column>
+    <key id="198" parent="24" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="199" parent="25" name="assetID">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+    </column>
+    <column id="200" parent="25" name="tagID">
+      <Position>2</Position>
+      <DataType>varchar(20)|0</DataType>
+    </column>
+    <column id="201" parent="25" name="rollup">
+      <Position>3</Position>
+      <DataType>varchar(300)|0</DataType>
+    </column>
+    <column id="202" parent="25" name="category">
+      <Position>4</Position>
+      <DataType>varchar(50)|0</DataType>
+    </column>
+    <column id="203" parent="25" name="taggedBy">
+      <Position>5</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="204" parent="25" name="timestamp">
+      <Position>6</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    </column>
+    <column id="205" parent="25" name="status">
+      <Position>7</Position>
+      <DataType>varchar(5)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="206" parent="25" name="id">
+      <Position>8</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="207" parent="25" name="tagMode">
+      <Position>9</Position>
+      <DataType>varchar(45)|0</DataType>
+    </column>
+    <key id="208" parent="25" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="209" parent="26" name="repoID">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+    </column>
+    <column id="210" parent="26" name="scID">
+      <Position>2</Position>
+      <DataType>varchar(150)|0</DataType>
+    </column>
+    <column id="211" parent="26" name="tagID">
+      <Position>3</Position>
+      <DataType>varchar(20)|0</DataType>
+    </column>
+    <column id="212" parent="26" name="rollup">
+      <Position>4</Position>
+      <DataType>varchar(300)|0</DataType>
+    </column>
+    <column id="213" parent="26" name="category">
+      <Position>5</Position>
+      <DataType>varchar(50)|0</DataType>
+    </column>
+    <column id="214" parent="26" name="timestamp">
+      <Position>6</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    </column>
+    <column id="215" parent="26" name="status">
+      <Position>7</Position>
+      <DataType>varchar(5)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="216" parent="26" name="id">
+      <Position>8</Position>
+      <DataType>int(11)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="217" parent="26" name="taggedBy">
+      <Position>9</Position>
+      <DataType>varchar(200)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="218" parent="26" name="idx_taggedrepos_scid_repoid_status">
+      <ColNames>scID
+repoID
+status</ColNames>
+    </index>
+    <key id="219" parent="26" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="220" parent="27" name="id">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="221" parent="27" name="userID">
+      <Position>2</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="222" parent="27" name="scID">
+      <Position>3</Position>
+      <DataType>varchar(150)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="223" parent="27" name="repoID">
+      <Position>4</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="224" parent="27" name="userName">
+      <Position>5</Position>
+      <DataType>varchar(45)|0</DataType>
+    </column>
+    <column id="225" parent="27" name="is_assigned">
+      <Position>6</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    </column>
+    <key id="226" parent="27" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="227" parent="28" name="id">
+      <Position>1</Position>
+      <DataType>mediumint(9)|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="228" parent="28" name="username">
+      <Position>2</Position>
+      <DataType>varchar(200)|0</DataType>
+    </column>
+    <column id="229" parent="28" name="tagMethod">
+      <Position>3</Position>
+      <DataType>varchar(10)|0</DataType>
+    </column>
+    <column id="230" parent="28" name="timestamp">
+      <Position>4</Position>
+      <DataType>timestamp|0</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    </column>
+    <column id="231" parent="28" name="assets">
+      <Position>5</Position>
+      <DataType>text|0</DataType>
+    </column>
+    <column id="232" parent="28" name="repo">
+      <Position>6</Position>
+      <DataType>varchar(1000)|0</DataType>
+    </column>
+    <column id="233" parent="28" name="errorMessage">
+      <Position>7</Position>
+      <DataType>text|0</DataType>
+    </column>
+    <key id="234" parent="28" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="235" parent="29" name="id">
+      <Position>1</Position>
+      <DataType>int(10) unsigned|0</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+    </column>
+    <column id="236" parent="29" name="name">
+      <Position>2</Position>
+      <DataType>varchar(50)|0</DataType>
+    </column>
+    <key id="237" parent="29" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <argument id="238" parent="30" name="repoID">
+      <DataType>INT|0</DataType>
+    </argument>
+    <argument id="239" parent="30" name="scID">
+      <DataType>VARCHAR|0</DataType>
+    </argument>
+    <argument id="240" parent="30" name="category">
+      <DataType>VARCHAR|0</DataType>
+    </argument>
+    <argument id="241" parent="30" name="cardinality">
+      <DataType>INT|0</DataType>
+    </argument>
+  </database-model>
+</dataSource>

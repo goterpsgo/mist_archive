@@ -1,0 +1,10 @@
+https://code.jquery.com/jquery-3.1.0.min.js
+https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js
+https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js.map
+https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular-animate.min.js
+https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular-animate.min.js.map
+https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular-route.min.js
+https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular-route.min.js.map
+https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular-touch.min.js
+https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular-touch.min.js.map
+https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/2.0.0/toaster.min.js

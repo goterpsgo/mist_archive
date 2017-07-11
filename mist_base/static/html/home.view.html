@@ -1,0 +1,20 @@
+<div class="col-md-6 col-md-offset-3">
+    <h1>Home</h1>
+    <p>MIST::Home</p>
+    <div>
+    <ul>
+        <li><a ui-sref="home">Home</a></li>
+        <li><a ui-sref="signup">Signup</a></li>
+        <li><a ui-sref="repostag">Repo Auto-Tagging</a></li>
+        <li><a ui-sref="assetstag">Assets Manual Tagging</a></li>
+        <li><a ui-sref="publish">Publish</a></li>
+        <div ng-if="user.permission === 'Admin User' || user.permission === 'Super User'">
+            <li><a ui-sref="admin">Admin</a></li>
+            <li><a ui-sref="config">Config</a></li>
+            <li><a ui-sref="tagactivities">Tag Activities</a></li>
+            <li><a ui-sref="locallogs">Local Logs</a></li>
+        </div>
+    </ul>
+    </div>
+    <p><a ui-sref="login">Logout</a></p>
+</div>

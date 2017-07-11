@@ -1,0 +1,10 @@
+#!/opt/mist/mist_base/env/bin/python2.7
+# EASY-INSTALL-ENTRY-SCRIPT: 'PyJWT==1.4.2','console_scripts','jwt'
+__requires__ = 'PyJWT==1.4.2'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('PyJWT==1.4.2', 'console_scripts', 'jwt')()
+    )

@@ -1,0 +1,16 @@
+server {
+    listen       0.0.0.0:8081;
+#    listen       somename:8080;
+    server_name  mist_api;
+
+    location / {
+        include            uwsgi_params;
+        uwsgi_pass         mist_app_cluster;
+
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+    }
+}

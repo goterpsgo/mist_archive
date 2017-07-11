@@ -1,0 +1,40 @@
+<div><br /></div>
+<div><br /></div>
+
+<br />
+<br />
+<div class="row">
+    <div class="col-md-2">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Publish Tasks
+                </h3>
+            </div>
+            <div class="panel-body" style="text-align: center;">
+                <div class="btn-group-vertical" role="group" style="width: 200px;">
+                    <button type="button" class="btn btn-default" ng-click="select_task('List Available Publications')" ui-sref="publish.list">List Available Publications</button>
+                    <button type="button" class="btn btn-default" ng-click="select_task('Publish On Demand or By Schedule')" ui-sref="publish.on_demand">Publish Jobs</button>
+                    <button type="button" class="btn btn-default" ng-click="select_task('Publish Options Last Dates')" ui-sref="publish.last_dates">Publish Options Last Dates</button>
+                </div>
+            </div>
+            <div class="panel-footer">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    {{_task}}
+                </h3>
+            </div>
+            <div class="panel-body" ui-view="_main">
+            </div>
+            <div class="panel-footer">
+
+            </div>
+        </div>
+    </div>
+</div>

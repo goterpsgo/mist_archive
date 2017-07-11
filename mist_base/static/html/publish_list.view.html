@@ -1,0 +1,33 @@
+<!--<style>-->
+    <!--.myGrid {-->
+        <!--width: 900px;-->
+        <!--height: 500px;-->
+    <!--}-->
+<!--</style>-->
+<div class="col-md-12">
+    <div class="row">
+        <h4>Publishing activities shown when done within <strong>{{assign_pub_rollover}}</strong> days from <strong>{{this_date|date:'MM-dd-yyyy HH:mm'}}</strong></h4>
+    </div>
+    <div class="row">
+        <input type="button" value="Reload Data" class="btn btn-primary"  style="width: 150px; font-size: 18px;" ng-click="refresh_data()" />
+    </div>
+    <div class="row">
+        <!--<div id="grid1" ui-grid="grid_options" class="myGrid"></div>-->
+        <table class="table table-hover">
+            <thead>
+                <th>Filename</th>
+                <th>Publish Date</th>
+                <th>Status</th>
+                <th>Published By</th>
+            </thead>
+            <tr ng-repeat="_row in publish_jobs_list" ng-switch="_row.status">
+                <td ng-switch-when="Error">{{_row.filename}}</td>
+                <td ng-switch-when="running">{{_row.filename}}</td>
+                <td ng-switch-when="Completed"><a href="/api/v2/publicationdownloader/{{_row.userName}}_{{_row.filename}}">{{_row.filename}}</a></td>
+                <td>{{_row.finishTime}}</td>
+                <td>{{_row.status}}</td>
+                <td>{{_row.userName}}</td>
+            </tr>
+        </table>
+    </div>
+</div>

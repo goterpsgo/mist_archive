@@ -1,0 +1,75 @@
+<br />
+<br />
+<br />
+<div class="col-md-12 col-md-offset-0">
+    <h3 class="row">
+        Tag By Repos
+    </h3>
+    <form ng-submit="submit_auto_tag()">
+        <div class="row">
+            <input type="submit" value="Save Update" class="btn btn-primary" style="width: 300px; font-size: 18px;" /> <input type="button" value="Reload Data" class="btn btn-primary"  style="width: 150px; font-size: 18px;" ng-click="refresh_data()" /> <span class="{{status.class}}">{{status.result}}: {{status.message}}</span>
+        </div>
+        <div class="row">
+
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span style="font-size: 20px;">Titles</span> <img ng-if="vm.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="col-md-10">
+                            <tr>
+                                <td>
+                                    <select class="select2-search" ng-model="assigned_tag_definition" ng-options="_def as _def.title for _def in tag_definitions track by _def.id" size="1" ng-change="load_tags()"></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div webix-ui
+                                         id="tags_tree"
+                                         view="tree"
+                                         webix-data="treeData"
+                                         type="lineTree"
+                                         width="400"
+                                         height="500"
+                                         select="multiselect"
+                                    ></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="panel-footer">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span style="font-size: 20px;">Repositories</span>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div ng-repeat="assign_repo in profile.assign_repos track by $index">
+                            &nbsp;<h4><input ng-model="assign_repo.is_checked" type="checkbox"> {{assign_repo.server_name}} - {{assign_repo.repo_name}}</h4>
+                            <div ng-repeat="tag in assign_repo.tags">
+                                &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger glyphicon glyphicon-trash" ng-click="delete_tagging(tag.tagged_repos_id)"></button> {{tag.dname}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <h3 class="row">
+        <!-- any future content here. -->
+    </h3>
+</div>
