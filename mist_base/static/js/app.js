@@ -20,7 +20,7 @@
         $urlRouterProvider.when('', '/publish/publish.list');
 
         // default route
-        $urlRouterProvider.otherwise("/publish/publish.list");
+        $urlRouterProvider.otherwise("/login");
 
         // app routes
         $stateProvider
