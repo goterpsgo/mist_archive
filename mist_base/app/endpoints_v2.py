@@ -221,7 +221,7 @@ def authenticate(username, password):
     # First try logging in with PKI, if cert was sent
     subject_dn = request.environ.get('SSL_CLIENT_S_DN')
     if subject_dn:
-        user = main.session.query(main.MistUser).filter(main.MistUser.subjectDN == subject_dn).first()
+        user = main.session.query(main.MistUser).filter(main.and_(main.MistUser.subjectDN == subject_dn, main.MistUser.lockout != "No")).first()
         if user:
             return user
 
@@ -235,7 +235,7 @@ def authenticate(username, password):
             ))
     user_query = user.first()
 
-    if (user_query.username is not None):
+    if (user_query is not None):
         if (int(request.headers.get('Attempts')) >= this_app.config['NUMBER_OF_LOGIN_ATTEMPTS']):
             upd_form = {
                 "lockout": "Yes"
