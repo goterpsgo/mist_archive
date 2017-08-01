@@ -17,10 +17,10 @@
     function config($stateProvider, $httpProvider, $urlRouterProvider, $authProvider, $locationProvider) {
 
         // You can also use regex for the match parameter
-        $urlRouterProvider.when('', '/publish/publish.list');
+        $urlRouterProvider.when('/?', '/publish/publish.list');
 
         // default route
-        $urlRouterProvider.otherwise("/publish/publish.list");
+        $urlRouterProvider.otherwise("/login");
 
         // app routes
         $stateProvider
