@@ -18,7 +18,7 @@
 
         // You can also use regex for the match parameter
         // Use /publish.list as default landing page when user tries to access /
-        $urlRouterProvider.when('', '/publish/publish.list');
+        $urlRouterProvider.when('/?', '/publish/publish.list');
 
         // default route for all un-authenticated browsers
         $urlRouterProvider.otherwise("/login");
