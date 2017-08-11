@@ -1124,7 +1124,7 @@ class SecurityCenter(Resource):
             upd_form["removeDate"] = datetime.now()
             r_removed_sc.update(upd_form)
         else:
-            new_removed_sc = main.SecurityCenter(
+            new_removed_sc = main.RemovedSCs(
                   scName = _sc['serverName']
                 , removeDate = datetime.now()
                 , ack = 'No'
