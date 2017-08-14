@@ -15,9 +15,9 @@
 
         return factory;
 
-        function get_publishjobs() {
+        function get_publishjobs(user_id) {
             var deferred = $q.defer();
-            $http.get(__env.api_url + ':' + __env.port + '/api/v2/publishjobs')
+            $http.get(__env.api_url + ':' + __env.port + '/api/v2/publishjobs/' + user_id)
                 .then(
                     function(response) {
                         deferred.resolve(response.data);

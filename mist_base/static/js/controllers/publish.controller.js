@@ -201,7 +201,7 @@
         function load_publish_jobs() {
             vm.loading += 1;
             PublishJobsService
-                ._get_publishjobs()
+                ._get_publishjobs($localStorage.user.id)
                 .then(
                     function(results) {
                         $scope.publish_jobs_list = results.publish_jobs_list;

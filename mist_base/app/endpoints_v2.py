@@ -2102,10 +2102,14 @@ class RepoPublishTimes(Resource):
 # PublishJobs model class template
 class PublishJobs(Resource):
     @jwt_required()
-    def get(self):
+    def get(self, user_id):
         rs_dict = {}  # used to hold and eventually return publish_jobs_list[] recordset and associated metadata
         _new_token = create_new_token(request)
         rs_dict['Authorization'] = _new_token  # pass token via response data since I can't figure out how to pass it via response header - JWT Oct 2016
+
+        user = rs_users().filter(main.MistUser.id == user_id).first()
+        _username = user.username
+        _permission = int(user.permission)
 
         publish_jobs_list = []
 
@@ -2114,9 +2118,14 @@ class PublishJobs(Resource):
         _then = _today - timedelta(days=rollver_days)
 
         # limit by date
-        handle_publish_jobs = rs_publish_jobs()\
-            .filter(main.between(main.PublishJobs.finishTime, _then, _today))\
-            .order_by(main.PublishJobs.finishTime.desc())
+        if _permission == 2:
+            handle_publish_jobs = rs_publish_jobs()\
+                .filter(main.between(main.PublishJobs.finishTime, _then, _today))\
+                .order_by(main.PublishJobs.finishTime.desc())
+        else:
+            handle_publish_jobs = rs_publish_jobs() \
+                .filter(main.between(main.PublishJobs.finishTime, _then, _today), main.PublishJobs.userName == _username) \
+                .order_by(main.PublishJobs.finishTime.desc())
 
         for r_publish_jobs in handle_publish_jobs:
             publish_jobs_list.append(row_to_dict(r_publish_jobs))
@@ -2422,7 +2431,7 @@ api.add_resource(CategorizedTags, '/categorizedtags', '/categorizedtags/<int:_td
 api.add_resource(TaggedRepos, '/taggedrepos', '/taggedrepos/<int:_tagged_repo_id>')
 api.add_resource(Assets, '/assets', '/assets/<int:_id>')
 api.add_resource(PublishSched, '/publishsched')
-api.add_resource(PublishJobs, '/publishjobs', '/publishjob/<int:_id>')
+api.add_resource(PublishJobs, '/publishjobs/<int:user_id>', '/publishjob/<int:_id>')
 api.add_resource(RepoPublishTimes, '/repopublishtimes', '/repopublishtimes/<int:_show_repos>')
 api.add_resource(LocalLogs, '/locallogs', '/locallog/<string:_name>')
 api.add_resource(PublicationDownloader, '/publicationdownloader/<string:_name>')
