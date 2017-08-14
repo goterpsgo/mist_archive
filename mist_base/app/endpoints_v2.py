@@ -2044,13 +2044,17 @@ class RepoPublishTimes(Resource):
             for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.cveLast).order_by(main.RepoPublishTimes.cveLast.desc()).limit(1).all():
                 repo_publish_times['cveLast'] = r_repo_publish_times.cveLast.strftime("%m/%d/%Y %H:%M:%S")
             for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.pluginLast).order_by(main.RepoPublishTimes.pluginLast.desc()).limit(1).all():
-                repo_publish_times['pluginLast'] = r_repo_publish_times.pluginLast.strftime("%m/%d/%Y %H:%M:%S")
+                if r_repo_publish_times.pluginLast is not None:
+                    repo_publish_times['pluginLast'] = r_repo_publish_times.pluginLast.strftime("%m/%d/%Y %H:%M:%S")
             for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.benchmarkLast).order_by(main.RepoPublishTimes.benchmarkLast.desc()).limit(1).all():
-                repo_publish_times['benchmarkLast'] = r_repo_publish_times.benchmarkLast.strftime("%m/%d/%Y %H:%M:%S")
+                if r_repo_publish_times.benchmarkLast is not None:
+                    repo_publish_times['benchmarkLast'] = r_repo_publish_times.benchmarkLast.strftime("%m/%d/%Y %H:%M:%S")
             for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.iavmLast).order_by(main.RepoPublishTimes.iavmLast.desc()).limit(1).all():
-                repo_publish_times['iavmLast'] = r_repo_publish_times.iavmLast.strftime("%m/%d/%Y %H:%M:%S")
+                if r_repo_publish_times.iavmLast is not None:
+                    repo_publish_times['iavmLast'] = r_repo_publish_times.iavmLast.strftime("%m/%d/%Y %H:%M:%S")
             for r_repo_publish_times in rs_repo_publish_times().with_entities(main.RepoPublishTimes.opattrLast).order_by(main.RepoPublishTimes.opattrLast.desc()).limit(1).all():
-                repo_publish_times['opattrLast'] = r_repo_publish_times.opattrLast.strftime("%m/%d/%Y %H:%M:%S")
+                if r_repo_publish_times.opattrLast is not None:
+                    repo_publish_times['opattrLast'] = r_repo_publish_times.opattrLast.strftime("%m/%d/%Y %H:%M:%S")
 
             rs_dict['repo_publish_times'] = repo_publish_times
             return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
