@@ -9,40 +9,41 @@
 <br />
 <div class="col-md-10 col-md-offset-0">
     <h2>Sign Up</h2>
-    <div>All Fields Are Required</div>
-    <form class="form-horizontal" id="form_signup" ng-submit="submit_signup()">
+    <div>Fields marked with * are required.</div>
+    <form class="form-horizontal" id="form_signup" name="form_signup" ng-submit="form_signup.$valid&&submit_signup()">
         <div class="form-group">
-            <label class="control-label col-sm-3" for="firstname0">First Name:</label>
+            <label class="control-label col-sm-3" for="firstname0">* First Name:</label>
             <div class="col-sm-9">
                 <input type="text" class="form-control" id="firstname0" ng-model="_user.first_name" required placeholder="Enter first name">
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-3" for="lastname0">Last Name:</label>
+            <label class="control-label col-sm-3" for="lastname0">* Last Name:</label>
             <div class="col-sm-9">
                 <input type="text" class="form-control" id="lastname0" ng-model="_user.last_name" required placeholder="Enter last name">
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-3" for="username0">Username:</label>
+            <label class="control-label col-sm-3" for="username0">* Username:</label>
             <div class="col-sm-9">
-                <input type="text" class="form-control" id="username0" ng-model="_user.username" required placeholder="Username (Use your DISA SID if possible)">
+                <input type="text" class="form-control" id="username0" name="username0" ng-model="_user.username" required placeholder="Username (Use your DISA SID if possible, letters and numbers only)" ng-pattern="_valid_pattern_username">
+                <span style="color:Red" ng-show="form_signup.username0.$dirty&&form_signup.username0.$error.pattern">Letters and numbers only</span>
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-3" for="password0">Password:</label>
+            <label class="control-label col-sm-3" for="password0">* Password:</label>
             <div class="col-sm-9">
                 <input type="password" class="form-control" id="password0" ng-model="_user.password0" required placeholder="Must be at least 14 chars and contain at least: 2 lower case characters, 2 upper case, 2 digits, and 2 special characters">
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-3" for="password1">Password Confirm:</label>
+            <label class="control-label col-sm-3" for="password1">* Password Confirm:</label>
             <div class="col-sm-9">
                 <input type="password" class="form-control" id="password1" ng-model="_user.password1" required placeholder="Enter password again">
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-3" for="organization0">Organization:</label>
+            <label class="control-label col-sm-3" for="organization0">* Organization:</label>
             <div class="col-sm-9">
                 <input type="text" class="form-control" id="organization0" ng-model="_user.organization" required placeholder="Enter organization">
             </div>
@@ -54,13 +55,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-3" for="email">Repos:</label>
+            <label class="control-label col-sm-3" for="email">* Repos:</label>
             <div class="col-sm-9">
-                <!--<select multiple name="repos" id="repos0" ng-model="_user.repos" ng-options="(repo.repo_name + ' @ ' + repo.server_name) for repo in repos">-->
-                <select multiple class="select2-search" name="repos" id="repos0" ng-model="_user.repos" required>
-                    <option ng-repeat="repo in repos" value="sc_id:{{repo.sc_id}},repo_id:{{repo.repo_id}},server_name:{{repo.server_name}},repo_name:{{repo.repo_name}}" sc_id="{{repo.sc_id}}" repo_id="{{repo.repo_id}}" server_name="{{repo.server_name}}" repo_name="{{repo.repo_name}}">{{repo.repo_name}} @ {{repo.server_name}}</option>
-                </select>
-                <!--<option ng-repeat="_index in [0,1,2,3,4,5,6,7,8,9]">{{_index}}</option>-->
             </div>
         </div>
         <div class="form-group">

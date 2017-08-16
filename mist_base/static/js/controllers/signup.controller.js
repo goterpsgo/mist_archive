@@ -12,6 +12,7 @@
         $scope.response_message = '';
         $scope.status = '';
         $scope._user = {};
+        $scope._valid_pattern_username = /^[A-Za-z0-9]+$/;
 
         $scope.submit_signup = function() {
             return MistUsersService._signup_user($scope._user)
