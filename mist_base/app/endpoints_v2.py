@@ -2075,13 +2075,17 @@ class RepoPublishTimes(Resource):
                     for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.cveLast).order_by(main.RepoPublishTimes.cveLast.desc()).limit(1).all():
                         _repos_published[_key]['cveLast'] = r_repo_publish_times.cveLast.strftime("%m/%d/%Y %H:%M:%S")
                     for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.pluginLast).order_by(main.RepoPublishTimes.pluginLast.desc()).limit(1).all():
-                        _repos_published[_key]['pluginLast'] = r_repo_publish_times.pluginLast.strftime("%m/%d/%Y %H:%M:%S")
+                        if r_repo_publish_times.pluginLast is not None:
+                            _repos_published[_key]['pluginLast'] = r_repo_publish_times.pluginLast.strftime("%m/%d/%Y %H:%M:%S")
                     for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.benchmarkLast).order_by(main.RepoPublishTimes.benchmarkLast.desc()).limit(1).all():
-                        _repos_published[_key]['benchmarkLast'] = r_repo_publish_times.benchmarkLast.strftime("%m/%d/%Y %H:%M:%S")
+                        if r_repo_publish_times.benchmarkLast is not None:
+                            _repos_published[_key]['benchmarkLast'] = r_repo_publish_times.benchmarkLast.strftime("%m/%d/%Y %H:%M:%S")
                     for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.iavmLast).order_by(main.RepoPublishTimes.iavmLast.desc()).limit(1).all():
-                        _repos_published[_key]['iavmLast'] = r_repo_publish_times.iavmLast.strftime("%m/%d/%Y %H:%M:%S")
+                        if r_repo_publish_times.iavmLast is not None:
+                            _repos_published[_key]['iavmLast'] = r_repo_publish_times.iavmLast.strftime("%m/%d/%Y %H:%M:%S")
                     for r_repo_publish_times in handle_publish_times_per_repo.with_entities(main.RepoPublishTimes.opattrLast).order_by(main.RepoPublishTimes.opattrLast.desc()).limit(1).all():
-                        _repos_published[_key]['opattrLast'] = r_repo_publish_times.opattrLast.strftime("%m/%d/%Y %H:%M:%S")
+                        if r_repo_publish_times.opattrLast is not None:
+                            _repos_published[_key]['opattrLast'] = r_repo_publish_times.opattrLast.strftime("%m/%d/%Y %H:%M:%S")
 
             rs_dict['repo_publish_times'] = _repos_published
             return rs_dict, 200, {"Authorization": _new_token}  # return rs_dict
@@ -2431,7 +2435,7 @@ api.add_resource(CategorizedTags, '/categorizedtags', '/categorizedtags/<int:_td
 api.add_resource(TaggedRepos, '/taggedrepos', '/taggedrepos/<int:_tagged_repo_id>')
 api.add_resource(Assets, '/assets', '/assets/<int:_id>')
 api.add_resource(PublishSched, '/publishsched')
-api.add_resource(PublishJobs, '/publishjobs/<int:user_id>', '/publishjob/<int:_id>')
+api.add_resource(PublishJobs, '/publishjobs', '/publishjobs/<int:user_id>', '/publishjob/<int:_id>')
 api.add_resource(RepoPublishTimes, '/repopublishtimes', '/repopublishtimes/<int:_show_repos>')
 api.add_resource(LocalLogs, '/locallogs', '/locallog/<string:_name>')
 api.add_resource(PublicationDownloader, '/publicationdownloader/<string:_name>')
