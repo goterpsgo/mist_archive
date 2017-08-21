@@ -594,6 +594,8 @@
                     if ($location.path() != '/login') {
                         console.log('Redirect to /login');
                         $timeout(function() {
+                            delete $localStorage.currentUser;
+                            delete $localStorage.user;
                             $location.path('/login');
                         }, 100);
                     }

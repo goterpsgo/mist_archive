@@ -40,7 +40,7 @@
                 // populate $scope.user to provide user status and state to be used in the nav view.
                 // $scope.user = $localStorage.user;
             }
-        };
+        }
 
         function login() {
             vm.loading = true;

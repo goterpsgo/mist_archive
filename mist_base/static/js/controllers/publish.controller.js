@@ -5,7 +5,7 @@
         .module('app')
         .controller('Publish.IndexController', Controller);
 
-    function Controller($state, $scope, $timeout, $localStorage, PublishSchedService, PublishJobsService, RepoPublishTimesService, PublishSitesService, MistParamsService) {
+    function Controller($state, $scope, $timeout, $localStorage, PublishSchedService, PublishJobsService, RepoPublishTimesService, PublishSitesService, MistParamsService, MistUsersService) {
         var vm = this;
         $scope._task = '';
         var obj_tasks = [];
@@ -200,57 +200,77 @@
 
         function load_publish_jobs() {
             vm.loading += 1;
-            PublishJobsService
-                ._get_publishjobs($localStorage.user.id)
+
+            MistUsersService._get_user($localStorage.currentUser.username)
                 .then(
-                    function(results) {
-                        $scope.publish_jobs_list = results.publish_jobs_list;
-
-                        // [kept for reference] [ES5] array forEach loop
-                        // $scope.publish_jobs_list.forEach(function(_row, _index, _ref) {
-                        //     if (_row.status == 'Completed') {
-                        //         _ref[_index].filename = '<a href="#">' + _row.filename + '</a>';
-                        //     }
-                        // });
-
-                        // [kept for reference] Displaying links in ui-grid cell
-                        // $scope.column_names = [
-                        //     {
-                        //       "name": "Filename"
-                        //       , "displayName": "Filename"
-                        //       , "field": "filename"
-                        //       , "width": 350
-                        //       , cellTemplate: '<div><a href="#">{{row.entity.filename}}</a></div>'
-                        //     },
-                        //     {
-                        //       "name": "PublishDate"
-                        //       , "displayName": "Publish Date"
-                        //       , "field": "finishTime"
-                        //       , "width": 150
-                        //       , "sort": {"direction": "desc", "priority": 0}
-                        //     },
-                        //     {
-                        //       "name": "Status"
-                        //       , "displayName": "Status"
-                        //       , "field": "status"
-                        //     },
-                        //     {
-                        //       "name": "PublishedBy"
-                        //       , "displayName": "Published By"
-                        //       , "field": "userName"
-                        //     }
-                        // ];
-                        // $scope.grid_options = {
-                        //     columnDefs: $scope.column_names
-                        // };
-                        // $scope.grid_options.data = results.publish_jobs_list;
-                        vm.loading = false;
+                      function(user) {
+                          $localStorage.user = user.users_list[0];
+                          $scope.user = user.users_list[0];
                       }
                     , function(err) {
                         $scope.status = 'Error loading data: ' + err.message;
-                        vm.loading -= 1;
                       }
-                );
+                )
+                .then(
+                      function() {
+                          PublishJobsService
+                            ._get_publishjobs($localStorage.user.id)
+                            .then(
+                                function(results) {
+                                    $scope.publish_jobs_list = results.publish_jobs_list;
+
+                                    // [kept for reference] [ES5] array forEach loop
+                                    // $scope.publish_jobs_list.forEach(function(_row, _index, _ref) {
+                                    //     if (_row.status == 'Completed') {
+                                    //         _ref[_index].filename = '<a href="#">' + _row.filename + '</a>';
+                                    //     }
+                                    // });
+
+                                    // [kept for reference] Displaying links in ui-grid cell
+                                    // $scope.column_names = [
+                                    //     {
+                                    //       "name": "Filename"
+                                    //       , "displayName": "Filename"
+                                    //       , "field": "filename"
+                                    //       , "width": 350
+                                    //       , cellTemplate: '<div><a href="#">{{row.entity.filename}}</a></div>'
+                                    //     },
+                                    //     {
+                                    //       "name": "PublishDate"
+                                    //       , "displayName": "Publish Date"
+                                    //       , "field": "finishTime"
+                                    //       , "width": 150
+                                    //       , "sort": {"direction": "desc", "priority": 0}
+                                    //     },
+                                    //     {
+                                    //       "name": "Status"
+                                    //       , "displayName": "Status"
+                                    //       , "field": "status"
+                                    //     },
+                                    //     {
+                                    //       "name": "PublishedBy"
+                                    //       , "displayName": "Published By"
+                                    //       , "field": "userName"
+                                    //     }
+                                    // ];
+                                    // $scope.grid_options = {
+                                    //     columnDefs: $scope.column_names
+                                    // };
+                                    // $scope.grid_options.data = results.publish_jobs_list;
+                                    vm.loading = false;
+                                  }
+                                , function(err) {
+                                    $scope.status = 'Error loading data: ' + err.message;
+                                    vm.loading -= 1;
+                                  }
+                            );
+
+                      }
+                    , function(err) {
+                        $scope.status = 'Error loading data: ' + err.message;
+                      }
+                )
+            ;
         }
 
         function load_publish_sites() {
